@@ -1,0 +1,12 @@
+@font-face 
+{
+  font-family: "Danidanijr";
+  src: url("danidanijrs-font.ttf");
+}
+
+p {
+    font-family: "Comic Sans MS";
+    font-size: 24px;
+    text-align: center;
+    text-shadow: 2px 2px grey;
+}
