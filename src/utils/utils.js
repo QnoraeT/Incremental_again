@@ -1,6 +1,7 @@
 function format(number, fixed = false)
 {
-    const abbSuffixes = ["","K","M","B","T","Qa","Qi","Sx","Sp","Oc","No","Dc","UDc","DDc","TDc","QaDc","QiDc","SxDc","SpDc","OcDc","NoDc","Vg"]
+    const abbSuffixes = ["","K","M","B","T","Qa","Qi","Sx","Sp","Oc","No","Dc",
+                        "UDc","DDc","TDc","QaDc","QiDc","SxDc","SpDc","OcDc","NoDc","Vg"];
 
     if (number.lessThan(1_000_000))                                         //display with commas
         return Math.floor(number.toNumber()).toLocaleString("en-US");
@@ -8,8 +9,10 @@ function format(number, fixed = false)
     {
         let powerOf1000 = Decimal.floor(number.log(1000));
         let mantissa = number.divide(Decimal.pow(1000, powerOf1000))
+        
         if (mantissa.round() >= 1000)
           mantissa = 999.999;
+
         if (fixed)
           return mantissa.toFixed(3) + abbSuffixes[powerOf1000];
         return  Number.parseFloat(mantissa.toFixed(3)) + abbSuffixes[powerOf1000];
