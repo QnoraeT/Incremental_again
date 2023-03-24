@@ -85,7 +85,7 @@ function buyComp(comp)
 
         //update cost HTML
         document.getElementById("gen-comp" + comp + "-cost").innerHTML = "Cost: " + format(comps[comp].cost);
-        document.getElementById("gen-comp" + comp + "-multi").innerHTML = format(comps[comp].multi) + "x";
+        document.getElementById("gen-comp" + comp + "-multi").innerHTML = format(comps[comp].multi) + "x ";
     }
 }
 
@@ -120,7 +120,7 @@ function calcCompxPerSecond(comp)
         for (let comp = 1; comp < 9; ++comp) 
         {
             comps[comp].amount = comps[comp].amount.add(calcCompxPerSecond(comp).times(delta));
-            document.getElementById("gen-comp" + comp + "-amount").innerHTML = format(comps[comp].amount) + ",";
+            document.getElementById("gen-comp" + comp + "-amount").innerHTML = format(comps[comp].amount) + ", ";
         }
         document.getElementById("points").innerHTML = "Points: " + format(points, true);
         document.getElementById("fps").innerHTML = "FPS: " + FPS;
