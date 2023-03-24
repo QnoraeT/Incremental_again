@@ -128,7 +128,7 @@ function calcCompxPerSecond(comp) {
         for (let comp = 1; comp <= 8; ++comp) 
         {
             comps[comp].amount = comps[comp].amount.add(calcCompxPerSecond(comp).times(delta));
-            document.getElementById("gen-comp" + comp + "-amount").innerHTML = format(comps[comp].trueamount) + ",";
+            document.getElementById("gen-comp" + comp + "-amount").innerHTML = format(comps[comp].trueamount) + ", ";
         }
         document.getElementById("points").innerHTML = "Points: " + format(points, true) + " ( " +format(calcPointsPerSecond(),true) + " / s )";
         document.getElementById("fps").innerHTML = "FPS: " + FPS;
