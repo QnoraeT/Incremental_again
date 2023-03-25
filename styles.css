@@ -3,16 +3,23 @@
   font-family: "Danidanijr";
   src: url("danidanijrs-font.ttf");
 }
-
-p {
-    font-family: "Comic Sans MS";
-    font-size: 24px;
-    text-align: center;
-    text-shadow: 2px 2px grey;
+body {
+  background-color: black;
 }
-pps {
-  font-family: "Comic Sans MS";
-  font-size: 18px;
-  text-align: center;
-  text-shadow: 2px 2px grey;
+p {
+    font-family: "Verdana";
+    font-size: 24px;
+    text-align: left;
+    text-shadow: 2px 2px grey;
+    color: white;
+}
+fps {
+  font-family: "Verdana";
+  font-size: 14px;
+  text-align: right;
+  color: yellow; 
+}
+br {
+  font-family: "Verdana";
+  color: white;
 }
