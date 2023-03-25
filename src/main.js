@@ -137,10 +137,11 @@ let comps = {
     }
 }
 
-for (let [index, comp] of Object.entries(comps)){
+for (let [index, comp] of Object.entries(comps))
+{
     document.getElementById("gen-comp" + index + "-cost").innerHTML = "Cost: " + format(comp.cost);
-    document.getElementById("gen-comp" + index + "-multi").innerHTML = format(comp.multi) + "x";
-    document.getElementById("gen-comp" + index + "-amount").innerHTML = format(comp.trueamount) + ",";
+    document.getElementById("gen-comp" + index + "-multi").innerHTML = format(comp.multi) + "x ";
+    document.getElementById("gen-comp" + index + "-amount").innerHTML = format(comp.trueamount) + ", ";
 }
 document.getElementById("tab_comp").innerHTML = "ComP";
 document.getElementById("tab_other").innerHTML = "Other";
@@ -223,7 +224,7 @@ function hideShow(id, condition){
         for (let comp = 1; comp <= 8; ++comp) 
         {
             comps[comp].amount = comps[comp].amount.add(calcCompxPerSecond(comp).times(delta));
-            document.getElementById("gen-comp" + comp + "-amount").innerHTML = format(comps[comp].trueamount) + ",";
+            document.getElementById("gen-comp" + comp + "-amount").innerHTML = format(comps[comp].trueamount) + ", ";
         }
         document.getElementById("points").innerHTML = "Points: " + format(points, true) + " ( " +format(calcPointsPerSecond(),true) + " / s )";
         document.getElementById("fps").innerHTML = "FPS: " + FPS;

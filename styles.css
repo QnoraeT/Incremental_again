@@ -1,25 +1,33 @@
-@font-face 
-{
+@font-face {
   font-family: "Danidanijr";
   src: url("danidanijrs-font.ttf");
 }
+
+p {
+  color: white;
+  font-family: "Verdana";
+  font-size: 18px;
+}
+
+.text {
+  display: inline;
+}
+
 body {
   background-color: black;
 }
-p {
+
+ #points {
     font-family: "Verdana";
     font-size: 24px;
     text-align: left;
     text-shadow: 2px 2px grey;
     color: white;
-}
-fps {
+} 
+
+/* fps {
   font-family: "Verdana";
   font-size: 14px;
   text-align: right;
   color: yellow; 
-}
-br {
-  font-family: "Verdana";
-  color: white;
-}
+} */
