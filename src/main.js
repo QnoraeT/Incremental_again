@@ -1,4 +1,6 @@
 let points = new Decimal(10);
+let totalPointsInSimplify = new Decimal(10);
+let totalPoints = new Decimal(10);
 let compExp = new Decimal(0.8)
 let compBM = new Decimal(2)
 let compScale = new Decimal(150);
@@ -7,8 +9,6 @@ let notation = "Mixed Scientific";
 let totalTime = 0;
 let gameTime = new Decimal(0);
 let timeSpeed = new Decimal(1);
-let totalPointsInSimplify = new Decimal(10);
-let totalPoints = new Decimal(0);
 let tab = [0,0,0];
 let simplify = {
     "main": {
@@ -139,8 +139,8 @@ let comps = {
 
 for (let [index, comp] of Object.entries(comps)){
     document.getElementById("gen-comp" + index + "-cost").innerHTML = "Cost: " + format(comp.cost);
-    document.getElementById("gen-comp" + index + "-multi").innerHTML = format(comp.multi) + "x";
-    document.getElementById("gen-comp" + index + "-amount").innerHTML = format(comp.trueamount) + ",";
+    document.getElementById("gen-comp" + index + "-multi").innerHTML = format(comp.multi) + "x ";
+    document.getElementById("gen-comp" + index + "-amount").innerHTML = format(comp.trueamount) + ", ";
 }
 document.getElementById("tab_comp").innerHTML = "ComP";
 document.getElementById("tab_other").innerHTML = "Other";
@@ -149,8 +149,17 @@ document.getElementById("tab_simplify").innerHTML = "Simplify";
 function switchTab(t,id){tab[id]=t;}
 function getSimplifyGain(){
     let temp
-    temp = simplify.main.SEExp.pow(totalPointsInSimplify.log().div(12).sub(1)).floor()
+    temp = simplify.main.SEExp.pow(totalPointsInSimplify.log(simplify.main.simplifyReq).sub(1)).floor()
     return temp
+}
+function compCost(comp,bought){
+    let temp = bought
+    if (temp.gte(compScale)){
+    temp = temp.div(compScale).pow(2).mul(compScale)
+    }
+    temp = new Decimal((comp * 4) - 3).add(new Decimal(comp)
+                .mul(2).mul(temp));
+    return new Decimal(10).pow(temp);
 }
 function buyComp(comp){
     if (points.gte(comps[comp].cost)){
@@ -158,13 +167,7 @@ function buyComp(comp){
         comps[comp].bought = comps[comp].bought.add(1);
         //update cost, formula: 10^(4(comp) + 2x(comp) - 3), x = comps[comp].bought
         //but what about further ingame, where ComP costs scale based off of time?? its not gonna update and will show an amount too high or low than it actually is
-        let temp = comps[comp].bought
-        if (temp.gte(compScale)){
-        temp = temp.div(compScale).pow(2).mul(compScale)
-        }
-        temp = new Decimal((comp * 4) - 3).add(new Decimal(comp)
-                    .mul(2).mul(temp));
-        comps[comp].cost = new Decimal(10).pow(temp);
+        comps[comp].cost=compCost(comp,comps[comp].bought)
         //update multipliers
         //same issue with costs
         comps[comp].multi = new Decimal(1);
@@ -186,6 +189,37 @@ function getTrueAmount(comp){
     comps[comp].trueamount=comps[comp].amount.pow(compExp).add(comps[comp].bought)
     return comps[comp].trueamount;
 }
+function calcGeneralCosts(){ // 1st arg is type, 2nd arg is effective bought, 3rd arg is if it's inverse, 4th+ are params
+    let type = arguments[0]
+    let x = arguments[1]
+    let temp
+    let a = arguments[3]
+    let b = arguments[4]
+    let c = arguments[5]
+    let d = arguments[6]
+    let f = arguments[7]
+    let g = arguments[8]
+    switch(type) {
+        case "EP": // a*b^(x+(cx)^2))
+            if (arguments[2] == false){
+                temp = b.pow(x.mul(c).pow(2).add(x)).mul(a)
+            } else {
+                temp = b.ln().add(x.div(a).ln().mul(c.pow(2).mul(4))).root(2).div(b.ln().root(2).mul(c.pow(2).mul(2))).sub(new Decimal(1).div(c.pow(2).mul(2)))
+            }
+            return temp
+        case "EEP": // a*b^(xcd^((fx)^g))
+           if (arguments[2] == false){
+            temp = a.mul(b.pow(d.pow(x.mul(f).pow(g)).mul(c).mul(x)))
+            } else {  
+            temp = x.div(a).ln().pow(g).mul(d.ln()).mul(f.pow(g)).mul(g).div(c.pow(g).mul(b.ln().pow(g))).lambertw().root(g).div(g.root(g).mul(f).mul(d.ln().root(g)))
+            }
+            return temp
+        default:
+            console.error("Cost scaling type " + type + " is not defined!!")
+            return new Decimal(10) // fallback cost
+        }
+}
+
 function calcPointsPerSecond(){
     return getTrueAmount(1).mul(comps[1].multi);
 }
@@ -201,12 +235,6 @@ function hideShow(id, condition){
     } else {
       x.style.display = "none";
     }
-    //if (tab[tabID] == value) {
-    //    x.style.display = "block";
-    //  } else {
-    //    x.style.display = "none";
-    //  }
-    // 
 }
 {
     window.requestAnimationFrame(gameLoop);
@@ -228,12 +256,9 @@ function hideShow(id, condition){
         }
         document.getElementById("points").innerHTML = "Points: " + format(points, true) + " ( " +format(calcPointsPerSecond(),true) + " / s )";
         document.getElementById("fps").innerHTML = "FPS: " + FPS;
-        //hideShow("comp",0,0)
-        //hideShow("Simplify",2,0)
         hideShow("comp",tab[0] == 0)
         hideShow("Simplify",tab[2] == 0)
-        hideShow("simpTab",totalPoints.gte(1e15))
-        
+        hideShow("tab_simplify",totalPoints.gte(1e15))
         oldTimeStamp = timeStamp;
         window.requestAnimationFrame(gameLoop);
     }
