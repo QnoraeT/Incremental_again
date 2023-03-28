@@ -3,14 +3,13 @@ function format(number, fixed = false)
     const abbSuffixes = ["","K","M","B","T","Qa","Qi","Sx","Sp","Oc","No","Dc",
                         "UDc","DDc","TDc","QaDc","QiDc","SxDc","SpDc","OcDc","NoDc","Vg"];
 
-
     if (number.lt(0))
       return "-" + format(number.times(-1), fixed)
     if (!Number.isFinite(points.mag))
-      return "Eternity"
+      return "Infinity"
     if (Number.isNaN(points.mag))
       return "NaN"
-
+      
     if (number.lessThan(1_000_000))                                         //display with commas
       return Math.floor(number.toNumber()).toLocaleString("en-US");
     if (number.lessThan(new Decimal("1e" + (abbSuffixes.length * 3))))           //display abberviaed
