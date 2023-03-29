@@ -23,10 +23,10 @@ function abberivate(number, fixed = false)
 {
   let powerOf1000 = Decimal.floor(number.log(1000));
   let mantissa = number.divide(Decimal.pow(1000, powerOf1000))
-
-  if (mantissa.round() >= 1000)
-    mantissa = 999.999;
-
+  if (mantissa >= 999.999){
+    mantissa = 1
+    powerOf1000++
+  }
   if (fixed)
     return mantissa.toFixed(3) + abberivationSuffixes[powerOf1000];
   return  Number.parseFloat(mantissa.toFixed(3)) + abberivationSuffixes[powerOf1000];
