@@ -75,6 +75,7 @@ let simplify = {
         milestoneMisc: new Decimal(0), // custom challenges and stuff ("don't buy comp1 more than once", "reach 1e100 in 15 seconds without comp6+", etc)
     },
 }
+
 let comps = {
     "1": new ComP(10, 1),
     "2": new ComP(100_000, 2),

@@ -71,7 +71,6 @@ class ComP
             this._multi = this._multi.mul(4).pow(1.584962500721156);
         if (inChallenge.length == 0)
             this._multi = this._multi.mul(simplify.main.simplifyStat.add(1).root(new Decimal(this._index + 1)))
-
     }
 
     _updateCost()
@@ -82,7 +81,6 @@ class ComP
         let temp = this._bought;
         if (temp.gte(compScale))
             temp = temp.div(compScale).pow(2).mul(compScale)
-
         temp = new Decimal((this._index * 4) - 3).add(new Decimal(this._index)
                     .mul(2).mul(temp));
         this._cost = new Decimal(10).pow(temp);
