@@ -1,3 +1,4 @@
+
 function format(number, fixed = false)
 {
     const abbSuffixes = ["","K","M","B","T","Qa","Qi","Sx","Sp","Oc","No","Dc",
