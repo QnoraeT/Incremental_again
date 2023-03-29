@@ -14,7 +14,7 @@ let simplify = {
         simplifyStat: new Decimal(0),
         SEExp: new Decimal(1.75),
         SAExp: new Decimal(0.75),
-        simplifyReq: new Decimal(1e15),
+        simplifyReq: new Decimal(1e12),
         totalXP: new Decimal(0), // (TruePP + TrueMP + True1P + TrueDP)^SimpEXP
     },
     "PP": {
