@@ -1,9 +1,9 @@
 let points = new Decimal(10);
 let totalPointsInSimplify = new Decimal(10);
 let totalPoints = new Decimal(10);
-let compExp = new Decimal(0.8)
-let compBM = new Decimal(2)
-let compScale = new Decimal(150);
+//let compExp = new Decimal(0.8)                 moved to ComP.js
+//let compBM = new Decimal(2)                    moved to ComP.js
+//let compScale = new Decimal(150);              moved to ComP.js
 let inChallenge = ["", "", "", ""]
 let notation = "Mixed Scientific";
 let totalTime = 0;
@@ -82,62 +82,14 @@ let simplify = {
 let compVisable = 1;
 
 let comps = {
-    "1": {
-        bought: new Decimal(0),
-        amount: new Decimal(0),
-        trueamount: new Decimal(0),
-        cost: new Decimal(10),
-        multi: new Decimal(1)
-    },
-    "2": {
-        bought: new Decimal(0),
-        amount: new Decimal(0),
-        trueamount: new Decimal(0),
-        cost: new Decimal(100_000),
-        multi: new Decimal(1)
-    },
-    "3": {
-        bought: new Decimal(0),
-        amount: new Decimal(0),
-        trueamount: new Decimal(0),
-        cost: new Decimal(1e9),
-        multi: new Decimal(1)
-    },
-    "4": {
-        bought: new Decimal(0),
-        amount: new Decimal(0),
-        trueamount: new Decimal(0),
-        cost: new Decimal(10e12),
-        multi: new Decimal(1)
-    },
-    "5": {
-        bought: new Decimal(0),
-        amount: new Decimal(0),
-        trueamount: new Decimal(0),
-        cost: new Decimal(100e15),
-        multi: new Decimal(1)
-    },
-    "6": {
-        bought: new Decimal(0),
-        amount: new Decimal(0),
-        trueamount: new Decimal(0),
-        cost: new Decimal(1e21),
-        multi: new Decimal(1)
-    },
-    "7": {
-        bought: new Decimal(0),
-        amount: new Decimal(0),
-        trueamount: new Decimal(0),
-        cost: new Decimal(10e24),
-        multi: new Decimal(1)
-    },
-    "8": {
-        bought: new Decimal(0),
-        amount: new Decimal(0),
-        trueamount: new Decimal(0),
-        cost: new Decimal(100e27),
-        multi: new Decimal(1)
-    }
+    "1": new ComP(10, 1),
+    "2": new ComP(100_000, 2),
+    "3": new ComP(1e9, 3),
+    "4": new ComP(10e12, 4),
+    "5": new ComP(100e15, 5),
+    "6": new ComP(1e21, 6),
+    "7": new ComP(10e24, 7),
+    "8": new ComP(100e27, 8)
 }
 
 for (let [index, comp] of Object.entries(comps))
@@ -163,9 +115,9 @@ function getSimplifyGain()
 function compCost(comp,bought)
 {
     let temp = bought
-    if (temp.gte(compScale)){
+    if (temp.gte(compScale))
     temp = temp.div(compScale).pow(2).mul(compScale)
-    }
+
     temp = new Decimal((comp * 4) - 3).add(new Decimal(comp)
                 .mul(2).mul(temp));
     return new Decimal(10).pow(temp);
@@ -173,31 +125,14 @@ function compCost(comp,bought)
 
 function buyComp(comp)
 {
-    if (points.gte(comps[comp].cost)){
+    if (points.gte(comps[comp].cost))
+    {
         points = points.minus(comps[comp].cost);
-        comps[comp].bought = comps[comp].bought.add(1);
-        //update cost, formula: 10^(4(comp) + 2x(comp) - 3), x = comps[comp].bought
-        //but what about further ingame, where ComP costs scale based off of time?? its not gonna update and will show an amount too high or low than it actually is
-        comps[comp].cost=compCost(comp,comps[comp].bought)
-        //update multipliers
-        //same issue with costs
-        comps[comp].multi = new Decimal(1);
-        if (comps[comp].bought.gte(2))
-            comps[comp].multi = comps[comp].multi.mul(compBM.pow(comps[comp].bought.sub(1)))
-        if (comp == 1)
-            comps[comp].multi = comps[comp].multi.mul(10).pow(2);
-        if (comp == 2)
-            comps[comp].multi = comps[comp].multi.mul(4).pow(1.584962500721156);
+        comps[comp].buy();
         //update cost HTML
         document.getElementById("gen-comp" + comp + "-cost").innerHTML = "Cost: " + format(comps[comp].cost);
         document.getElementById("gen-comp" + comp + "-multi").innerHTML = format(comps[comp].multi) + "x ";
     }
-}
-
-function getTrueAmount(comp)
-{
-    comps[comp].trueamount=comps[comp].amount.pow(compExp).add(comps[comp].bought)
-    return comps[comp].trueamount;
 }
 
 function calcGeneralCosts()
@@ -235,14 +170,14 @@ function calcGeneralCosts()
 
 function calcPointsPerSecond()
 {
-    return getTrueAmount(1).mul(comps[1].multi);
+    return comps[1].trueamount.mul(comps[1].multi);
 }
 
 function calcCompxPerSecond(comp) 
 {
     if (comp === 8)
         return new Decimal(0);
-    return getTrueAmount(comp + 1).mul(comps[comp + 1].multi);
+    return comps[comp + 1].trueamount.mul(comps[comp + 1].multi);
 }
 
 function hideShow(id, condition)
@@ -272,7 +207,7 @@ function hideShow(id, condition)
         totalPointsInSimplify = totalPointsInSimplify.add(calcPointsPerSecond().times(gameDelta));
         for (let comp = 1; comp <= 8; ++comp) 
         {
-            comps[comp].amount = comps[comp].amount.add(calcCompxPerSecond(comp).times(delta));
+            comps[comp].changeAmount(calcCompxPerSecond(comp).times(delta));
 
             let tr = comps[comp].amount.add(calcCompxPerSecond(comp)).pow(compExp).sub(comps[comp].amount.pow(compExp))
             const perSecondText = " (" + format(tr) + "/s),";
