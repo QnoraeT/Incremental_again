@@ -3,7 +3,7 @@ for (let [index, comp] of Object.entries(comps))
     document.getElementById("gen-comp" + index + "-cost").innerHTML = "Cost: " + format(comp.cost);
     document.getElementById("gen-comp" + index + "-multi").innerHTML = format(comp.multi) + "x ";
     document.getElementById("gen-comp" + index + "-amount").innerHTML = format(comp.trueamount) + ", ";
-    document.getElementById("gen-comp" + index).style.display = index > compVisable ? "none" : "block";
+    document.getElementById("gen-comp" + index).style.display = index > compVisible ? "none" : "block";
 }
 
 function switchTab(t,id)
@@ -103,10 +103,10 @@ function hideShow(id, condition)
         let gameDelta = new Decimal(delta).mul(timeSpeed)
 
         points = points.add(calcPointsPerSecond().times(gameDelta));
-        if (compVisable < 8 && points.gte(comps[compVisable + 1].cost.mul(0.1)))
+        if (compVisible < 8 && points.gte(comps[compVisible + 1].cost.mul(0.1)))
         {
-            ++compVisable;
-            hideShow("gen-comp" + compVisable, true);
+            ++compVisible;
+            hideShow("gen-comp" + compVisible, true);
         }
 
         totalPoints = totalPoints.add(calcPointsPerSecond().times(gameDelta));
