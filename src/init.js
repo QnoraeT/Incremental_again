@@ -1,4 +1,4 @@
-let compVisible = 1;
+var compVisible = 1;
 let points = new Decimal(10);
 let totalPointsInSimplify = new Decimal(10);
 let totalPoints = new Decimal(10);
