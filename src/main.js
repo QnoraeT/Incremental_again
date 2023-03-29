@@ -53,25 +53,24 @@ function calcGeneralCosts()
     let f = new Decimal(arguments[7])
     let g = new Decimal(arguments[8])
     let temp
-    switch(type) {
+    switch(type) 
+    {
         case "EP": // a*b^(x+(cx)^2))
-            if (arguments[2] == false){
+            if (arguments[2] == false)
                 temp = b.pow(x.mul(c).pow(2).add(x)).mul(a)
-            } else {
+            else
                 temp = b.ln().add(x.div(a).ln().mul(c.pow(2).mul(4))).root(2).div(b.ln().root(2).mul(c.pow(2).mul(2))).sub(new Decimal(1).div(c.pow(2).mul(2)))
-            }
             return temp
         case "EEP": // a*b^(xcd^((fx)^g))
-           if (arguments[2] == false){
-            temp = a.mul(b.pow(d.pow(x.mul(f).pow(g)).mul(c).mul(x)))
-            } else {  
-            temp = x.div(a).ln().pow(g).mul(d.ln()).mul(f.pow(g)).mul(g).div(c.pow(g).mul(b.ln().pow(g))).lambertw().root(g).div(g.root(g).mul(f).mul(d.ln().root(g)))
-            }
+            if (arguments[2] == false)
+                temp = a.mul(b.pow(d.pow(x.mul(f).pow(g)).mul(c).mul(x)))
+            else 
+                temp = x.div(a).ln().pow(g).mul(d.ln()).mul(f.pow(g)).mul(g).div(c.pow(g).mul(b.ln().pow(g))).lambertw().root(g).div(g.root(g).mul(f).mul(d.ln().root(g)))
             return temp
         default:
             console.error("Cost scaling type " + type + " is not defined!!")
             return new Decimal(10) // fallback cost
-        }
+    }
 }
 
 function calcPointsPerSecond()
