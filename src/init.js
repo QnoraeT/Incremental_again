@@ -2,9 +2,6 @@ let compVisible = 1;
 let points = new Decimal(10);
 let totalPointsInSimplify = new Decimal(10);
 let totalPoints = new Decimal(10);
-let compExp = new Decimal(0.8)
-let compBM = new Decimal(2)
-let compScale = new Decimal(150);
 let inChallenge = [] // this is not in simplify list because theres potentially gonna be further layers with their own challenges (which can and will be nested)
 let notation = "Mixed Scientific";
 let totalTime = 0;
@@ -79,60 +76,12 @@ let simplify = {
     },
 }
 let comps = {
-    "1": {
-        bought: new Decimal(0),
-        amount: new Decimal(0),
-        trueamount: new Decimal(0),
-        cost: new Decimal(10),
-        multi: new Decimal(1)
-    },
-    "2": {
-        bought: new Decimal(0),
-        amount: new Decimal(0),
-        trueamount: new Decimal(0),
-        cost: new Decimal(100_000),
-        multi: new Decimal(1)
-    },
-    "3": {
-        bought: new Decimal(0),
-        amount: new Decimal(0),
-        trueamount: new Decimal(0),
-        cost: new Decimal(1e9),
-        multi: new Decimal(1)
-    },
-    "4": {
-        bought: new Decimal(0),
-        amount: new Decimal(0),
-        trueamount: new Decimal(0),
-        cost: new Decimal(10e12),
-        multi: new Decimal(1)
-    },
-    "5": {
-        bought: new Decimal(0),
-        amount: new Decimal(0),
-        trueamount: new Decimal(0),
-        cost: new Decimal(100e15),
-        multi: new Decimal(1)
-    },
-    "6": {
-        bought: new Decimal(0),
-        amount: new Decimal(0),
-        trueamount: new Decimal(0),
-        cost: new Decimal(1e21),
-        multi: new Decimal(1)
-    },
-    "7": {
-        bought: new Decimal(0),
-        amount: new Decimal(0),
-        trueamount: new Decimal(0),
-        cost: new Decimal(10e24),
-        multi: new Decimal(1)
-    },
-    "8": {
-        bought: new Decimal(0),
-        amount: new Decimal(0),
-        trueamount: new Decimal(0),
-        cost: new Decimal(100e27),
-        multi: new Decimal(1)
-    }
+    "1": new ComP(10, 1),
+    "2": new ComP(100_000, 2),
+    "3": new ComP(1e9, 3),
+    "4": new ComP(10e12, 4),
+    "5": new ComP(100e15, 5),
+    "6": new ComP(1e21, 6),
+    "7": new ComP(10e24, 7),
+    "8": new ComP(100e27, 8)
 }

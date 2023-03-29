@@ -25,34 +25,11 @@ function compCost(comp,bought){
 function buyComp(comp){
     if (points.gte(comps[comp].cost)){
         points = points.minus(comps[comp].cost);
-        comps[comp].bought = comps[comp].bought.add(1);
-        //update cost, formula: 10^(4(comp) + 2x(comp) - 3), x = comps[comp].bought
-        //but what about further ingame, where ComP costs scale based off of time?? its not gonna update and will show an amount too high or low than it actually is
-        comps[comp].cost=compCost(comp,comps[comp].bought)
-        //update multipliers
-        //same issue with costs
-        comps[comp].multi = new Decimal(1);
-        if (comps[comp].bought.gte(2)){
-            comps[comp].multi = comps[comp].multi.mul(compBM.pow(comps[comp].bought.sub(1)))
-        }
-        if (comp == 1){
-            comps[comp].multi = comps[comp].multi.mul(10).pow(2);
-        }
-        if (comp == 2){
-            comps[comp].multi = comps[comp].multi.mul(4).pow(1.584962500721156);
-        }
-        if (inChallenge.length == 0){
-            comps[comp].multi = comps[comp].multi.mul(simplify.main.simplifyStat.add(1).root(new Decimal(comp + 1)))
-        }
+        comps[comp].buy();
         //update cost HTML
         document.getElementById("gen-comp" + comp + "-cost").innerHTML = "Cost: " + format(comps[comp].cost);
         document.getElementById("gen-comp" + comp + "-multi").innerHTML = format(comps[comp].multi) + "x ";
     }
-}
-
-function getTrueAmount(comp){
-    comps[comp].trueamount=comps[comp].amount.pow(compExp).add(comps[comp].bought)
-    return comps[comp].trueamount;
 }
 
 function calcGeneralCosts(){ // 1st arg is type, 2nd arg is effective bought, 3rd arg is if it's inverse, 4th+ are params
@@ -88,7 +65,7 @@ function calcGeneralCosts(){ // 1st arg is type, 2nd arg is effective bought, 3r
 }
 
 function calcPointsPerSecond(){
-    return getTrueAmount(1).mul(comps[1].multi);
+    return comps[1].trueamount.mul(comps[1].multi);
 }
 function simplifyReset(){
     simplify.main.simplifyEnergy=simplify.main.simplifyEnergy.add(getSimplifyGain())
@@ -98,7 +75,7 @@ function simplifyReset(){
 function calcCompxPerSecond(comp) {
     if (comp === 8)
         return new Decimal(0);
-    return getTrueAmount(comp + 1).mul(comps[comp + 1].multi);
+    return comps[comp + 1].trueamount.mul(comps[comp + 1].multi);
 }
 
 function hideShow(id, condition){
@@ -126,7 +103,7 @@ function hideShow(id, condition){
         totalPointsInSimplify = totalPointsInSimplify.add(calcPointsPerSecond().times(gameDelta));
         for (let comp = 1; comp <= 8; ++comp) 
         {
-            comps[comp].amount = comps[comp].amount.add(calcCompxPerSecond(comp).times(delta));
+            comps[comp].changeAmount(calcCompxPerSecond(comp).times(delta));
 
             let tr = comps[comp].amount.add(calcCompxPerSecond(comp)).pow(compExp).sub(comps[comp].amount.pow(compExp))
             const perSecondText = " (" + format(tr) + "/s),";
