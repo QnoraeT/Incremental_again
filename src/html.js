@@ -1,25 +1,30 @@
-const brTag = document.createElement("br");
-
 for (let comp = 1; comp <= 8; ++comp)
 {
-    let name = document.createElement("span");
-    
+    let div = document.createElement("div");
+    div.id = "gen-comp" + comp;
+    document.getElementById("comp").appendChild(div);
+
+    let name = document.createElement("p");
     name.innerHTML = "ComP" + comp + ": ";
     name.id = "gen-comp" + comp + "-name";
-    document.getElementById("comp").appendChild(name);
+    name.classList.add("text");
+    div.appendChild(name);
 
-    let amount = document.createElement("span");
+    let amount = document.createElement("p");
     amount.id = "gen-comp" + comp + "-amount";
-    document.getElementById("comp").appendChild(amount);
+    amount.classList.add("text");
+    div.appendChild(amount);
 
-    let multi = document.createElement("span");
+    let multi = document.createElement("p");
     multi.id = "gen-comp" + comp + "-multi";
-    document.getElementById("comp").appendChild(multi);
+    multi.class = "text";
+    multi.classList.add("text");
+    div.appendChild(multi);
 
     let buyButton = document.createElement("button");
     buyButton.id = "gen-comp" + comp + "-cost";
     buyButton.onclick = () => buyComp(comp);
-    document.getElementById("comp").appendChild(buyButton);
+    div.appendChild(buyButton);
 
-    document.getElementById("comp").appendChild(document.createElement("br"));
+    //document.getElementById("comp").appendChild(document.createElement("br"));
 }
