@@ -1,25 +1,19 @@
-for (let [index, comp] of Object.entries(comps))
-{
+for (let [index, comp] of Object.entries(comps)){
     document.getElementById("gen-comp" + index + "-cost").innerHTML = "Cost: " + format(comp.cost);
     document.getElementById("gen-comp" + index + "-multi").innerHTML = format(comp.multi) + "x ";
     document.getElementById("gen-comp" + index + "-amount").innerHTML = format(comp.trueamount) + ", ";
     document.getElementById("gen-comp" + index).style.display = index > compVisible ? "none" : "block";
 }
 
-function switchTab(t,id)
-{
-    tab[id] = t;
-}
+function switchTab(t,id){tab[id] = t;}
 
-function getSimplifyGain()
-{
+function getSimplifyGain(){
     let temp
     temp = simplify.main.SEExp.pow(totalPointsInSimplify.log(simplify.main.simplifyReq).sub(1)).floor();
     return temp
 }
 
-function compCost(comp,bought)
-{
+function compCost(comp,bought){
     let temp = bought
     if (temp.gte(compScale))
     temp = temp.div(compScale).pow(2).mul(compScale)
@@ -29,8 +23,7 @@ function compCost(comp,bought)
     return new Decimal(10).pow(temp);
 }
 
-function buyComp(comp)
-{
+function buyComp(comp){
     if (points.gte(comps[comp].cost))
     {
         points = points.minus(comps[comp].cost);
@@ -42,7 +35,6 @@ function buyComp(comp)
 }
 
 function calcGeneralCosts(){ // 1st arg is type, 2nd arg is effective bought, 3rd arg is if it's inverse, 4th+ are params
-    // TearonQ - should i really just put all "arguments[n]" and make the formulas even more confusing than it already is?
     let type = arguments[0]
     let x = new Decimal(arguments[1])
     let a = new Decimal(arguments[3])
@@ -54,17 +46,36 @@ function calcGeneralCosts(){ // 1st arg is type, 2nd arg is effective bought, 3r
     let temp
     switch(type) 
     {
-        case "EP": // a*b^(x+(cx)^2))
+        case "EP": // a*b^(x+(cx)^2)) - exponential:polynomial
             if (arguments[2] == false)
                 temp = b.pow(x.mul(c).pow(2).add(x)).mul(a)
             else
                 temp = b.ln().add(x.div(a).ln().mul(c.pow(2).mul(4))).root(2).div(b.ln().root(2).mul(c.pow(2).mul(2))).sub(new Decimal(1).div(c.pow(2).mul(2)))
             return temp
-        case "EEP": // a*b^(xcd^((fx)^g))
+        case "EEP": // a*b^(xcd^((fx)^g)) - exponential^2:polynomial
             if (arguments[2] == false)
                 temp = a.mul(b.pow(d.pow(x.mul(f).pow(g)).mul(c).mul(x)))
             else 
                 temp = x.div(a).ln().pow(g).mul(d.ln()).mul(f.pow(g)).mul(g).div(c.pow(g).mul(b.ln().pow(g))).lambertw().root(g).div(g.root(g).mul(f).mul(d.ln().root(g)))
+            return temp
+        case "ADt": // antimatter dimension's free tickspeed from time softcap (a = start [AD = 300000], b = normal base [AD = 1.33 or 1.25], c = scale base [AD = 1.000006])
+            if (arguments[2] == false){
+                if (x.gte(a)){
+                    temp = x.sub(a).add(1)
+                    temp = b.pow(x).mul(c.pow(temp.sub(1).mul(temp).div(2)))
+                }else{
+                    temp = b.pow(x)
+                }
+            }else{
+                if (x.gte(b.pow(a))){
+                    b = b.ln()
+                    c = c.ln()
+                    //((2ac-2b-c)/2c)+(sqrt(4bc-8abc+4b^2+8ln(x)*c+c^2)/2c)
+                    temp = a.mul(c).mul(2).sub(b.mul(2)).sub(c).div(c.mul(2)).add(b.mul(c).mul(4).sub(a.mul(b).mul(c).mul(8)).add(b.pow(2).mul(4)).add(x.ln().mul(8).mul(c)).add(c.pow(2)).root(2).div(c.mul(2)))
+                }else{
+                    temp = x.log(b)
+                }
+            }
             return temp
         default:
             console.error("Cost scaling type " + type + " is not defined!!")
@@ -86,8 +97,7 @@ function calcCompxPerSecond(comp) {
     return comps[comp + 1].trueamount.mul(comps[comp + 1].multi);
 }
 
-function hideShow(id, condition)
-{
+function hideShow(id, condition){
     let x = document.getElementById(id);
     x.style.display = condition ? "block" : "none";
 }
