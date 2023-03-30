@@ -3,16 +3,11 @@
   src: url("danidanijrs-font.ttf");
 }
 
-p {
-  color: white;
+fps {
+  color: yellow;
   font-family: "Verdana";
   font-size: 18px;
 }
-
-.text {
-  display: inline;
-}
-
 
 p {
   color: white;
@@ -35,3 +30,40 @@ body {
     text-shadow: 2px 2px grey;
     color: white;
 } 
+
+#simpEXP1 {
+  font-family: "Verdana";
+  font-size: 16px;
+  text-align: left;
+  text-shadow: 2px 2px rgb(127, 0, 0);
+  color: red;
+} 
+#simpEXP2 {
+  font-family: "Verdana";
+  font-size: 16px;
+  text-align: left;
+  text-shadow: 2px 2px rgb(127, 127, 0);
+  color: yellow;
+} 
+#simpEXP3 {
+  font-family: "Verdana";
+  font-size: 16px;
+  text-align: left;
+  text-shadow: 2px 2px rgb(0, 127, 0);
+  color: rgb(0, 255, 0);
+} 
+#simpEXP4 {
+  font-family: "Verdana";
+  font-size: 16px;
+  text-align: left;
+  text-shadow: 2px 2px rgb(0, 0, 127);
+  color: blue;
+} 
+#simpEnergy {
+  font-family: "Verdana";
+  font-size: 16px;
+  text-align: left;
+  text-shadow: 2px 2px rgb(0, 127, 127);
+  color: cyan;
+} 
+

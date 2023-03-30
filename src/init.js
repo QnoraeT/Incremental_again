@@ -21,32 +21,32 @@ let simplify = {
         allocated: new Decimal(0),
         generated: new Decimal(0),
         trueValue: new Decimal(0),
-        effect: new Decimal(1)
+        effect: new Decimal(1),
     },
     "MP": {
         allocated: new Decimal(0),
         generated: new Decimal(0),
         trueValue: new Decimal(0),
-        effect: new Decimal(1)
+        effect: new Decimal(1),
     },
-    "1P": {
+    "OP": {
         allocated: new Decimal(0),
         generated: new Decimal(0),
         trueValue: new Decimal(0),
-        effect: new Decimal(2)
+        effect: new Decimal(2),
     },
     "DP": {
         allocated: new Decimal(0),
         generated: new Decimal(0),
         trueValue: new Decimal(0),
-        effect: new Decimal(1)
+        effect: new Decimal(1),
     },
     "challenge": {
         completed: Array(15).fill(0), // 0-3 Magnifying [] 4-7 Beginner [] 8-11 Articulated [] 12-15 77777777 []
         timeInChallenge: new Decimal(0), // time speed exists
     },
     "upgrades": {
-        simplifyMainUPG: new Decimal(0),
+        simplifyMainUPG: 0,
         simplifyUPGNum2: new Decimal(0),
         PPUPG: new Decimal(0),
         MPUPG: new Decimal(0),
@@ -85,4 +85,11 @@ let comps = {
     "6": new ComP(1e21, 6),
     "7": new ComP(10e24, 7),
     "8": new ComP(100e27, 8)
+}
+
+const SimpUPG1 = {
+    1: "Invest in multiple energies to boost production.",
+    2: "Unlock TTS Challenges.",
+    3: "Unlock Simplify upgrades where you can use your SE, xP, and total xP to get advantages.",
+    4: "Unlock 'Situations' where you can go on altered runs for different milestones.",
 }

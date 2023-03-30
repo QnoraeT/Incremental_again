@@ -46,7 +46,6 @@ class ComP
         return this._index;
     }
 
-    //this is called when this ComP is brought by a player
     buy()
     {
         this._bought = this._bought.add(1);
@@ -63,14 +62,15 @@ class ComP
     {
         this._multi = new Decimal(1);
         if (this._bought.gte(2))
-            this._multi = this._multi.mul(compBM.pow(this._bought.sub(1)))
-
+            this._multi = this._multi.mul(compBM.pow(this._bought.sub(1)));
+        
         if (this._index == 1)
-            this._multi = this._multi.mul(10).pow(2);
+            this._multi = this._multi.mul(10).pow(simplify.OP.effect);
         if (this._index == 2)
             this._multi = this._multi.mul(4).pow(1.584962500721156);
         if (inChallenge.length == 0)
-            this._multi = this._multi.mul(simplify.main.simplifyStat.add(1).root(new Decimal(this._index + 1)))
+            this._multi = this._multi.mul(simplify.main.simplifyStat.add(1).root(new Decimal(this._index)));
+        this._multi = this._multi.mul(simplify.MP.effect);
     }
 
     _updateCost()
