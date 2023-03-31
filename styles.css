@@ -67,3 +67,32 @@ body {
   color: cyan;
 } 
 
+.compNo{
+  border: 2px solid #FF0000;
+  cursor: not-allowed;
+}
+
+.compYes{
+  border: 2px solid #00FF00;
+  cursor: pointer;
+}
+
+.Unscaled{
+  color: white;
+}
+
+.Scaled1{
+  color: #FFC000;
+}
+
+.Scaled2{
+  color: #104CFF;
+}
+
+.Scaled3{
+  color: #FF0866;
+}
+
+.Scaled3{
+  color: #3AFF4A;
+}

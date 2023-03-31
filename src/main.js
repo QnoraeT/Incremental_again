@@ -91,7 +91,8 @@ function calcGeneralCosts()
     }
 }
 
-function simplifyXPtick(type,tickRate){
+function simplifyXPtick(type,tickRate)
+{
     let temp
     temp = simplify[type].allocated
     simplify[type].generated = simplify[type].generated.add(temp.mul(tickRate))
@@ -110,7 +111,7 @@ function simplifyXPtick(type,tickRate){
     }
     if (type = "DP"){
         temp = simplify.DP.trueValue
-        simplify.DP.effect = temp.add(10).log(10).root(4).add(1)
+        simplify.DP.effect = temp.add(10).log(10).root(4)
     }
 }
 
@@ -119,7 +120,8 @@ function calcPointsPerSecond()
     return comps[1].trueamount.mul(comps[1].multi).mul(simplify.PP.effect);
 }
 
-function simpUPG1Cost(){
+function simpUPG1Cost()
+{
     let ret = new Decimal(simplify.upgrades.simplifyMainUPG)
     return new Decimal(10).pow(ret.pow(2)).mul(ret.factorial()).div(1.001)
 }
@@ -194,6 +196,26 @@ function hideShow(id, condition)
     x.style.display = condition ? "block" : "none";
 }
 
+function maxAllComPS(){
+    let x = points.log(10)
+    let buy
+    for (let comp = 8; comp >= 1; --comp) 
+    {
+        if (points.gte(comps[comp].cost))
+        {
+        buy = x.sub(new Decimal((comp * 4) - 3)).div(new Decimal(comp * 2))
+        if (buy.gte(compScale))
+        {
+            buy = x.mul(compScale).add(compScale.mul(3)).sub(new Decimal(comp * 4).mul(compScale)).root(2).div(new Decimal(comp * 2).root(2))
+        }
+        comps[comp]._bought = buy.floor();
+        comps[comp]._updateCost(); 
+        points = points.sub(comps[comp].cost);
+        comps[comp].buy();
+        }
+    }
+}
+
 {
     window.requestAnimationFrame(gameLoop);
     let oldTimeStamp = 0; 
@@ -222,7 +244,7 @@ function hideShow(id, condition)
 
         for (let comp = 1; comp <= 8; ++comp) 
         {
-            comps[comp].changeAmount(calcCompxPerSecond(comp).times(delta));
+            comps[comp].changeAmount(calcCompxPerSecond(comp).times(gameDelta));
             let tr = comps[comp].amount.add(calcCompxPerSecond(comp)).pow(compExp).sub(comps[comp].amount.pow(compExp))
             const perSecondText = " (" + format(tr) + "/s),";
             const boughtText =  " [ " + format(comps[comp].bought) + " ]    "
@@ -240,7 +262,7 @@ function hideShow(id, condition)
         document.getElementById("simpEXP1").innerHTML = "You have " + format(simplify.PP.allocated,true) + " SE allocated to " + format(simplify.PP.trueValue, true, 1) + " PP, increasing overall gain by x" + format(simplify.PP.effect, true, 2) + ".";
         document.getElementById("simpEXP2").innerHTML = "You have " + format(simplify.MP.allocated,true) + " SE allocated to " + format(simplify.MP.trueValue, true, 1) + " MP, increasing all multipliers by x" + format(simplify.MP.effect, true, 2) + ".";
         document.getElementById("simpEXP3").innerHTML = "You have " + format(simplify.OP.allocated,true) + " SE allocated to " + format(simplify.OP.trueValue, true, 1) + " 1P, improving 1st mult power to ^" + format(simplify.OP.effect, true, 3) + ".";
-        document.getElementById("simpEXP4").innerHTML = "You have " + format(simplify.DP.allocated,true) + " SE allocated to " + format(simplify.DP.trueValue, true, 1) + " DP, causing DM per buy to be x" + format(simplify.DP.effect, true, 3) + ".";
+        document.getElementById("simpEXP4").innerHTML = "You have " + format(simplify.DP.allocated,true) + " SE allocated to " + format(simplify.DP.trueValue, true, 1) + " DP, causing DM per buy to be x" + format(compBM, true, 3) + ".";
 
         hideShow("comp", tab[0] == 0)
         hideShow("tab_simplify", totalPoints.gte(1e12))

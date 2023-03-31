@@ -46,13 +46,15 @@ class ComP
     buy()
     {
         this._bought = this._bought.add(1);
+        this._updateMultiplier();
+        this._updateCost(); 
     }
 
     changeAmount(amount)
     {
         this._amount = this._amount.add(amount);
         this._updateMultiplier();
-        this._updateCost(); // UIDFHGUDHFGBINFDGBNRWTYIB
+        this._updateCost();
     }
 
     _updateMultiplier()
