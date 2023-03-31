@@ -9,13 +9,20 @@ document.getElementById("simpEXP2b").innerHTML = "Allocate all SE into MP."
 document.getElementById("simpEXP3b").innerHTML = "Allocate all SE into 1P."
 document.getElementById("simpEXP4b").innerHTML = "Allocate all SE into DP."
 
-function switchTab(t,id){tab[id] = t;}
-function getSimplifyGain(){
+function switchTab(t,id) 
+{
+    tab[id] = t;
+}
+
+function getSimplifyGain()
+{
     let temp
     temp = simplify.main.SEExp.pow(totalPointsInSimplify.log(simplify.main.simplifyReq).sub(1)).floor();
     return temp
 }
-function compCost(comp,bought){
+
+function compCost(comp,bought)
+{
     let temp = bought
     if (temp.gte(compScale))
     temp = temp.div(compScale).pow(2).mul(compScale)
@@ -24,14 +31,18 @@ function compCost(comp,bought){
                 .mul(2).mul(temp));
     return new Decimal(10).pow(temp);
 }
-function buyComp(comp){
+
+function buyComp(comp)
+{
     if (points.gte(comps[comp].cost))
     {
         points = points.minus(comps[comp].cost);
         comps[comp].buy();
     }
 }
-function calcGeneralCosts(){ // 1st arg is type, 2nd arg is effective bought, 3rd arg is if it's inverse, 4th+ are params
+
+function calcGeneralCosts()
+{ // 1st arg is type, 2nd arg is effective bought, 3rd arg is if it's inverse, 4th+ are params
     let type = arguments[0]
     let x = new Decimal(arguments[1])
     let a = new Decimal(arguments[3])
@@ -79,6 +90,7 @@ function calcGeneralCosts(){ // 1st arg is type, 2nd arg is effective bought, 3r
             return new Decimal(10) // fallback cost
     }
 }
+
 function simplifyXPtick(type,tickRate){
     let temp
     temp = simplify[type].allocated
@@ -101,43 +113,54 @@ function simplifyXPtick(type,tickRate){
         simplify.DP.effect = temp.add(10).log(10).root(4).add(1)
     }
 }
-function calcPointsPerSecond(){
+
+function calcPointsPerSecond()
+{
     return comps[1].trueamount.mul(comps[1].multi).mul(simplify.PP.effect);
 }
+
 function simpUPG1Cost(){
     let ret = new Decimal(simplify.upgrades.simplifyMainUPG)
     return new Decimal(10).pow(ret.pow(2)).mul(ret.factorial()).div(1.001)
 }
-function simplifyReset(){
+
+function simplifyReset()
+{
     simplify.main.simplifyEnergy=simplify.main.simplifyEnergy.add(getSimplifyGain())
     simplify.main.simplifyStat=simplify.main.simplifyStat.add(1)
     compVisible = 1;
     points = new Decimal(10);
     totalPointsInSimplify = new Decimal(10);
     comps = {
-        "1": new ComP(10, 1),
-        "2": new ComP(100_000, 2),
-        "3": new ComP(1e9, 3),
-        "4": new ComP(10e12, 4),
-        "5": new ComP(100e15, 5),
-        "6": new ComP(1e21, 6),
-        "7": new ComP(10e24, 7),
-        "8": new ComP(100e27, 8)
+        "1": new ComP(1),
+        "2": new ComP(2),
+        "3": new ComP(3),
+        "4": new ComP(4),
+        "5": new ComP(5),
+        "6": new ComP(6),
+        "7": new ComP(7),
+        "8": new ComP(8)
     }
-    for (let [index, comp] of Object.entries(comps)){
+    for (let [index, comp] of Object.entries(comps))
+    {
         document.getElementById("gen-comp" + index + "-cost").innerHTML = "Cost: " + format(comp.cost);
         document.getElementById("gen-comp" + index + "-multi").innerHTML = format(comp.multi) + "x ";
         document.getElementById("gen-comp" + index + "-amount").innerHTML = format(comp.trueamount) + ", ";
         document.getElementById("gen-comp" + index).style.display = index > compVisible ? "none" : "block";
     }
 }
-function simplify1Upg(){
-    if (simplify.main.simplifyEnergy.gte(simpUPG1Cost())){
-        simplify.main.simplifyEnergy=simplify.main.simplifyEnergy.sub(simpUPG1Cost())
+
+function simplify1Upg()
+{
+    if (simplify.main.simplifyEnergy.gte(simpUPG1Cost()))
+    {
+        simplify.main.simplifyEnergy = simplify.main.simplifyEnergy.sub(simpUPG1Cost())
         simplify.upgrades.simplifyMainUPG++
     }
 }
-function simpExPAllocate(id){
+
+function simpExPAllocate(id)
+{
     switch(id){
         case 1: 
             simplify.PP.allocated = simplify.PP.allocated.add(simplify.main.simplifyEnergy)
@@ -157,15 +180,20 @@ function simpExPAllocate(id){
     }
     simplify.main.simplifyEnergy=new Decimal(0)
 }
-function calcCompxPerSecond(comp) {
+
+function calcCompxPerSecond(comp) 
+{
     if (comp === 8)
         return new Decimal(0);
     return comps[comp + 1].trueamount.mul(comps[comp + 1].multi);
 }
-function hideShow(id, condition){
+
+function hideShow(id, condition)
+{
     let x = document.getElementById(id);
     x.style.display = condition ? "block" : "none";
 }
+
 {
     window.requestAnimationFrame(gameLoop);
     let oldTimeStamp = 0; 
@@ -176,15 +204,14 @@ function hideShow(id, condition){
         const FPS = Math.round(1 / delta);
         let gameDelta = new Decimal(delta).mul(timeSpeed)
 
-        simplifyXPtick("PP",gameDelta) // why do i have to do this stupid terribleness
-        simplifyXPtick("MP",gameDelta)
-        simplifyXPtick("OP",gameDelta)
-        simplifyXPtick("DP",gameDelta)
+        for (type of ["PP", "MP", "OP", "DP"])
+            simplifyXPtick(type, gameDelta);
 
         compBM = simplify.DP.effect.mul(2)
 
         points = points.add(calcPointsPerSecond().times(gameDelta));
-        if (compVisible < 8 && points.gte(comps[compVisible + 1].cost.mul(0.1))){
+        if (compVisible < 8 && points.gte(comps[compVisible + 1].cost.mul(0.1)))
+        {
             ++compVisible;
             hideShow("gen-comp" + compVisible, true);
         }
@@ -193,7 +220,8 @@ function hideShow(id, condition){
         totalPointsInSimplify = totalPointsInSimplify.add(calcPointsPerSecond().times(gameDelta));
         
 
-        for (let comp = 1; comp <= 8; ++comp) {
+        for (let comp = 1; comp <= 8; ++comp) 
+        {
             comps[comp].changeAmount(calcCompxPerSecond(comp).times(delta));
             let tr = comps[comp].amount.add(calcCompxPerSecond(comp)).pow(compExp).sub(comps[comp].amount.pow(compExp))
             const perSecondText = " (" + format(tr) + "/s),";
@@ -209,10 +237,10 @@ function hideShow(id, condition){
         document.getElementById("SER").innerHTML = "You will gain " + format(getSimplifyGain(), true) + " Simplify Energy. [ Next at " + format(new Decimal(10).pow(getSimplifyGain().add(1).log(10).div(simplify.main.SEExp.log(10)).add(1).mul(simplify.main.simplifyReq.log(10))).sub(totalPointsInSimplify), true) + " ]";
         document.getElementById("SEUPG1").innerHTML = SimpUPG1[simplify.upgrades.simplifyMainUPG + 1] + " Cost: " + format(simpUPG1Cost().mul(1.001),true) + " Simplify Energy";
         document.getElementById("simpEnergy").innerHTML = "You have " + format(simplify.main.simplifyEnergy,true) + " Simplify Energy.";
-        document.getElementById("simpEXP1").innerHTML = "You have " + format(simplify.PP.allocated,true) + " SE allocated to " + format(simplify.PP.trueValue,true,1) + " PP, increasing overall gain by x" + format(simplify.PP.effect,true,2) + ".";
-        document.getElementById("simpEXP2").innerHTML = "You have " + format(simplify.MP.allocated,true) + " SE allocated to " + format(simplify.MP.trueValue,true,1) + " MP, increasing all multipliers by x" + format(simplify.MP.effect,true,2) + ".";
-        document.getElementById("simpEXP3").innerHTML = "You have " + format(simplify.OP.allocated,true) + " SE allocated to " + format(simplify.OP.trueValue,true,1) + " 1P, improving 1st mult power to ^" + format(simplify.OP.effect,true,3) + ".";
-        document.getElementById("simpEXP4").innerHTML = "You have " + format(simplify.DP.allocated,true) + " SE allocated to " + format(simplify.DP.trueValue,true,1) + " DP, causing DM per buy to be x" + format(simplify.DP.effect,true,3) + ".";
+        document.getElementById("simpEXP1").innerHTML = "You have " + format(simplify.PP.allocated,true) + " SE allocated to " + format(simplify.PP.trueValue, true, 1) + " PP, increasing overall gain by x" + format(simplify.PP.effect, true, 2) + ".";
+        document.getElementById("simpEXP2").innerHTML = "You have " + format(simplify.MP.allocated,true) + " SE allocated to " + format(simplify.MP.trueValue, true, 1) + " MP, increasing all multipliers by x" + format(simplify.MP.effect, true, 2) + ".";
+        document.getElementById("simpEXP3").innerHTML = "You have " + format(simplify.OP.allocated,true) + " SE allocated to " + format(simplify.OP.trueValue, true, 1) + " 1P, improving 1st mult power to ^" + format(simplify.OP.effect, true, 3) + ".";
+        document.getElementById("simpEXP4").innerHTML = "You have " + format(simplify.DP.allocated,true) + " SE allocated to " + format(simplify.DP.trueValue, true, 1) + " DP, causing DM per buy to be x" + format(simplify.DP.effect, true, 3) + ".";
 
         hideShow("comp", tab[0] == 0)
         hideShow("tab_simplify", totalPoints.gte(1e12))
