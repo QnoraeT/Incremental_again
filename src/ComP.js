@@ -68,7 +68,6 @@ class ComP
             this._multi = this._multi.mul(10).pow(simplify.OP.effect);
         if (this._index == 2)
             this._multi = this._multi.mul(4).pow(1.584962500721156);
-        this._multi = this._multi.mul(250);
         if (inChallenge.length == 0)
             this._multi = this._multi.mul(simplify.main.simplifyStat.add(1).root(new Decimal(this._index)));
         this._multi = this._multi.mul(simplify.MP.effect);
