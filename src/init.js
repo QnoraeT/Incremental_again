@@ -46,11 +46,11 @@ let simplify = {
         timeInChallenge: new Decimal(0), // time speed exists
     },
     "upgrades": {
-        simplifyMainUPG: 0,
-        simplifyUPGNum2: new Decimal(0),
+        simplifyMainUPG: 0, // the upgrades will always be unique, no need for decimal'ing here
+        simplifyUPGNum2: new Decimal(0), // the upgrades here will not be unique, and may be bulk auto'd in the future, so i'm letting it stay as decimal
         PPUPG: new Decimal(0),
         MPUPG: new Decimal(0),
-        OPUPG: new Decimal(0), // OP -> 1P
+        OPUPG: new Decimal(0), // OP -> 1P (why am i so stupid? i should've known "anything.1P" isn't gonna work)
         DPUPG: new Decimal(0),
     },
     "situation1": {

@@ -35,35 +35,35 @@ body {
   font-family: "Verdana";
   font-size: 16px;
   text-align: left;
-  text-shadow: 2px 2px rgb(127, 0, 0);
+  text-shadow: 1px 1px rgb(127, 0, 0);
   color: red;
 } 
 #simpEXP2 {
   font-family: "Verdana";
   font-size: 16px;
   text-align: left;
-  text-shadow: 2px 2px rgb(127, 127, 0);
+  text-shadow: 1px 1px rgb(127, 127, 0);
   color: yellow;
 } 
 #simpEXP3 {
   font-family: "Verdana";
   font-size: 16px;
   text-align: left;
-  text-shadow: 2px 2px rgb(0, 127, 0);
+  text-shadow: 1px 1px rgb(0, 127, 0);
   color: rgb(0, 255, 0);
 } 
 #simpEXP4 {
   font-family: "Verdana";
   font-size: 16px;
   text-align: left;
-  text-shadow: 2px 2px rgb(0, 0, 127);
+  text-shadow: 1px 1px rgb(0, 0, 127);
   color: blue;
 } 
 #simpEnergy {
   font-family: "Verdana";
-  font-size: 16px;
+  font-size: 20px;
   text-align: left;
-  text-shadow: 2px 2px rgb(0, 127, 127);
+  text-shadow: 1.5px 1.5px rgb(0, 127, 127);
   color: cyan;
 } 
 
