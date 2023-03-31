@@ -80,12 +80,12 @@ let simplify = {
 }
 
 let comps = {
-    "1": new ComP(10, 1),
-    "2": new ComP(100_000, 2),
-    "3": new ComP(1e9, 3),
-    "4": new ComP(10e12, 4),
-    "5": new ComP(100e15, 5),
-    "6": new ComP(1e21, 6),
-    "7": new ComP(10e24, 7),
-    "8": new ComP(100e27, 8)
+    "1": new ComP(1),
+    "2": new ComP(2),
+    "3": new ComP(3),
+    "4": new ComP(4),
+    "5": new ComP(5),
+    "6": new ComP(6),
+    "7": new ComP(7),
+    "8": new ComP(8)
 }

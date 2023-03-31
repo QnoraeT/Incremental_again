@@ -118,14 +118,14 @@ function hideShow(id, condition)
             comps[comp].changeAmount(calcCompxPerSecond(comp).times(delta));
 
             let tr = comps[comp].amount.add(calcCompxPerSecond(comp)).pow(compExp).sub(comps[comp].amount.pow(compExp))
-            const perSecondText = " (" + format(tr) + "/s),";
+            const perSecondText = " (" + format(tr, true) + "/s),";
             const broughtText =  " [ " + format(comps[comp].bought) + " ]    "
             const text = tr.gt(0) ? perSecondText + broughtText : broughtText;
-            document.getElementById("gen-comp" + comp + "-amount").innerHTML = format(comps[comp].trueamount) + " " + text;
+            document.getElementById("gen-comp" + comp + "-amount").innerHTML = format(comps[comp].trueamount, true) + " " + text;
         }
         document.getElementById("points").innerHTML = "Points: " + format(points, true) + " ( " +format(calcPointsPerSecond(),true) + " / s )";
         document.getElementById("fps").innerHTML = "FPS: " + FPS;
-        document.getElementById("SER").innerHTML = "You will gain " + format(getSimplifyGain(), true) + " Simplify Energy. [ Next at " + format(new Decimal(10).pow(getSimplifyGain().add(1).log(10).div(simplify.main.SEExp.log(10)).add(1).mul(simplify.main.simplifyReq.log(10))).sub(totalPointsInSimplify), true) + " ]";
+        document.getElementById("SER").innerHTML = "You will gain " + format(getSimplifyGain(), true) + " Simplify Energy. [ Next at " + format(new Decimal(10).pow(getSimplifyGain().add(1).log(10).div(simplify.main.SEExp.log(10)).add(1).mul(simplify.main.simplifyReq.log(10))).sub(totalPointsInSimplify)) + " ]";
         hideShow("comp",  tab[0] == 0)
         hideShow("Simplify",  tab[2] == 0)
         hideShow("tab_simplify",  totalPoints.gte(1e15))

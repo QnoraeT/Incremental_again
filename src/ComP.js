@@ -4,16 +4,13 @@ let compScale = new Decimal(150);
 
 class ComP
 {
-    constructor(baseCost, index)
+    constructor(index)
     {
-        if (typeof(baseCost) === "number" || typeof(baseCost) === "string")
-            this._cost = new Decimal(baseCost);
-        else 
-            this._cost = baseCost;
         this._amount = new Decimal(0);
         this._bought = new Decimal(0);
         this._multi = new Decimal(1);
         this._index = index;
+        this._updateCost();
     }
 
     get cost()
