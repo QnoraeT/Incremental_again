@@ -41,6 +41,33 @@ function buyComp(comp)
     }
 }
 
+function softcap(amt, type, strength, start)
+{
+    let str = new Decimal(strength)
+    let sta = new Decimal(start)
+    let temp
+    let reduce
+    switch(type) 
+    {
+        case "P": // polynomial
+            str = new Decimal(2).pow(str)
+            temp = amt.root(str).mul(sta.pow(new Decimal(1).sub(new Decimal(1).div(str))))
+            reduce = amt.div(temp)
+            return [temp, reduce] // "/{reduce}"
+        case "E": // exponential
+            temp = amt.log(sta).add(1).pow(sta.log(2))
+            reduce = temp.log(amt)
+            return [temp, reduce] // "^{reduce}"
+        case "EP":
+            str = new Decimal(2).pow(str)
+            temp = new Decimal(10).pow(amt.log(10).root(str).mul(sta.log(10).pow(new Decimal(1).sub(new Decimal(1).div(str)))))
+            reduce = temp.log(amt)
+            return [temp, reduce] // "^{reduce}"
+        default:
+            console.error("Softcap type " + type + " is not defined!!")
+            return amt // fallback amt
+    }
+}
 function calcGeneralCosts()
 { // 1st arg is type, 2nd arg is effective bought, 3rd arg is if it's inverse, 4th+ are params
     let type = arguments[0]
