@@ -31,50 +31,189 @@ body {
     color: white;
 } 
 
+#simpEXP1b {
+  border: 2px solid #FF0000;
+  color: #FF0000;
+  background-color: black;
+  transition-duration: 0.2s;
+} 
+
+#simpEXP1b:hover{
+  background-color: #600000;
+}
+
+#simpEXP2b {
+  border: 2px solid #FFFF00;
+  color: #FFFF00;
+  background-color: black;
+  transition-duration: 0.2s;
+} 
+
+#simpEXP2b:hover{
+  background-color: #606000;
+}
+
+#simpEXP3b {
+  border: 2px solid #00FF00;
+  color: #00FF00;
+  background-color: black;
+  transition-duration: 0.2s;
+} 
+
+#simpEXP3b:hover{
+  background-color: #006000;
+}
+
+#simpEXP4b {
+  border: 2px solid #0000FF;
+  color: #0000FF;
+  background-color: black;
+  transition-duration: 0.2s;
+} 
+
+#simpEXP4b:hover{
+  background-color: #000060;
+}
+
 #simpEXP1 {
   font-family: "Verdana";
   font-size: 16px;
   text-align: left;
-  text-shadow: 1px 1px rgb(127, 0, 0);
+  text-shadow: 1px 1px #800000;
   color: red;
 } 
+
 #simpEXP2 {
   font-family: "Verdana";
   font-size: 16px;
   text-align: left;
-  text-shadow: 1px 1px rgb(127, 127, 0);
+  text-shadow: 1px 1px #808000;
   color: yellow;
 } 
+
 #simpEXP3 {
   font-family: "Verdana";
   font-size: 16px;
   text-align: left;
-  text-shadow: 1px 1px rgb(0, 127, 0);
-  color: rgb(0, 255, 0);
+  text-shadow: 1px 1px #008000;
+  color: #00ff00;
 } 
+
 #simpEXP4 {
   font-family: "Verdana";
   font-size: 16px;
   text-align: left;
-  text-shadow: 1px 1px rgb(0, 0, 127);
+  text-shadow: 1px 1px #000080;
   color: blue;
 } 
+
 #simpEnergy {
   font-family: "Verdana";
   font-size: 20px;
   text-align: left;
-  text-shadow: 1.5px 1.5px rgb(0, 127, 127);
+  text-shadow: 1.5px 1.5px #008080;
   color: cyan;
 } 
+
+#tab_comp{
+  border: 2px solid #FFFFFF;
+  color: white;
+  background-color: black;
+  transition-duration: 0.2s;
+  size: 150%;
+}
+
+#tab_comp:hover{
+  background-color: #606060;
+}
+
+
+#tab_other{
+  border: 2px solid #FFFFFF;
+  color: white;
+  background-color: black;
+  transition-duration: 0.2s;
+}
+
+#tab_other:hover{
+  background-color: #606060;
+}
+
+#tab_other_stat{
+  border: 2px solid #FFFFFF;
+  color: white;
+  background-color: black;
+  transition-duration: 0.2s;
+}
+
+#tab_other_stat:hover{
+  background-color: #606060;
+}
+
+#maxAll{
+  border: 2px solid #FFFFFF;
+  color: white;
+  background-color: black;
+  transition-duration: 0.2s;
+}
+
+#maxAll:hover{
+  background-color: #606060;
+}
+
+#tab_simplify{
+  border: 2px solid #00FFFF;
+  color: cyan;
+  background-color: black;
+  transition-duration: 0.2s;
+}
+
+#tab_simplify:hover{
+  background-color: #006060;
+}
+
+#SER{
+  border: 2px solid #00FFFF;
+  color: cyan;
+  background-color: black;
+  transition-duration: 0.2s;
+}
+
+#SER:hover{
+  background-color: #006060;
+}
+
+#SEUPG1{
+  border: 2px solid #00FFFF;
+  color: cyan;
+  background-color: black;
+  transition-duration: 0.2s;
+}
+
+#SEUPG1:hover{
+  background-color: #006060;
+}
 
 .compNo{
   border: 2px solid #FF0000;
   cursor: not-allowed;
+  background-color: black;
+  transition-duration: 0.2s;
 }
 
 .compYes{
   border: 2px solid #00FF00;
   cursor: pointer;
+  background-color: black;
+  transition-duration: 0.2s;
+}
+
+.compNo:hover{
+  background-color: #300000;
+}
+
+.compYes:hover{
+  background-color: #006000;
 }
 
 .Unscaled{

@@ -24,6 +24,9 @@ for (let comp = 1; comp <= 8; ++comp)
     let buyButton = document.createElement("button");
     buyButton.id = "gen-comp" + comp + "-cost";
     buyButton.onclick = () => buyComp(comp);
+    buyButton.class = "compNo";
+    buyButton.classList.add("compNo");
+    buyButton.classList.add("Unscaled");
     div.appendChild(buyButton);
 
     //document.getElementById("comp").appendChild(document.createElement("br"));

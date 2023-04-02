@@ -1,3 +1,15 @@
+/* 
+alright, just as a note, i REALLY do not like using stuff like this:
+
+function thing()
+{
+    code
+}
+
+i really don't like it, and i rather use the first '{' in the line of the original function
+like so:
+*/
+
 for (let [index, comp] of Object.entries(comps)){
     document.getElementById("gen-comp" + index + "-cost").innerHTML = "Cost: " + format(comp.cost);
     document.getElementById("gen-comp" + index + "-multi").innerHTML = format(comp.multi) + "x ";
@@ -21,17 +33,6 @@ function getSimplifyGain()
     return temp
 }
 
-function compCost(comp,bought)
-{
-    let temp = bought
-    if (temp.gte(compScale))
-    temp = temp.div(compScale).pow(2).mul(compScale)
-
-    temp = new Decimal((comp * 4) - 3).add(new Decimal(comp)
-                .mul(2).mul(temp));
-    return new Decimal(10).pow(temp);
-}
-
 function buyComp(comp)
 {
     if (points.gte(comps[comp].cost))
@@ -43,30 +44,34 @@ function buyComp(comp)
 
 function softcap(amt, type, strength, start)
 {
-    let str = new Decimal(strength)
     let sta = new Decimal(start)
-    let temp
-    let reduce
-    switch(type) 
+    if (amt.gte(sta))
     {
-        case "P": // polynomial
-            str = new Decimal(2).pow(str)
-            temp = amt.root(str).mul(sta.pow(new Decimal(1).sub(new Decimal(1).div(str))))
-            reduce = amt.div(temp)
-            return [temp, reduce] // "/{reduce}"
-        case "E": // exponential
-            temp = amt.log(sta).add(1).pow(sta.log(2))
-            reduce = temp.log(amt)
-            return [temp, reduce] // "^{reduce}"
-        case "EP":
-            str = new Decimal(2).pow(str)
-            temp = new Decimal(10).pow(amt.log(10).root(str).mul(sta.log(10).pow(new Decimal(1).sub(new Decimal(1).div(str)))))
-            reduce = temp.log(amt)
-            return [temp, reduce] // "^{reduce}"
-        default:
-            console.error("Softcap type " + type + " is not defined!!")
-            return amt // fallback amt
+        let str = new Decimal(strength)
+        let temp
+        let reduce
+        switch(type) 
+        {
+            case "P": // polynomial
+                str = new Decimal(2).pow(str)
+                temp = amt.root(str).mul(sta.pow(new Decimal(1).sub(new Decimal(1).div(str))))
+                reduce = amt.div(temp)
+                return [temp, reduce] // "/{reduce}"
+            case "E": // exponential
+                temp = amt.log(sta).add(1).pow(sta.log(2))
+                reduce = temp.log(amt)
+                return [temp, reduce] // "^{reduce}"
+            case "EP":
+                str = new Decimal(2).pow(str)
+                temp = new Decimal(10).pow(amt.log(10).root(str).mul(sta.log(10).pow(new Decimal(1).sub(new Decimal(1).div(str)))))
+                reduce = temp.log(amt)
+                return [temp, reduce] // "^{reduce}"
+            default:
+                console.error("Softcap type " + type + " is not defined!!")
+                return [amt, new Decimal(1)] // fallback amt
+        }
     }
+    return [amt, new Decimal(1)] 
 }
 function calcGeneralCosts()
 { // 1st arg is type, 2nd arg is effective bought, 3rd arg is if it's inverse, 4th+ are params
@@ -224,10 +229,10 @@ function hideShow(id, condition)
 }
 
 function maxAllComPS(){
-    let x = points.log(10)
     let buy
     for (let comp = 8; comp >= 1; --comp) 
     {
+        let x = points.log(10)
         if (points.gte(comps[comp].cost))
         {
         buy = x.sub(new Decimal((comp * 4) - 3)).div(new Decimal(comp * 2))
@@ -279,12 +284,22 @@ function maxAllComPS(){
             document.getElementById("gen-comp" + comp + "-amount").innerHTML = format(comps[comp].trueamount) + " " + text;
             document.getElementById("gen-comp" + comp + "-cost").innerHTML = "Cost: " + format(comps[comp].cost);
             document.getElementById("gen-comp" + comp + "-multi").innerHTML = format(comps[comp].multi) + "x ";
+            if (points.gte(comps[comp].cost)){
+                document.getElementById("gen-comp" + comp + "-cost").classList.replace("compNo", "compYes")
+            } else {
+                document.getElementById("gen-comp" + comp + "-cost").classList.replace("compYes", "compNo")
+            }
+            if (comps[comp].bought.gte(compScale)){
+                document.getElementById("gen-comp" + comp + "-cost").classList.replace("Unscaled", "Scaled1")
+            } else {
+                document.getElementById("gen-comp" + comp + "-cost").classList.replace("Scaled1", "Unscaled")
+            }
         }
         
         document.getElementById("points").innerHTML = "Points: " + format(points, true) + " ( " +format(calcPointsPerSecond(),true) + " / s )";
         document.getElementById("fps").innerHTML = "FPS: " + FPS;
         document.getElementById("SER").innerHTML = "You will gain " + format(getSimplifyGain(), true) + " Simplify Energy. [ Next at " + format(new Decimal(10).pow(getSimplifyGain().add(1).log(10).div(simplify.main.SEExp.log(10)).add(1).mul(simplify.main.simplifyReq.log(10))).sub(totalPointsInSimplify), true) + " ]";
-        document.getElementById("SEUPG1").innerHTML = SimpUPG1[simplify.upgrades.simplifyMainUPG + 1] + " Cost: " + format(simpUPG1Cost().mul(1.001),true) + " Simplify Energy";
+        document.getElementById("SEUPG1").innerHTML = SimpUPG1[simplify.upgrades.simplifyMainUPG + 1] + " Cost: " + format(simpUPG1Cost(),true) + " Simplify Energy";
         document.getElementById("simpEnergy").innerHTML = "You have " + format(simplify.main.simplifyEnergy,true) + " Simplify Energy.";
         document.getElementById("simpEXP1").innerHTML = "You have " + format(simplify.PP.allocated,true) + " SE allocated to " + format(simplify.PP.trueValue, true, 1) + " PP, increasing overall gain by x" + format(simplify.PP.effect, true, 2) + ".";
         document.getElementById("simpEXP2").innerHTML = "You have " + format(simplify.MP.allocated,true) + " SE allocated to " + format(simplify.MP.trueValue, true, 1) + " MP, increasing all multipliers by x" + format(simplify.MP.effect, true, 2) + ".";
@@ -292,6 +307,7 @@ function maxAllComPS(){
         document.getElementById("simpEXP4").innerHTML = "You have " + format(simplify.DP.allocated,true) + " SE allocated to " + format(simplify.DP.trueValue, true, 1) + " DP, causing DM per buy to be x" + format(compBM, true, 3) + ".";
 
         hideShow("comp", tab[0] == 0)
+        hideShow("tab_other_stat", tab[0] == 1)
         hideShow("tab_simplify", totalPoints.gte(1e12))
         hideShow("Simplify", tab[0] == 2)
         hideShow("simpExP", simplify.upgrades.simplifyMainUPG >= 1 && tab[0] == 2)
