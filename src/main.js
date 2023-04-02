@@ -14,6 +14,7 @@ for (let [index, comp] of Object.entries(comps)){
     document.getElementById("gen-comp" + index + "-cost").innerHTML = "Cost: " + format(comp.cost);
     document.getElementById("gen-comp" + index + "-multi").innerHTML = format(comp.multi) + "x ";
     document.getElementById("gen-comp" + index + "-amount").innerHTML = format(comp.trueamount) + ", ";
+    document.getElementById("gen-comp" + index + "-breakdown").innerHTML = "Show factors";
     document.getElementById("gen-comp" + index).style.display = index > compVisible ? "none" : "block";
 }
 document.getElementById("simpEXP1b").innerHTML = "Allocate all SE into PP."
@@ -29,7 +30,7 @@ function switchTab(t,id)
 function getSimplifyGain()
 {
     let temp
-    temp = simplify.main.SEExp.pow(totalPointsInSimplify.log(simplify.main.simplifyReq).sub(1)).floor();
+    temp = simplify.main.SEExp.pow(totalPointsInSimplify.log(simplify.main.simplifyReq).sub(1));
     return temp
 }
 
@@ -149,7 +150,7 @@ function simplifyXPtick(type,tickRate)
 
 function calcPointsPerSecond()
 {
-    return comps[1].trueamount.mul(comps[1].multi).mul(simplify.PP.effect);
+    return comps[1].trueamount.mul(comps[1].multi);
 }
 
 function simpUPG1Cost()
@@ -160,7 +161,7 @@ function simpUPG1Cost()
 
 function simplifyReset()
 {
-    simplify.main.simplifyEnergy=simplify.main.simplifyEnergy.add(getSimplifyGain())
+    simplify.main.simplifyEnergy=simplify.main.simplifyEnergy.add(getSimplifyGain().floor())
     simplify.main.simplifyStat=simplify.main.simplifyStat.add(1)
     compVisible = 1;
     points = new Decimal(10);
@@ -222,10 +223,30 @@ function calcCompxPerSecond(comp)
     return comps[comp + 1].trueamount.mul(comps[comp + 1].multi);
 }
 
+function getProgress(delta){ // progressBar = 0-1
+    let prev
+    if (totalPoints.lt(1e12)){
+        prev = totalPoints.add(1).log(1e12)
+        progressBarText = "Next layer: "
+    } else if (simplify.main.simplifyEnergy.lt(10)){
+        prev = simplify.main.simplifyEnergy.add(getSimplifyGain()).div(10)
+        progressBarText = "Next feature: "
+    }
+    if (prev.gte(1)){
+        prev = new Decimal(1)
+    }
+    progressBar = progressBar.mul(0.01 ** delta).add(prev.mul(1 - (0.01 ** delta)))
+    
+}
+
 function hideShow(id, condition)
 {
     let x = document.getElementById(id);
     x.style.display = condition ? "block" : "none";
+}
+
+function expandComPMULTI(comp){
+    expandMultComP = (expandMultComP == comp) ? 0 : comp;
 }
 
 function maxAllComPS(){
@@ -272,8 +293,7 @@ function maxAllComPS(){
 
         totalPoints = totalPoints.add(calcPointsPerSecond().times(gameDelta));
         totalPointsInSimplify = totalPointsInSimplify.add(calcPointsPerSecond().times(gameDelta));
-        
-
+        getProgress(delta)
         for (let comp = 1; comp <= 8; ++comp) 
         {
             comps[comp].changeAmount(calcCompxPerSecond(comp).times(gameDelta));
@@ -284,6 +304,8 @@ function maxAllComPS(){
             document.getElementById("gen-comp" + comp + "-amount").innerHTML = format(comps[comp].trueamount) + " " + text;
             document.getElementById("gen-comp" + comp + "-cost").innerHTML = "Cost: " + format(comps[comp].cost);
             document.getElementById("gen-comp" + comp + "-multi").innerHTML = format(comps[comp].multi) + "x ";
+            tr = (expandMultComP == comp) ? comps[comp]._factors : "";
+            document.getElementById("gen-comp" + comp + "-mbd").innerHTML = tr;
             if (points.gte(comps[comp].cost)){
                 document.getElementById("gen-comp" + comp + "-cost").classList.replace("compNo", "compYes")
             } else {
@@ -296,16 +318,17 @@ function maxAllComPS(){
             }
         }
         
-        document.getElementById("points").innerHTML = "Points: " + format(points, true) + " ( " +format(calcPointsPerSecond(),true) + " / s )";
+        document.getElementById("points").innerHTML = format(points, true) + " <pps>( " + format(calcPointsPerSecond(),true) + " / s ) </pps>";
         document.getElementById("fps").innerHTML = "FPS: " + FPS;
-        document.getElementById("SER").innerHTML = "You will gain " + format(getSimplifyGain(), true) + " Simplify Energy. [ Next at " + format(new Decimal(10).pow(getSimplifyGain().add(1).log(10).div(simplify.main.SEExp.log(10)).add(1).mul(simplify.main.simplifyReq.log(10))).sub(totalPointsInSimplify), true) + " ]";
+        document.getElementById("SER").innerHTML = "You will gain " + format(getSimplifyGain().floor(), true) + " Simplify Energy. [ Next at " + format(new Decimal(10).pow(getSimplifyGain().floor().add(1).log(10).div(simplify.main.SEExp.log(10)).add(1).mul(simplify.main.simplifyReq.log(10))).sub(totalPointsInSimplify), true) + " ]";
         document.getElementById("SEUPG1").innerHTML = SimpUPG1[simplify.upgrades.simplifyMainUPG + 1] + " Cost: " + format(simpUPG1Cost(),true) + " Simplify Energy";
         document.getElementById("simpEnergy").innerHTML = "You have " + format(simplify.main.simplifyEnergy,true) + " Simplify Energy.";
         document.getElementById("simpEXP1").innerHTML = "You have " + format(simplify.PP.allocated,true) + " SE allocated to " + format(simplify.PP.trueValue, true, 1) + " PP, increasing overall gain by x" + format(simplify.PP.effect, true, 2) + ".";
         document.getElementById("simpEXP2").innerHTML = "You have " + format(simplify.MP.allocated,true) + " SE allocated to " + format(simplify.MP.trueValue, true, 1) + " MP, increasing all multipliers by x" + format(simplify.MP.effect, true, 2) + ".";
         document.getElementById("simpEXP3").innerHTML = "You have " + format(simplify.OP.allocated,true) + " SE allocated to " + format(simplify.OP.trueValue, true, 1) + " 1P, improving 1st mult power to ^" + format(simplify.OP.effect, true, 3) + ".";
         document.getElementById("simpEXP4").innerHTML = "You have " + format(simplify.DP.allocated,true) + " SE allocated to " + format(simplify.DP.trueValue, true, 1) + " DP, causing DM per buy to be x" + format(compBM, true, 3) + ".";
-
+        document.getElementById("progressBar1").innerHTML = progressBarText + Math.round(progressBar.toNumber()*10000)/100 + "%";
+        document.getElementById("progressBar1").style.width = progressBar.toNumber()*98 + "%";
         hideShow("comp", tab[0] == 0)
         hideShow("tab_other_stat", tab[0] == 1)
         hideShow("tab_simplify", totalPoints.gte(1e12))

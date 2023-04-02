@@ -11,6 +11,7 @@ class ComP
         this._multi = new Decimal(1);
         this._index = index;
         this._updateCost();
+        this._factors = [];
     }
 
     get cost()
@@ -59,17 +60,36 @@ class ComP
 
     _updateMultiplier()
     {
+        this._factors = [];
         this._multi = new Decimal(1);
-        if (this._bought.gte(2))
-            this._multi = this._multi.mul(compBM.pow(this._bought.sub(1)));
-        
-        if (this._index == 1)
-            this._multi = this._multi.mul(10).pow(simplify.OP.effect);
-        if (this._index == 2)
-            this._multi = this._multi.mul(4).pow(1.584962500721156);
-        if (inChallenge.length == 0)
+        if (this._bought.gte(2)){
+            this._multi = this._multi.mul(compBM.pow(this._bought.sub(1)))
+            this._factors.push("<br> Buy Multiplier (Total): x" + format(compBM.pow(this._bought.sub(1)),true,2) + "  (" + format(this._multi,true) + "x)")
+        }
+        if (this._index == 1){
+            this._multi = this._multi.mul(10)
+            this._factors.push("<br> ComP1 Bonus: x" + format(new Decimal(10),true,2) + "  (" + format(this._multi,true) + "x)")
+            this._multi = this._multi.pow(simplify.OP.effect)
+            this._factors.push("<br> ComP1 Bonus: ^" + format(simplify.OP.effect,true,3) + "  (" + format(this._multi,true) + "x)")
+        }
+        if (this._index == 2){
+            this._multi = this._multi.mul(4)
+            this._factors.push("<br> ComP2 Bonus: x" + format(new Decimal(4),true,2) + "  (" + format(this._multi,true) + "x)")
+            this._multi = this._multi.pow(1.584962500721156)
+            this._factors.push("<br> ComP2 Bonus: ^" + format(new Decimal(1.584962500721156),true,3) + "  (" + format(this._multi,true) + "x)")
+        }
+        if (inChallenge.length == 0 && simplify.main.simplifyStat.gt(0)){
             this._multi = this._multi.mul(simplify.main.simplifyStat.add(1).root(new Decimal(this._index)));
+            this._factors.push("<br> Simplified amount: x" + format(simplify.main.simplifyStat.add(1).root(new Decimal(this._index)),true,2) + "  (" + format(this._multi,true) + "x)")
+        }
+        if (simplify.MP.effect.gt(1)){
         this._multi = this._multi.mul(simplify.MP.effect);
+        this._factors.push("<br> MP Effect: x" + format(simplify.MP.effect,true) + "  (" + format(this._multi,true) + "x)")
+        }
+        if (simplify.PP.effect.gt(1)){
+            this._multi = this._multi.mul(simplify.PP.effect);
+            this._factors.push("<br> PP Effect: x" + format(simplify.PP.effect,true) + "  (" + format(this._multi,true) + "x)")
+            }
     }
 
     _updateCost()

@@ -8,6 +8,9 @@ let totalTime = 0; // timespeed doesn't affect this
 let gameTime = new Decimal(0); // timespeed will affect this (totalGameTime)
 let timeSpeed = new Decimal(1);
 let tab = [0,0,0];
+let expandMultComP = 0;
+let progressBar = new Decimal(0);
+let progressBarText = "";
 let simplify = {
     "main": {
         simplifyEnergy: new Decimal(0),

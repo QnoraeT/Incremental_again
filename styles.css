@@ -15,6 +15,10 @@ p {
   font-size: 18px;
 }
 
+pps {
+  font-size: 16px;
+}
+
 .text {
   display: inline;
 }
@@ -194,6 +198,18 @@ body {
   background-color: #006060;
 }
 
+.ceMul{
+  border: 2px solid #0080FF;
+  color: #0080FF;
+  background-color: black;
+  transition-duration: 0.2s;
+  margin-left: 4px
+}
+
+.ceMul:hover{
+  background-color: #003060;
+}
+
 .compNo{
   border: 2px solid #FF0000;
   cursor: not-allowed;
@@ -216,6 +232,36 @@ body {
   background-color: #006000;
 }
 
+.compMultBreakdown {
+  font-family: "Verdana";
+  font-size: 16px;
+  text-align: left;
+  text-shadow: 1px 1px #004080;
+  color: #0080FF;
+} 
+
+#progressBar1 {
+  font-family: "Verdana";
+  font-size: 16px;
+  text-align: center;
+  color: #00FF00;
+  border: 2px solid #00FF00;
+  background-color: black;
+  overflow: visible;
+  white-space: nowrap;
+  bottom: 10px;
+  position: absolute;
+} 
+
+#progBarBase {
+  text-align: center;
+  color: #808080;
+  border: 2px solid #808080;
+  background-color: black;
+  bottom: 10px;
+  position: absolute;
+} 
+
 .Unscaled{
   color: white;
 }
@@ -234,4 +280,9 @@ body {
 
 .Scaled3{
   color: #3AFF4A;
+}
+
+.buttonRight{
+  position: absolute;
+  right: 10px;
 }
