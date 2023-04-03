@@ -1,5 +1,4 @@
-for (let comp = 1; comp <= 8; ++comp)
-{
+for (let comp = 1; comp <= 8; ++comp) {
     let div = document.createElement("div");
     div.id = "gen-comp" + comp;
     document.getElementById("comp").appendChild(div);
@@ -26,7 +25,7 @@ for (let comp = 1; comp <= 8; ++comp)
     buyButton.onclick = () => buyComp(comp);
     buyButton.class = "compNo";
     buyButton.classList.add("compNo");
-    buyButton.classList.add("Unscaled");
+    buyButton.classList.add("Scaled0");
     buyButton.classList.add("buttonRight");
     div.appendChild(buyButton);
 
@@ -45,7 +44,7 @@ for (let comp = 1; comp <= 8; ++comp)
     div.appendChild(mbreakdown);
 }
 
-for (let chall = 0; chall < 16;){
+for (let chall = 0; chall < 16;) {
     let div = document.createElement("div");
     div.id = "simpChal" + chall;
     document.getElementById("ttsChal").appendChild(div);
@@ -56,7 +55,7 @@ for (let chall = 0; chall < 16;){
     chtext.classList.add("simpChText");
     div.appendChild(chtext);
 
-    for (let g = 0; g < 4; ++g){
+    for (let g = 0; g < 4; ++g) {
         let challenge = document.createElement("button");
         challenge.id = "simpChal" + chall + "-id";
         challenge.onclick = () => simpChalSelect(chall);
