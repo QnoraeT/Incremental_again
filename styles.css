@@ -170,7 +170,6 @@ body {
   color: cyan;
   background-color: black;
   transition-duration: 0.2s;
-  display: inline;
 }
 
 #tab_simplify:hover{
@@ -336,4 +335,8 @@ body {
 .simpChalComplete{
   color: #00FF00;
   border: 2px solid #00FF00;
+}
+
+.inline {
+  display: inline;
 }

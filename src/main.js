@@ -8,17 +8,18 @@ function thing()
 
 i really don't like it, and i rather use the first '{' in the line of the original function
 like so:
+
+oh ok ill but the first { line of the function from now on
 */
 
 /* TODO:
 1. fix challenges (at least make them square and the text smaller)
 2. make the "switch other tab" thing to look at different tabs with preserving previous deeper tab values not work oisjfngoigdnfs
 3. like say you are tab [1,3,0], you move to tab 2 layer 0, it will only make it to [2,3,0] causing you to see minitabs you shouldn't be seeing
-4. WHY IS THE SIMPLIFY TAB WHEN YOU UNLOCK IT STILL <br>'d FROM THE TAB LIST (+ the tts challenges too)
 5. make the challenges vertically spaced out less and the challenge text smaller
 6. the floating dots bg + the cursor lmao [most difficult]
 */
-for (let [index, comp] of Object.entries(comps)){
+for (let [index, comp] of Object.entries(comps)) {
     document.getElementById("gen-comp" + index + "-cost").innerHTML = "Cost: " + format(comp.cost);
     document.getElementById("gen-comp" + index + "-multi").innerHTML = format(comp.multi) + "x ";
     document.getElementById("gen-comp" + index + "-amount").innerHTML = format(comp.trueamount) + ", ";
@@ -271,7 +272,7 @@ function getProgress(delta) { // progressBar = 0-1
 function hideShow(id, condition)
 {
     let x = document.getElementById(id);
-    x.style.display = condition ? "block" : "none";
+    x.style.display = condition ? "inherit" : "none";
 }
 
 function expandComPMULTI(comp){
