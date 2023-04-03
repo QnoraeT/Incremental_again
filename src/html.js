@@ -26,7 +26,7 @@ for (let comp = 1; comp <= 8; ++comp)
     buyButton.onclick = () => buyComp(comp);
     buyButton.class = "compNo";
     buyButton.classList.add("compNo");
-    buyButton.classList.add("Unscaled");
+    buyButton.classList.add("Scaled0");
     buyButton.classList.add("buttonRight");
     div.appendChild(buyButton);
 
@@ -45,7 +45,8 @@ for (let comp = 1; comp <= 8; ++comp)
     div.appendChild(mbreakdown);
 }
 
-for (let chall = 0; chall < 16;){
+for (let chall = 0; chall < 16;)
+{
     let div = document.createElement("div");
     div.id = "simpChal" + chall;
     document.getElementById("ttsChal").appendChild(div);
