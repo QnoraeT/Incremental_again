@@ -71,6 +71,10 @@ class ComP
             this._factors.push("<br> ComP1 Bonus: x" + format(new Decimal(10),true,2) + "  (" + format(this._multi,true) + "x)")
             this._multi = this._multi.pow(simplify.OP.effect)
             this._factors.push("<br> ComP1 Bonus: ^" + format(simplify.OP.effect,true,3) + "  (" + format(this._multi,true) + "x)")
+            if (simplify.PP.effect.gt(1)){
+                this._multi = this._multi.mul(simplify.PP.effect);
+                this._factors.push("<br> PP Effect: x" + format(simplify.PP.effect,true) + "  (" + format(this._multi,true) + "x)")
+                }
         }
         if (this._index == 2){
             this._multi = this._multi.mul(4)
@@ -86,10 +90,7 @@ class ComP
         this._multi = this._multi.mul(simplify.MP.effect);
         this._factors.push("<br> MP Effect: x" + format(simplify.MP.effect,true) + "  (" + format(this._multi,true) + "x)")
         }
-        if (simplify.PP.effect.gt(1)){
-            this._multi = this._multi.mul(simplify.PP.effect);
-            this._factors.push("<br> PP Effect: x" + format(simplify.PP.effect,true) + "  (" + format(this._multi,true) + "x)")
-            }
+
     }
 
     _updateCost()

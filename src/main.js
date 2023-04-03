@@ -10,6 +10,14 @@ i really don't like it, and i rather use the first '{' in the line of the origin
 like so:
 */
 
+/* TODO:
+1. fix challenges (at least make them square and the text smaller)
+2. make the "switch other tab" thing to look at different tabs with preserving previous deeper tab values not work oisjfngoigdnfs
+3. like say you are tab [1,3,0], you move to tab 2 layer 0, it will only make it to [2,3,0] causing you to see minitabs you shouldn't be seeing
+4. WHY IS THE SIMPLIFY TAB WHEN YOU UNLOCK IT STILL <br>'d FROM THE TAB LIST (+ the tts challenges too)
+5. make the challenges vertically spaced out less and the challenge text smaller
+6. the floating dots bg + the cursor lmao [most difficult]
+*/
 for (let [index, comp] of Object.entries(comps)){
     document.getElementById("gen-comp" + index + "-cost").innerHTML = "Cost: " + format(comp.cost);
     document.getElementById("gen-comp" + index + "-multi").innerHTML = format(comp.multi) + "x ";
@@ -17,6 +25,13 @@ for (let [index, comp] of Object.entries(comps)){
     document.getElementById("gen-comp" + index + "-breakdown").innerHTML = "Show factors";
     document.getElementById("gen-comp" + index).style.display = index > compVisible ? "none" : "block";
 }
+for (let [index] of Object.entries(simplify.challenge.completed)){
+    document.getElementById("simpChal" + index + "-id").innerHTML = index;
+}
+document.getElementById("simpChal0-type").innerHTML = "🔎 Challenges"
+document.getElementById("simpChal4-type").innerHTML = "🔰 Challenges"
+document.getElementById("simpChal8-type").innerHTML = "🚛 Challenges"
+document.getElementById("simpChal12-type").innerHTML = "777 Challenges"
 document.getElementById("simpEXP1b").innerHTML = "Allocate all SE into PP."
 document.getElementById("simpEXP2b").innerHTML = "Allocate all SE into MP."
 document.getElementById("simpEXP3b").innerHTML = "Allocate all SE into 1P."
@@ -156,7 +171,11 @@ function calcPointsPerSecond()
 function simpUPG1Cost()
 {
     let ret = new Decimal(simplify.upgrades.simplifyMainUPG)
-    return new Decimal(10).pow(ret.pow(2)).mul(ret.factorial()).div(1.001)
+    ret = new Decimal(10).pow(ret.pow(2)).mul(ret.factorial())
+    if (simplify.upgrades.simplifyMainUPG <= 2){
+        ret = ret.div(1.001)
+    }
+    return ret
 }
 
 function simplifyReset()
@@ -224,14 +243,31 @@ function calcCompxPerSecond(comp)
 }
 
 function getProgress(delta){ // progressBar = 0-1
-    let prev
+    let prev = 1
     if (totalPoints.lt(1e12)){
         prev = totalPoints.add(1).log(1e12)
         progressBarText = "Next layer: "
     } else if (simplify.main.simplifyEnergy.lt(10)){
         prev = simplify.main.simplifyEnergy.add(getSimplifyGain()).div(10)
         progressBarText = "Next feature: "
+    } else if (simplify.main.simplifyEnergy.lt(20000)){
+        prev = simplify.main.simplifyEnergy.add(getSimplifyGain()).div(10).log(new Decimal(20000).div(10))
+        progressBarText = "Next feature: "
+    } else if (simplify.main.simplifyEnergy.lt(6e9)){
+        prev = simplify.main.simplifyEnergy.add(getSimplifyGain()).div(20000).log(new Decimal(6e9).div(20000))
+        progressBarText = "Next feature: "
+    } else if (simplify.main.simplifyEnergy.lt(2.4e17)){
+        prev = simplify.main.simplifyEnergy.add(getSimplifyGain()).div(6e9).log(new Decimal(2.4e17).div(6e9))
+        progressBarText = "Next feature: "
+    } else if (simplify.main.simplifyEnergy.lt(1.2e27)){
+        prev = simplify.main.simplifyEnergy.add(getSimplifyGain()).div(2.4e17).log(new Decimal(1.2e27).div(2.4e17))
+        progressBarText = "Next feature: "
+    } else if (simplify.main.simplifyEnergy.lt(7.2e38)){
+        prev = simplify.main.simplifyEnergy.add(getSimplifyGain()).div(1.2e27).log(new Decimal(7.2e38).div(1.2e27))
+        progressBarText = "Next feature: "
     }
+
+    // cap and smooth from here
     if (prev.gte(1)){
         prev = new Decimal(1)
     }
@@ -281,10 +317,10 @@ function maxAllComPS(){
 
         for (type of ["PP", "MP", "OP", "DP"])
             simplifyXPtick(type, gameDelta);
-
         compBM = simplify.DP.effect.mul(2)
 
         points = points.add(calcPointsPerSecond().times(gameDelta));
+
         if (compVisible < 8 && points.gte(comps[compVisible + 1].cost.mul(0.1)))
         {
             ++compVisible;
@@ -294,6 +330,7 @@ function maxAllComPS(){
         totalPoints = totalPoints.add(calcPointsPerSecond().times(gameDelta));
         totalPointsInSimplify = totalPointsInSimplify.add(calcPointsPerSecond().times(gameDelta));
         getProgress(delta)
+
         for (let comp = 1; comp <= 8; ++comp) 
         {
             comps[comp].changeAmount(calcCompxPerSecond(comp).times(gameDelta));
@@ -317,7 +354,8 @@ function maxAllComPS(){
                 document.getElementById("gen-comp" + comp + "-cost").classList.replace("Scaled1", "Unscaled")
             }
         }
-        
+
+        //html stuff
         document.getElementById("points").innerHTML = format(points, true) + " <pps>( " + format(calcPointsPerSecond(),true) + " / s ) </pps>";
         document.getElementById("fps").innerHTML = "FPS: " + FPS;
         document.getElementById("SER").innerHTML = "You will gain " + format(getSimplifyGain().floor(), true) + " Simplify Energy. [ Next at " + format(new Decimal(10).pow(getSimplifyGain().floor().add(1).log(10).div(simplify.main.SEExp.log(10)).add(1).mul(simplify.main.simplifyReq.log(10))).sub(totalPointsInSimplify), true) + " ]";
@@ -333,7 +371,11 @@ function maxAllComPS(){
         hideShow("tab_other_stat", tab[0] == 1)
         hideShow("tab_simplify", totalPoints.gte(1e12))
         hideShow("Simplify", tab[0] == 2)
-        hideShow("simpExP", simplify.upgrades.simplifyMainUPG >= 1 && tab[0] == 2)
+        hideShow("simplify_tab_simplify", tab[0] == 2)
+        hideShow("simplify_tab_tts", simplify.upgrades.simplifyMainUPG >= 2 && tab[0] == 2)
+        hideShow("simpExP", simplify.upgrades.simplifyMainUPG >= 1 && tab[0] == 2 && tab[1] == 0)
+        hideShow("ttsChal", tab[0] == 2 && tab[1] == 1)
+        // do not change order at all
         oldTimeStamp = timeStamp;
         window.requestAnimationFrame(gameLoop);
     }

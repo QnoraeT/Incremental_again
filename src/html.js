@@ -43,6 +43,27 @@ for (let comp = 1; comp <= 8; ++comp)
     mbreakdown.classList.add("text");
     mbreakdown.classList.add("compMultBreakdown");
     div.appendChild(mbreakdown);
+}
 
-    //document.getElementById("comp").appendChild(document.createElement("br"));
+for (let chall = 0; chall < 16;){
+    let div = document.createElement("div");
+    div.id = "simpChal" + chall;
+    document.getElementById("ttsChal").appendChild(div);
+
+    let chtext = document.createElement("p");
+    chtext.id = "simpChal" + chall + "-type";
+    chtext.class = "simpChText";
+    chtext.classList.add("simpChText");
+    div.appendChild(chtext);
+
+    for (let g = 0; g < 4; ++g){
+        let challenge = document.createElement("button");
+        challenge.id = "simpChal" + chall + "-id";
+        challenge.onclick = () => simpChalSelect(chall);
+        challenge.class = "simpChal";
+        challenge.classList.add("simpChal");
+        challenge.classList.add("simpChalIncomplete");
+        div.appendChild(challenge);
+        chall++
+    }
 }

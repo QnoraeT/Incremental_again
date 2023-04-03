@@ -6,7 +6,7 @@ let inChallenge = [] // this is not in simplify list because theres potentially 
 let notation = "Mixed Scientific";
 let totalTime = 0; // timespeed doesn't affect this
 let gameTime = new Decimal(0); // timespeed will affect this (totalGameTime)
-let timeSpeed = new Decimal(1);
+let timeSpeed = new Decimal(100);
 let tab = [0,0,0];
 let expandMultComP = 0;
 let progressBar = new Decimal(0);
@@ -45,7 +45,7 @@ let simplify = {
         effect: new Decimal(1),
     },
     "challenge": {
-        completed: Array(15).fill(0), // 0-3 Magnifying [] 4-7 Beginner [] 8-11 Articulated [] 12-15 77777777 []
+        completed: Array(16).fill(0), // 0-3 Magnifying [] 4-7 Beginner [] 8-11 Articulated [] 12-15 77777777 []
         timeInChallenge: new Decimal(0), // time speed exists
     },
     "upgrades": {
@@ -53,7 +53,7 @@ let simplify = {
         simplifyUPGNum2: new Decimal(0), // the upgrades here will not be unique, and may be bulk auto'd in the future, so i'm letting it stay as decimal
         PPUPG: new Decimal(0),
         MPUPG: new Decimal(0),
-        OPUPG: new Decimal(0), // OP -> 1P (why am i so stupid? i should've known "anything.1P" isn't gonna work)
+        OPUPG: new Decimal(0),
         DPUPG: new Decimal(0),
     },
     "situation1": {

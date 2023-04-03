@@ -170,6 +170,7 @@ body {
   color: cyan;
   background-color: black;
   transition-duration: 0.2s;
+  display: inline;
 }
 
 #tab_simplify:hover{
@@ -198,6 +199,30 @@ body {
   background-color: #006060;
 }
 
+#simplify_tab_simplify{
+  border: 2px solid #00FFFF;
+  color: cyan;
+  background-color: black;
+  transition-duration: 0.2s;
+  display: inline;
+}
+
+#simplify_tab_simplify:hover{
+  background-color: #006060;
+}
+
+#simplify_tab_tts{
+  border: 2px solid #FFFFFF;
+  color: white;
+  background-color: black;
+  transition-duration: 0.2s;
+  display: inline;
+}
+
+#simplify_tab_tts:hover{
+  background-color: #606060;
+}
+
 .ceMul{
   border: 2px solid #0080FF;
   color: #0080FF;
@@ -222,6 +247,10 @@ body {
   cursor: pointer;
   background-color: black;
   transition-duration: 0.2s;
+}
+
+.simpChText{
+  size: 16px;
 }
 
 .compNo:hover{
@@ -285,4 +314,26 @@ body {
 .buttonRight{
   position: absolute;
   right: 10px;
+}
+
+.simpChal{
+  font-family: "Verdana";
+  font-size: 16px;
+  text-align: center;
+  background-color: black;
+  transition-duration: 0.2s;
+}
+
+.simpChal:hover{
+  border: 2px solid #FFFFFF;
+}
+
+.simpChalIncomplete{
+  color: #808080;
+  border: 2px solid #808080;
+}
+
+.simpChalComplete{
+  color: #00FF00;
+  border: 2px solid #00FF00;
 }
