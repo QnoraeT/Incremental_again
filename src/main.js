@@ -1,24 +1,46 @@
 /* 
-alright, just as a note, i REALLY do not like using stuff like this:
+TODO:
+1. the text needs to be properly centered
+2. make the challenges vertically spaced out less and the challenge text smaller
+3. i need to figure out how to make the challenges show up in a certain order
+    etc:
+    magnifying
+    1 2 3 4
+    beginner
+    5 6 7 8
+    articulated
+    9 10 11 12
+    777
+    13 14 15 16
 
-function thing()
-{
-    code
-}
+    [1 2 3 4] is always shown
 
-i really don't like it, and i rather use the first '{' in the line of the original function
-like so:
+    [5 6 7 8...] is only shown when the challenge above it is completed
 
-oh ok ill but the first { line of the function from now on
+    if 1 and 3 are completed, then it should look like this
+
+    magnifying
+    1* 2 3* 4 (note: the numbers should not be astrisk'd, i'm just doing this for visualization)
+    beginner
+    5   7   
+
+    the text for the later challenges don't show until at least 1 of the challenge types above it are completed
+    example: you completed beginner (5)
+
+    magnifying
+    1* 2 3* 4
+    beginner
+    5*  7
+    articulated
+    9
+
+4. make the tab for the challenge select (clicking any amount of times on the challenge numbers themselves won't do anything, there must be a "start challenge" button to the right side with its description and reward), concept image here: https://cdn.discordapp.com/attachments/769979905827143733/1092633200427278346/image.png
+w. the floating dots bg + the cursor lmao [most difficult]
+w+1. save function? perhaps?
+
+note: i'm seeing a lot of delays because of html aaaaaaa
 */
 
-/* TODO:
-1. fix challenges (at least make them square and the text smaller)
-2. make the "switch other tab" thing to look at different tabs with preserving previous deeper tab values not work oisjfngoigdnfs
-3. like say you are tab [1,3,0], you move to tab 2 layer 0, it will only make it to [2,3,0] causing you to see minitabs you shouldn't be seeing
-5. make the challenges vertically spaced out less and the challenge text smaller
-6. the floating dots bg + the cursor lmao [most difficult]
-*/
 for (let [index, comp] of Object.entries(comps)) {
     document.getElementById("gen-comp" + index + "-cost").innerHTML = "Cost: " + format(comp.cost);
     document.getElementById("gen-comp" + index + "-multi").innerHTML = format(comp.multi) + "x ";
@@ -40,6 +62,12 @@ document.getElementById("simpEXP4b").innerHTML = "Allocate all SE into DP."
 
 function switchTab(t,id) {
     tab[id] = t;
+    for (let TA = id + 1; TA <= (tab.length - 1); ++TA) {
+        tab[TA] = 0;
+        if (TA > 40){
+            throw new Error("what the hell? (broke out of somehow infinite loop)")
+        }
+    }
 }
 
 function getSimplifyGain() {
@@ -170,7 +198,7 @@ function calcPointsPerSecond()
 function simpUPG1Cost() {
     let ret = new Decimal(simplify.upgrades.simplifyMainUPG)
     ret = new Decimal(10).pow(ret.pow(2)).mul(ret.factorial())
-    if (simplify.upgrades.simplifyMainUPG <= 2){
+    if (simplify.upgrades.simplifyMainUPG < 2){
         ret = ret.div(1.001)
     }
     return ret
@@ -328,25 +356,27 @@ function maxAllComPS(){
         for (let comp = 1; comp <= 8; ++comp) 
         {
             comps[comp].changeAmount(calcCompxPerSecond(comp).times(gameDelta));
-            let tr = comps[comp].amount.add(calcCompxPerSecond(comp)).pow(compExp).sub(comps[comp].amount.pow(compExp))
-            const perSecondText = " (" + format(tr, true, tr < 10 ? 1 : 0) + "/s),";
-            const boughtText =  " [ " + format(comps[comp].bought) + " ]    "
-            const text = tr.gt(0) ? perSecondText + boughtText : boughtText;
-            document.getElementById("gen-comp" + comp + "-amount").innerHTML = format(comps[comp].trueamount, true) + " " + text;
-            document.getElementById("gen-comp" + comp + "-cost").innerHTML = "Cost: " + format(comps[comp].cost);
-            document.getElementById("gen-comp" + comp + "-multi").innerHTML = format(comps[comp].multi) + "x ";
-            tr = (expandMultComP == comp) ? comps[comp]._factors : "";
-            document.getElementById("gen-comp" + comp + "-mbd").innerHTML = tr;
-            if (points.gte(comps[comp].cost)) 
-                document.getElementById("gen-comp" + comp + "-cost").classList.replace("compNo", "compYes")
-            else 
-                document.getElementById("gen-comp" + comp + "-cost").classList.replace("compYes", "compNo")
-            
-            document.getElementById("gen-comp" + comp + "-cost").classList.forEach(clas => {
-                if (clas.startsWith("Scaled"))
-                    document.getElementById("gen-comp" + comp + "-cost").classList.remove(clas);
-            });
 
+            if (tab[0] == 0){
+                let tr = comps[comp].amount.add(calcCompxPerSecond(comp)).pow(compExp).sub(comps[comp].amount.pow(compExp))
+                const perSecondText = " (" + format(tr, true, tr < 10 ? 1 : 0) + "/s),";
+                const boughtText =  " [ " + format(comps[comp].bought) + " ]    "
+                const text = tr.gt(0) ? perSecondText + boughtText : boughtText;
+                document.getElementById("gen-comp" + comp + "-amount").innerHTML = format(comps[comp].trueamount, true) + " " + text;
+                document.getElementById("gen-comp" + comp + "-cost").innerHTML = "Cost: " + format(comps[comp].cost);
+                document.getElementById("gen-comp" + comp + "-multi").innerHTML = format(comps[comp].multi) + "x ";
+                tr = (expandMultComP == comp) ? comps[comp]._factors : "";
+                document.getElementById("gen-comp" + comp + "-mbd").innerHTML = tr;
+                if (points.gte(comps[comp].cost)) 
+                    document.getElementById("gen-comp" + comp + "-cost").classList.replace("compNo", "compYes")
+                else 
+                    document.getElementById("gen-comp" + comp + "-cost").classList.replace("compYes", "compNo")
+                
+                document.getElementById("gen-comp" + comp + "-cost").classList.forEach(clas => {
+                    if (clas.startsWith("Scaled"))
+                        document.getElementById("gen-comp" + comp + "-cost").classList.remove(clas);
+            });
+            }
             // if (comps[comp].bought.gte(compScale * 4)) 
             //     document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled4")
             // if (comps[comp].bought.gte(compScale * 3)) 
@@ -372,13 +402,15 @@ function maxAllComPS(){
         //html stuff
         document.getElementById("points").innerHTML = format(points, true) + " <pps>( " + format(calcPointsPerSecond(),true) + " / s ) </pps>";
         document.getElementById("fps").innerHTML = "FPS: " + FPS;
-        document.getElementById("SER").innerHTML = "You will gain " + format(getSimplifyGain().floor(), true) + " Simplify Energy. [ Next at " + format(new Decimal(10).pow(getSimplifyGain().floor().add(1).log(10).div(simplify.main.SEExp.log(10)).add(1).mul(simplify.main.simplifyReq.log(10))).sub(totalPointsInSimplify), true) + " ]";
-        document.getElementById("SEUPG1").innerHTML = SimpUPG1[simplify.upgrades.simplifyMainUPG + 1] + " Cost: " + format(simpUPG1Cost(),true) + " Simplify Energy";
-        document.getElementById("simpEnergy").innerHTML = "You have " + format(simplify.main.simplifyEnergy,true) + " Simplify Energy.";
-        document.getElementById("simpEXP1").innerHTML = "You have " + format(simplify.PP.allocated,true) + " SE allocated to " + format(simplify.PP.trueValue, true, 1) + " PP, increasing overall gain by x" + format(simplify.PP.effect, true, 2) + ".";
-        document.getElementById("simpEXP2").innerHTML = "You have " + format(simplify.MP.allocated,true) + " SE allocated to " + format(simplify.MP.trueValue, true, 1) + " MP, increasing all multipliers by x" + format(simplify.MP.effect, true, 2) + ".";
-        document.getElementById("simpEXP3").innerHTML = "You have " + format(simplify.OP.allocated,true) + " SE allocated to " + format(simplify.OP.trueValue, true, 1) + " 1P, improving 1st mult power to ^" + format(simplify.OP.effect, true, 3) + ".";
-        document.getElementById("simpEXP4").innerHTML = "You have " + format(simplify.DP.allocated,true) + " SE allocated to " + format(simplify.DP.trueValue, true, 1) + " DP, causing DM per buy to be x" + format(compBM, true, 3) + ".";
+        if (tab[0] == 2){ // i'm doing this because we should not update html stuff when it won't be seen at all so lets delay, even though the back-end continues updating the internal variables
+            document.getElementById("SER").innerHTML = "You will gain " + format(getSimplifyGain().floor(), true) + " Simplify Energy. [ Next at " + format(new Decimal(10).pow(getSimplifyGain().floor().add(1).log(10).div(simplify.main.SEExp.log(10)).add(1).mul(simplify.main.simplifyReq.log(10))).sub(totalPointsInSimplify), true) + " ]";
+            document.getElementById("SEUPG1").innerHTML = SimpUPG1[simplify.upgrades.simplifyMainUPG + 1] + " Cost: " + format(simpUPG1Cost(),true) + " Simplify Energy";
+            document.getElementById("simpEnergy").innerHTML = "You have " + format(simplify.main.simplifyEnergy,true) + " Simplify Energy.";
+            document.getElementById("simpEXP1").innerHTML = "You have " + format(simplify.PP.allocated,true) + " SE allocated to " + format(simplify.PP.trueValue, true, 1) + " PP, increasing overall gain by x" + format(simplify.PP.effect, true, 2) + ".";
+            document.getElementById("simpEXP2").innerHTML = "You have " + format(simplify.MP.allocated,true) + " SE allocated to " + format(simplify.MP.trueValue, true, 1) + " MP, increasing all multipliers by x" + format(simplify.MP.effect, true, 2) + ".";
+            document.getElementById("simpEXP3").innerHTML = "You have " + format(simplify.OP.allocated,true) + " SE allocated to " + format(simplify.OP.trueValue, true, 1) + " 1P, improving 1st mult power to ^" + format(simplify.OP.effect, true, 3) + ".";
+            document.getElementById("simpEXP4").innerHTML = "You have " + format(simplify.DP.allocated,true) + " SE allocated to " + format(simplify.DP.trueValue, true, 1) + " DP, causing DM per buy to be x" + format(compBM, true, 3) + ".";
+        }
         document.getElementById("progressBar1").innerHTML = progressBarText + (progressBar.toNumber() * 100).toFixed(2) + "%";
         document.getElementById("progressBar1").style.width = progressBar.toNumber() * 98 + "%";
         hideShow("comp", tab[0] == 0)

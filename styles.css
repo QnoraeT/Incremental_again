@@ -248,10 +248,6 @@ body {
   transition-duration: 0.2s;
 }
 
-.simpChText{
-  size: 16px;
-}
-
 .compNo:hover{
   background-color: #300000;
 }
@@ -317,10 +313,12 @@ body {
 
 .simpChal{
   font-family: "Verdana";
-  font-size: 16px;
+  font-size: 14px;
   text-align: center;
   background-color: black;
   transition-duration: 0.2s;
+  width: 30px;
+  height: 30px;
 }
 
 .simpChal:hover{
@@ -335,6 +333,10 @@ body {
 .simpChalComplete{
   color: #00FF00;
   border: 2px solid #00FF00;
+}
+
+.simpChText{
+  font-size: 14px;
 }
 
 .inline {
