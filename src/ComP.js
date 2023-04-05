@@ -90,7 +90,24 @@ class ComP
         this._multi = this._multi.mul(simplify.MP.effect);
         this._factors.push("<br> MP Effect: x" + format(simplify.MP.effect,true) + "  (" + format(this._multi,true) + "x)")
         }
-
+        if (mode == "softcap"){
+            if (this._multi.gte(100)){
+                this._multi = softcap(this._multi, "EP", 1/6, 100, "mul1," + this._index, false)[0]
+                this._factors.push("<br><sc1> Softcap 1: /" + format(softcaps[softcaps.indexOf("mul1," + this._index)+1],true,3) + "  (" + format(this._multi,true) + "x)</sc1>")
+            }
+            if (this._multi.gte(1e7)){
+                this._multi = softcap(this._multi, "EP", 1/3, 1e7, "mul2," + this._index, false)[0]
+                this._factors.push("<br><sc2> Softcap 2: /" + format(softcaps[softcaps.indexOf("mul2," + this._index)+1],true,3) + "  (" + format(this._multi,true) + "x)</sc2>")
+            }
+            if (this._multi.gte(1e49)){
+                this._multi = softcap(this._multi, "EP", 1/2, 1e49, "mul3," + this._index, false)[0]
+                this._factors.push("<br><sc3> Softcap 3: /" + format(softcaps[softcaps.indexOf("mul3," + this._index)+1],true,3) + "  (" + format(this._multi,true) + "x)</sc3>")
+            }
+            if (this._multi.gte(1.797693e308)){
+                this._multi = softcap(this._multi, "EP", 1, 1.797693e308, "mul4," + this._index, false)[0]
+                this._factors.push("<br><sc4> Softcap 4: /" + format(softcaps[softcaps.indexOf("mul4," + this._index)+1],true,3) + "  (" + format(this._multi,true) + "x)</sc4>")
+            }
+        }
     }
 
     _updateCost()

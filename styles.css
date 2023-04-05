@@ -119,55 +119,20 @@ body {
   color: cyan;
 } 
 
-#tab_comp{
-  border: 2px solid #FFFFFF;
-  color: white;
-  background-color: black;
-  transition-duration: 0.2s;
-  size: 150%;
-}
-
-#tab_comp:hover{
-  background-color: #606060;
-}
-
-
-#tab_other{
+.defaultTab{
   border: 2px solid #FFFFFF;
   color: white;
   background-color: black;
   transition-duration: 0.2s;
 }
 
-#tab_other:hover{
-  background-color: #606060;
-}
-
-#tab_other_stat{
-  border: 2px solid #FFFFFF;
-  color: white;
-  background-color: black;
-  transition-duration: 0.2s;
-}
-
-#tab_other_stat:hover{
-  background-color: #606060;
-}
-
-#maxAll{
-  border: 2px solid #FFFFFF;
-  color: white;
-  background-color: black;
-  transition-duration: 0.2s;
-}
-
-#maxAll:hover{
+.defaultTab:hover{
   background-color: #606060;
 }
 
 #tab_simplify{
-  border: 2px solid #00FFFF;
-  color: cyan;
+  border: 2px solid #00E0FF;
+  color: #0EF;
   background-color: black;
   transition-duration: 0.2s;
 }
@@ -199,8 +164,8 @@ body {
 }
 
 #simplify_tab_simplify{
-  border: 2px solid #00FFFF;
-  color: cyan;
+  border: 2px solid #0CF;
+  color: #0CF;
   background-color: black;
   transition-duration: 0.2s;
   display: inline;
@@ -322,6 +287,7 @@ body {
 }
 
 .simpChal:hover{
+  color: #FFFFFF;
   border: 2px solid #FFFFFF;
 }
 
@@ -340,5 +306,68 @@ body {
 }
 
 .inline {
+  display: inline;
+}
+
+sc1{
+  color: #F00;
+}
+
+sc2{
+  color: #F50;
+}
+
+sc3{
+  color: #FA0;
+}
+
+sc4{
+  color: #FF0;
+}
+
+.challengeStart{
+  font-family: "Verdana";
+  border: 2px solid #00FF00;
+  color: #0F0;
+  background-color: black;
+  transition-duration: 0.2s;
+  font-size: 16px;
+  width: 180px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.startChallenge{
+  border: 2px solid #00FF00;
+  color: #0F0;
+  text-shadow: 1px 1px #080;
+}
+
+.exitChallenge{
+  border: 2px solid #F00;
+  color: #F00;
+  text-shadow: 1px 1px #800;
+}
+
+.completeChallenge{
+  border: 2px solid #FF0;
+  color: #FF0;
+  text-shadow: 1px 1px #880;
+}
+
+.challengeStart:hover{
+  border: 2px solid #fff;
+}
+
+#changeLog{
+  font-family: "Verdana";
+  color: #FFF;
+  font-size: 14px;
+  display: inline;
+}
+
+.date0{
+  color: #F00;
+  font-size: 18px;
   display: inline;
 }

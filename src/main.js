@@ -1,42 +1,16 @@
 /* 
 TODO:
-1. the text needs to be properly centered
-2. make the challenges vertically spaced out less and the challenge text smaller
-3. i need to figure out how to make the challenges show up in a certain order
-    etc:
-    magnifying
-    1 2 3 4
-    beginner
-    5 6 7 8
-    articulated
-    9 10 11 12
-    777
-    13 14 15 16
+ :make the tab for the challenge select (clicking any amount of times on the challenge numbers themselves won't do anything, there must be a "start challenge" button to the right side with its description and reward)
+ :the buttons inside the the big rectangle and the descriptions inside the rectangle
 
-    [1 2 3 4] is always shown
+ concept images:
+ outside simplify challenge: https://cdn.discordapp.com/attachments/769979905827143733/1092633200427278346/image.png
+ inside simplify challenge: https://cdn.discordapp.com/attachments/769979905827143733/1093259477802823800/image.png
+ inside simplify challenge (points > completeRequirement) in simplify_challenge tab: https://cdn.discordapp.com/attachments/769979905827143733/1093259536418209852/image.png
+ inside simplify challenge (points > completeRequirement) in simplify_main tab: https://cdn.discordapp.com/attachments/769979905827143733/1093259579632144424/image.png
 
-    [5 6 7 8...] is only shown when the challenge above it is completed
-
-    if 1 and 3 are completed, then it should look like this
-
-    magnifying
-    1* 2 3* 4 (note: the numbers should not be astrisk'd, i'm just doing this for visualization)
-    beginner
-    5   7   
-
-    the text for the later challenges don't show until at least 1 of the challenge types above it are completed
-    example: you completed beginner (5)
-
-    magnifying
-    1* 2 3* 4
-    beginner
-    5*  7
-    articulated
-    9
-
-4. make the tab for the challenge select (clicking any amount of times on the challenge numbers themselves won't do anything, there must be a "start challenge" button to the right side with its description and reward), concept image here: https://cdn.discordapp.com/attachments/769979905827143733/1092633200427278346/image.png
-w. the floating dots bg + the cursor lmao [most difficult]
-w+1. save function? perhaps?
+ w. the floating dots bg + the cursor lmao [most difficult]
+ w+1. save function? perhaps?
 
 note: i'm seeing a lot of delays because of html aaaaaaa
 */
@@ -59,6 +33,27 @@ document.getElementById("simpEXP1b").innerHTML = "Allocate all SE into PP."
 document.getElementById("simpEXP2b").innerHTML = "Allocate all SE into MP."
 document.getElementById("simpEXP3b").innerHTML = "Allocate all SE into 1P."
 document.getElementById("simpEXP4b").innerHTML = "Allocate all SE into DP."
+document.getElementById("challengeStart1").classList.add("challengeStart")
+document.getElementById("challengeStart1").classList.add("startChallenge")
+document.getElementById("completeChallenge1").classList.add("challengeStart")
+document.getElementById("completeChallenge1").classList.add("completeChallenge")
+document.getElementById("tab_comp").classList.add("defaultTab")
+document.getElementById("tab_other").classList.add("defaultTab")
+document.getElementById("tab_other_stat").classList.add("defaultTab")
+document.getElementById("tab_other_changeLog").classList.add("defaultTab")
+document.getElementById("tab_other").classList.add("defaultTab")
+document.getElementById("maxAll").classList.add("defaultTab")
+
+changeLog()
+
+function changeLog(){
+    let changeLog = ""
+    changeLog = changeLog + "<br><changeLog><p class='date0'> v0.0.0 - Apr 5, 2023 </p>"
+    changeLog = changeLog + "<br> Progress on TTS Challenges #1"
+    changeLog = changeLog + "<br> Added a new mode 'softcapped', currently unavaliable"
+    
+    document.getElementById("changeLog").innerHTML = changeLog
+}
 
 function switchTab(t,id) {
     tab[id] = t;
@@ -85,6 +80,7 @@ function buyComp(comp) {
 }
 
 function softcap(amt, type, strength, start) {
+    softcaps.push(arguments[4]) // arg4 is name for listing
     let sta = new Decimal(start)
     if (amt.gte(sta))
     {
@@ -97,21 +93,25 @@ function softcap(amt, type, strength, start) {
                 str = new Decimal(2).pow(str)
                 temp = amt.root(str).mul(sta.pow(new Decimal(1).sub(new Decimal(1).div(str))))
                 reduce = amt.div(temp)
+                softcaps.push(reduce)
                 return [temp, reduce] // "/{reduce}"
             case "E": // exponential
                 temp = amt.log(sta).add(1).pow(sta.log(2))
-                reduce = temp.log(amt)
-                return [temp, reduce] // "^{reduce}"
+                reduce = arguments[5] ? temp.log(amt) : amt.div(temp)
+                softcaps.push(reduce)
+                return [temp, reduce] // "^{reduce}" or "/{reduce}" if arg5 is false
             case "EP":
                 str = new Decimal(2).pow(str)
                 temp = new Decimal(10).pow(amt.log(10).root(str).mul(sta.log(10).pow(new Decimal(1).sub(new Decimal(1).div(str)))))
-                reduce = temp.log(amt)
-                return [temp, reduce] // "^{reduce}"
+                reduce = arguments[5] ? temp.log(amt) : amt.div(temp)
+                softcaps.push(reduce)
+                return [temp, reduce] // "^{reduce}" or "/{reduce}" if arg5 is false
             default:
                 console.error("Softcap type " + type + " is not defined!!")
                 return [amt, new Decimal(1)] // fallback amt
         }
     }
+    softcaps.push(new Decimal(1))
     return [amt, new Decimal(1)] 
 }
 function calcGeneralCosts() {
@@ -192,16 +192,54 @@ function simplifyXPtick(type,tickRate) {
 
 function calcPointsPerSecond()
 {
-    return comps[1].trueamount.mul(comps[1].multi);
+    let tmp = comps[1].trueamount.mul(comps[1].multi)
+    if (mode == "softcap"){
+        tmp = softcap(tmp, "EP", 1/6, 100, "pts1", false)[0]
+        tmp = softcap(tmp, "EP", 1/3, 1e10, "pts2", false)[0]
+        tmp = softcap(tmp, "EP", 1/2, 1e100, "pts3", false)[0]
+        tmp = softcap(tmp, "EP", 1, 1.797693e308, "pts4", false)[0]
+    }
+    return tmp;
 }
 
 function simpUPG1Cost() {
     let ret = new Decimal(simplify.upgrades.simplifyMainUPG)
     ret = new Decimal(10).pow(ret.pow(2)).mul(ret.factorial())
-    if (simplify.upgrades.simplifyMainUPG < 2){
+    if (simplify.upgrades.simplifyMainUPG < 2){ // factorial inaccuracy (displays as 1 but actually 1.00123456789)
         ret = ret.div(1.001)
     }
     return ret
+}
+
+function updateChallenge(){
+    let temp
+    let c
+    for (let j = 1; j < 4; ++j){
+        temp = false
+        for (let i = 0; i <= 4; ++i){
+            c=simplify.challenge.completed[i + (j - 1) * 4] == 1
+            if ((i + j * 4) < 16){
+                hideShow("simpChal" + (i + j * 4) + "-id", c)
+            }
+            if (c){
+                temp = true
+            }
+        }
+        hideShow("simpChal" + j * 4, temp)
+    }
+    for (let i = 0; i < 16; ++i){
+        if (simplify.challenge.completed[i] == 1){
+            document.getElementById("simpChal" + i + "-id").classList.replace("simpChalIncomplete","simpChalComplete")
+        } else {
+            document.getElementById("simpChal" + i + "-id").classList.replace("simpChalComplete","simpChalIncomplete")
+        }
+        if (document.getElementById("simpChal" + i + "-id").style.display == "inherit"){
+            document.getElementById("simpChal" + i + "-id").style.display = ""
+        }
+    }
+
+    document.getElementById("challengeStart1").innerHTML = "Start Challenge"
+    document.getElementById("completeChallenge1").innerHTML = "Complete Challenge"
 }
 
 function simplifyReset() {
@@ -337,20 +375,21 @@ function maxAllComPS(){
         const FPS = Math.round(1 / delta);
         let gameDelta = new Decimal(delta).mul(timeSpeed)
 
+        softcaps = [];
         for (type of ["PP", "MP", "OP", "DP"])
             simplifyXPtick(type, gameDelta);
         compBM = simplify.DP.effect.mul(2)
 
-        points = points.add(calcPointsPerSecond().times(gameDelta));
+        pps = calcPointsPerSecond()
+        points = points.add(pps.times(gameDelta));
 
-        if (compVisible < 8 && points.gte(comps[compVisible + 1].cost.mul(0.1)))
-        {
+        if (compVisible < 8 && points.gte(comps[compVisible + 1].cost.mul(0.1))){
             ++compVisible;
             hideShow("gen-comp" + compVisible, true);
         }
 
-        totalPoints = totalPoints.add(calcPointsPerSecond().times(gameDelta));
-        totalPointsInSimplify = totalPointsInSimplify.add(calcPointsPerSecond().times(gameDelta));
+        totalPoints = totalPoints.add(pps.times(gameDelta));
+        totalPointsInSimplify = totalPointsInSimplify.add(pps.times(gameDelta));
         getProgress(delta)
 
         for (let comp = 1; comp <= 8; ++comp) 
@@ -377,30 +416,49 @@ function maxAllComPS(){
                         document.getElementById("gen-comp" + comp + "-cost").classList.remove(clas);
             });
             }
-            // if (comps[comp].bought.gte(compScale * 4)) 
-            //     document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled4")
-            // if (comps[comp].bought.gte(compScale * 3)) 
-            //     document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled3")
-            // if (comps[comp].bought.gte(compScale * 2)) 
-            //     document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled2")
-            // if (comps[comp].bought.gte(compScale)) 
-            //     document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled1")
-            // else 
-            //     document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled0")
-            //below does the same thing as above but with less code.
-            //idk the scale boundries i made them up.
-            
-            const scaled = Math.floor(comps[comp].bought.toNumber() / 150);
-            document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled" + scaled)
-
+            if (comps[comp].bought.gte("eeeee10")) // filler
+                document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled4")
+            if (comps[comp].bought.gte("ee1000")) // filler
+                document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled3")
+            if (comps[comp].bought.gte("1e400000")) // filler
+                document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled2")
+            if (comps[comp].bought.gte(compScale)) 
+                document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled1")
+            else 
+                document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled0")
             //also somthing to consider for proformance reasons its better to change text when it needs to be changed
             //rather than doing it every frame for example this could be moved to when a comP gets bought as its
             //scaling only changes based on how many of that ComP has been bought.
+            //
+            // ^ this won't be effective because pretty soon there will be something that reduces ComP costs *gradually*
             
         }
 
         //html stuff
-        document.getElementById("points").innerHTML = format(points, true) + " <pps>( " + format(calcPointsPerSecond(),true) + " / s ) </pps>";
+        let htmlTemp = ""
+        document.getElementById("points").innerHTML = format(points, true) + " <pps>( " + format(pps,true) + " / s ) </pps>";
+        if (mode == "softcap"){
+            document.getElementById("scPts1").innerHTML = ""
+            document.getElementById("scPts2").innerHTML = ""
+            document.getElementById("scPts3").innerHTML = ""
+            document.getElementById("scPts4").innerHTML = ""
+            if (pps.gte(100)){
+                htmlTemp = "<pps><sc1> Your gain is being reduced by /" + format(softcaps[softcaps.indexOf("pts1")+1],true,3) + " ! </sc1></pps>";
+                document.getElementById("scPts1").innerHTML = htmlTemp
+            }
+            if (pps.gte(1e10)){
+                htmlTemp = "<pps><sc2> Your gain is being reduced by /" + format(softcaps[softcaps.indexOf("pts2")+1],true,3) + " ! </sc2></pps>";
+                document.getElementById("scPts2").innerHTML = htmlTemp
+            }
+            if (pps.gte(1e100)){
+                htmlTemp = "<pps><sc3> Your gain is being reduced by /" + format(softcaps[softcaps.indexOf("pts3")+1],true,3) + " ! </sc3></pps>";
+                document.getElementById("scPts3").innerHTML = htmlTemp
+            }
+            if (pps.gte(1.797693e308)){
+                htmlTemp = "<pps><sc4> Your gain is being reduced by /" + format(softcaps[softcaps.indexOf("pts4")+1],true,3) + " ! </sc4></pps>";
+                document.getElementById("scPts4").innerHTML = htmlTemp
+            }
+        } 
         document.getElementById("fps").innerHTML = "FPS: " + FPS;
         if (tab[0] == 2){ // i'm doing this because we should not update html stuff when it won't be seen at all so lets delay, even though the back-end continues updating the internal variables
             document.getElementById("SER").innerHTML = "You will gain " + format(getSimplifyGain().floor(), true) + " Simplify Energy. [ Next at " + format(new Decimal(10).pow(getSimplifyGain().floor().add(1).log(10).div(simplify.main.SEExp.log(10)).add(1).mul(simplify.main.simplifyReq.log(10))).sub(totalPointsInSimplify), true) + " ]";
@@ -415,6 +473,8 @@ function maxAllComPS(){
         document.getElementById("progressBar1").style.width = progressBar.toNumber() * 98 + "%";
         hideShow("comp", tab[0] == 0)
         hideShow("tab_other_stat", tab[0] == 1)
+        hideShow("tab_other_changeLog", tab[0] == 1)
+        hideShow("changeLog", tab[0] == 1 && tab[1] == 2)
         hideShow("tab_simplify", totalPoints.gte(1e12))
         hideShow("Simplify", tab[0] == 2)
         hideShow("simplify_tab_simplify", tab[0] == 2)

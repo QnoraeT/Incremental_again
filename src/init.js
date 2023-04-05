@@ -1,12 +1,14 @@
+const mode = "normal";
 var compVisible = 1;
 let points = new Decimal(10);
+let pps = new Decimal(0);
 let totalPointsInSimplify = new Decimal(10);
 let totalPoints = new Decimal(10);
-let inChallenge = [] // this is not in simplify list because theres potentially gonna be further layers with their own challenges (which can and will be nested)
+let inChallenge = []; // this is not in simplify list because theres potentially gonna be further layers with their own challenges (which can and will be nested)
 let notation = "Mixed Scientific";
 let totalTime = 0; // timespeed doesn't affect this
 let gameTime = new Decimal(0); // timespeed will affect this (totalGameTime)
-let timeSpeed = new Decimal(100);
+let timeSpeed = new Decimal(1);
 let tab = [0,0,0];
 let expandMultComP = 0;
 let progressBar = new Decimal(0);
@@ -49,7 +51,7 @@ let simplify = {
         timeInChallenge: new Decimal(0), // time speed exists
     },
     "upgrades": {
-        simplifyMainUPG: 0, // the upgrades will always be unique, no need for decimal'ing here
+        simplifyMainUPG: 0, 
         simplifyUPGNum2: new Decimal(0), // the upgrades here will not be unique, and may be bulk auto'd in the future, so i'm letting it stay as decimal
         PPUPG: new Decimal(0),
         MPUPG: new Decimal(0),
