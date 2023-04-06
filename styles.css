@@ -130,36 +130,14 @@ body {
   background-color: #606060;
 }
 
-#tab_simplify{
-  border: 2px solid #00E0FF;
-  color: #0EF;
-  background-color: black;
-  transition-duration: 0.2s;
-}
-
-#tab_simplify:hover{
-  background-color: #006060;
-}
-
-#SER{
+.defaultSimplifyTab{
   border: 2px solid #00FFFF;
   color: cyan;
   background-color: black;
   transition-duration: 0.2s;
 }
 
-#SER:hover{
-  background-color: #006060;
-}
-
-#SEUPG1{
-  border: 2px solid #00FFFF;
-  color: cyan;
-  background-color: black;
-  transition-duration: 0.2s;
-}
-
-#SEUPG1:hover{
+.defaultSimplifyTab:hover{
   background-color: #006060;
 }
 
@@ -301,6 +279,15 @@ body {
   border: 2px solid #00FF00;
 }
 
+.inSimpChal{
+  color: #FFFF00;
+  border: 2px solid #FFFF00;
+}
+
+.inSimpChal:hover{
+  background-color: #660;
+}
+
 .simpChText{
   font-size: 14px;
 }
@@ -311,18 +298,27 @@ body {
 
 sc1{
   color: #F00;
+  text-shadow: 1px 1px #800;
 }
 
 sc2{
   color: #F50;
+  text-shadow: 1px 1px #830;
 }
 
 sc3{
   color: #FA0;
+  text-shadow: 1px 1px #850;
 }
 
 sc4{
   color: #FF0;
+  text-shadow: 1px 1px #880;
+}
+
+sc5{
+  color: #AF0;
+  text-shadow: 1px 1px #580;
 }
 
 .challengeStart{

@@ -43,14 +43,16 @@ document.getElementById("tab_other_stat").classList.add("defaultTab")
 document.getElementById("tab_other_changeLog").classList.add("defaultTab")
 document.getElementById("tab_other").classList.add("defaultTab")
 document.getElementById("maxAll").classList.add("defaultTab")
-
+document.getElementById("SER").classList.add("defaultSimplifyTab")
+document.getElementById("SEUPG1").classList.add("defaultSimplifyTab")
+document.getElementById("tab_simplify").classList.add("defaultSimplifyTab")
 changeLog()
 
 function changeLog(){
     let changeLog = ""
     changeLog = changeLog + "<br><changeLog><p class='date0'> v0.0.0 - Apr 5, 2023 </p>"
     changeLog = changeLog + "<br> Progress on TTS Challenges #1"
-    changeLog = changeLog + "<br> Added a new mode 'softcapped', currently unavaliable"
+    changeLog = changeLog + "<br> Added a new mode 'softcapped', currently unavaliable as an option"
     
     document.getElementById("changeLog").innerHTML = changeLog
 }
@@ -95,8 +97,13 @@ function softcap(amt, type, strength, start) {
                 reduce = amt.div(temp)
                 softcaps.push(reduce)
                 return [temp, reduce] // "/{reduce}"
-            case "E": // exponential
-                temp = amt.log(sta).add(1).pow(sta.log(2))
+            case "E": // exponential 
+                if (str.lt(0)){
+                    console.warn("case 'E' softcaps with strength less than 0 will not work properly!")
+                    str = new Decimal(0)
+                }
+                str = new Decimal(1).sub(new Decimal(2).pow(str).sub(1))
+                temp = amt.log(sta.mul(amt.div(sta).pow(str))).add(1).pow(sta.mul(amt.div(sta).pow(str)).log(2))
                 reduce = arguments[5] ? temp.log(amt) : amt.div(temp)
                 softcaps.push(reduce)
                 return [temp, reduce] // "^{reduce}" or "/{reduce}" if arg5 is false
@@ -194,10 +201,11 @@ function calcPointsPerSecond()
 {
     let tmp = comps[1].trueamount.mul(comps[1].multi)
     if (mode == "softcap"){
-        tmp = softcap(tmp, "EP", 1/6, 100, "pts1", false)[0]
-        tmp = softcap(tmp, "EP", 1/3, 1e10, "pts2", false)[0]
-        tmp = softcap(tmp, "EP", 1/2, 1e100, "pts3", false)[0]
-        tmp = softcap(tmp, "EP", 1, 1.797693e308, "pts4", false)[0]
+        tmp = softcap(tmp, "P", 0.1, 100, "pts1", false)[0]
+        tmp = softcap(tmp, "E", 0.4, 1e8, "pts2", false)[0]
+        tmp = softcap(tmp, "EP", 0.1, 1e16, "pts3", false)[0]
+        tmp = softcap(tmp, "EP", 0.3, 1e25, "pts4", false)[0]
+        tmp = softcap(tmp, "EP", 0.5, 1e40, "pts5", true)[0]
     }
     return tmp;
 }
@@ -227,21 +235,44 @@ function updateChallenge(){
         }
         hideShow("simpChal" + j * 4, temp)
     }
+
+    inSChallenge = false
     for (let i = 0; i < 16; ++i){
-        if (simplify.challenge.completed[i] == 1){
-            document.getElementById("simpChal" + i + "-id").classList.replace("simpChalIncomplete","simpChalComplete")
-        } else {
-            document.getElementById("simpChal" + i + "-id").classList.replace("simpChalComplete","simpChalIncomplete")
-        }
+        document.getElementById("simpChal" + i + "-id").classList.forEach(clas => {
+            if (!clas == "simpChal")
+            document.getElementById("simpChal" + i + "-id").classList.remove(clas);
+        });
+
+        document.getElementById("simpChal" + i + "-id").classList.add(simplify.challenge.completed[i] == 1 ? "simpChalComplete" : "simpChalIncomplete")
         if (document.getElementById("simpChal" + i + "-id").style.display == "inherit"){
             document.getElementById("simpChal" + i + "-id").style.display = ""
         }
+        if (inChallenge.includes("simp" + i)){
+            document.getElementById("simpChal" + i + "-id").classList.add("inSimpChal")
+            inSChallenge = true 
+        }
     }
-
-    document.getElementById("challengeStart1").innerHTML = "Start Challenge"
-    document.getElementById("completeChallenge1").innerHTML = "Complete Challenge"
+    if (inSChallenge == true){
+        document.getElementById("challengeStart1").classList.replace("startChallenge","exitChallenge")
+    } else {
+        document.getElementById("challengeStart1").classList.replace("exitChallenge","startChallenge")
+    }
+    document.getElementById("challengeStart1").innerHTML = inSChallenge ? "Exit Challenge" : "Start Challenge";
+    document.getElementById("challengeStart1").style.width =  totalPointsInSimplify.gte(simplify.main.simplifyReq) && inSChallenge ? "180px" : "360px";
+    document.getElementById("completeChallenge1").innerHTML = "Complete Challenge";
+    hideShow("completeChallenge1", totalPointsInSimplify.gte(simplify.main.simplifyReq) && inSChallenge && tab[0] == 2 & tab[1] == 1)
 }
-
+function completeChallenge() {
+    for (let i = 0; i < 16; ++i){
+        if (inChallenge.includes("simp" + i)){
+            simplify.challenge.completed[i] = 1
+        }
+    }
+    simplifyReset()
+}
+function simpChalSelect(ex) {
+    simpChalSelected = ex
+}
 function simplifyReset() {
     simplify.main.simplifyEnergy=simplify.main.simplifyEnergy.add(getSimplifyGain().floor())
     simplify.main.simplifyStat=simplify.main.simplifyStat.add(1)
@@ -352,10 +383,16 @@ function maxAllComPS(){
         let x = points.log(10)
         if (points.gte(comps[comp].cost))
         {
-        buy = x.sub(new Decimal((comp * 4) - 3)).div(new Decimal(comp * 2))
+        buy = x.sub(new Decimal((comp * 4) - 3)).div(new Decimal(comp * 2).sub(simplify.challenge.MC1effect.log(10)))
         if (buy.gte(compScale))
         {
-            buy = x.mul(compScale).add(compScale.mul(3)).sub(new Decimal(comp * 4).mul(compScale)).root(2).div(new Decimal(comp * 2).root(2))
+            if (simplify.challenge.completed[0] == 1){
+                buy = x.mul(compScale).add(compScale.mul(3)).sub(new Decimal(comp * 4).mul(compScale)).root(2).div(new Decimal(comp * 2).root(2))
+            } else {
+                buy = x.sub(new Decimal(comp * 4)).add(3).mul(new Decimal(comp * 8)).div(compScale)
+                buy = buy.add(simplify.challenge.MC1effect.ln().pow(2).div(5.301898110478399)).root(2).mul(compScale)
+                buy = buy.add(simplify.challenge.MC1effect.ln().div(2.302585092994046).mul(compScale)).div(new Decimal(comp * 4)).add(1)
+            }
         }
         comps[comp]._bought = buy.floor();
         comps[comp]._updateCost(); 
@@ -414,26 +451,25 @@ function maxAllComPS(){
                 document.getElementById("gen-comp" + comp + "-cost").classList.forEach(clas => {
                     if (clas.startsWith("Scaled"))
                         document.getElementById("gen-comp" + comp + "-cost").classList.remove(clas);
-            });
-            }
-            if (comps[comp].bought.gte("eeeee10")) // filler
-                document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled4")
-            if (comps[comp].bought.gte("ee1000")) // filler
-                document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled3")
-            if (comps[comp].bought.gte("1e400000")) // filler
+                    });
+                if (comps[comp].bought.gte("eeeee10")) // filler
+                    document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled4")
+                if (comps[comp].bought.gte("ee1000")) // filler
+                    document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled3")
+                if (comps[comp].bought.gte("1e400000")) // filler
                 document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled2")
-            if (comps[comp].bought.gte(compScale)) 
-                document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled1")
-            else 
-                document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled0")
-            //also somthing to consider for proformance reasons its better to change text when it needs to be changed
-            //rather than doing it every frame for example this could be moved to when a comP gets bought as its
-            //scaling only changes based on how many of that ComP has been bought.
-            //
-            // ^ this won't be effective because pretty soon there will be something that reduces ComP costs *gradually*
-            
-        }
+                if (comps[comp].bought.gte(compScale)) 
+                    document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled1")
+                else 
+                    document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled0")
 
+                //also somthing to consider for proformance reasons its better to change text when it needs to be changed
+                //rather than doing it every frame for example this could be moved to when a comP gets bought as its
+                //scaling only changes based on how many of that ComP has been bought.
+                //
+                // ^ this won't be effective because pretty soon there will be something that reduces/increases ComP costs *gradually*
+            }
+        }
         //html stuff
         let htmlTemp = ""
         document.getElementById("points").innerHTML = format(points, true) + " <pps>( " + format(pps,true) + " / s ) </pps>";
@@ -446,41 +482,52 @@ function maxAllComPS(){
                 htmlTemp = "<pps><sc1> Your gain is being reduced by /" + format(softcaps[softcaps.indexOf("pts1")+1],true,3) + " ! </sc1></pps>";
                 document.getElementById("scPts1").innerHTML = htmlTemp
             }
-            if (pps.gte(1e10)){
+            if (pps.gte(1e8)){
                 htmlTemp = "<pps><sc2> Your gain is being reduced by /" + format(softcaps[softcaps.indexOf("pts2")+1],true,3) + " ! </sc2></pps>";
                 document.getElementById("scPts2").innerHTML = htmlTemp
             }
-            if (pps.gte(1e100)){
+            if (pps.gte(1e16)){
                 htmlTemp = "<pps><sc3> Your gain is being reduced by /" + format(softcaps[softcaps.indexOf("pts3")+1],true,3) + " ! </sc3></pps>";
                 document.getElementById("scPts3").innerHTML = htmlTemp
             }
-            if (pps.gte(1.797693e308)){
+            if (pps.gte(1e25)){
                 htmlTemp = "<pps><sc4> Your gain is being reduced by /" + format(softcaps[softcaps.indexOf("pts4")+1],true,3) + " ! </sc4></pps>";
                 document.getElementById("scPts4").innerHTML = htmlTemp
+            }
+            if (pps.gte(1e40)){
+                htmlTemp = "<pps><sc5> Your gain is being reduced by ^" + format(softcaps[softcaps.indexOf("pts5")+1],true,6) + " ! </sc5></pps>";
+                document.getElementById("scPts5").innerHTML = htmlTemp
             }
         } 
         document.getElementById("fps").innerHTML = "FPS: " + FPS;
         if (tab[0] == 2){ // i'm doing this because we should not update html stuff when it won't be seen at all so lets delay, even though the back-end continues updating the internal variables
             document.getElementById("SER").innerHTML = "You will gain " + format(getSimplifyGain().floor(), true) + " Simplify Energy. [ Next at " + format(new Decimal(10).pow(getSimplifyGain().floor().add(1).log(10).div(simplify.main.SEExp.log(10)).add(1).mul(simplify.main.simplifyReq.log(10))).sub(totalPointsInSimplify), true) + " ]";
+            if (inSChallenge){
+                document.getElementById("SER").classList.add("inSimpChal");
+            } else {
+                document.getElementById("SER").classList.remove("inSimpChal");
+            }
             document.getElementById("SEUPG1").innerHTML = SimpUPG1[simplify.upgrades.simplifyMainUPG + 1] + " Cost: " + format(simpUPG1Cost(),true) + " Simplify Energy";
             document.getElementById("simpEnergy").innerHTML = "You have " + format(simplify.main.simplifyEnergy,true) + " Simplify Energy.";
             document.getElementById("simpEXP1").innerHTML = "You have " + format(simplify.PP.allocated,true) + " SE allocated to " + format(simplify.PP.trueValue, true, 1) + " PP, increasing overall gain by x" + format(simplify.PP.effect, true, 2) + ".";
             document.getElementById("simpEXP2").innerHTML = "You have " + format(simplify.MP.allocated,true) + " SE allocated to " + format(simplify.MP.trueValue, true, 1) + " MP, increasing all multipliers by x" + format(simplify.MP.effect, true, 2) + ".";
             document.getElementById("simpEXP3").innerHTML = "You have " + format(simplify.OP.allocated,true) + " SE allocated to " + format(simplify.OP.trueValue, true, 1) + " 1P, improving 1st mult power to ^" + format(simplify.OP.effect, true, 3) + ".";
             document.getElementById("simpEXP4").innerHTML = "You have " + format(simplify.DP.allocated,true) + " SE allocated to " + format(simplify.DP.trueValue, true, 1) + " DP, causing DM per buy to be x" + format(compBM, true, 3) + ".";
+
         }
-        document.getElementById("progressBar1").innerHTML = progressBarText + (progressBar.toNumber() * 100).toFixed(2) + "%";
-        document.getElementById("progressBar1").style.width = progressBar.toNumber() * 98 + "%";
         hideShow("comp", tab[0] == 0)
-        hideShow("tab_other_stat", tab[0] == 1)
-        hideShow("tab_other_changeLog", tab[0] == 1)
-        hideShow("changeLog", tab[0] == 1 && tab[1] == 2)
-        hideShow("tab_simplify", totalPoints.gte(1e12))
+        hideShow("maxAll", !(inChallenge.includes("simp0") || inChallenge.includes("simp1") || inChallenge.includes("simp2") || inChallenge.includes("simp3") || inChallenge.includes("simp8") || inChallenge.includes("simp11")))     
         hideShow("Simplify", tab[0] == 2)
         hideShow("simplify_tab_simplify", tab[0] == 2)
         hideShow("simplify_tab_tts", simplify.upgrades.simplifyMainUPG >= 2 && tab[0] == 2)
         hideShow("simpExP", simplify.upgrades.simplifyMainUPG >= 1 && tab[0] == 2 && tab[1] == 0)
         hideShow("ttsChal", tab[0] == 2 && tab[1] == 1)
+        hideShow("tab_other_stat", tab[0] == 1)
+        hideShow("tab_other_changeLog", tab[0] == 1)
+        hideShow("changeLog", tab[0] == 1 && tab[1] == 2)
+        hideShow("tab_simplify", totalPoints.gte(1e12))
+        document.getElementById("progressBar1").innerHTML = progressBarText + (progressBar.toNumber() * 100).toFixed(2) + "%";
+        document.getElementById("progressBar1").style.width = progressBar.toNumber() * 98 + "%";
         // do not change order at all
         oldTimeStamp = timeStamp;
         window.requestAnimationFrame(gameLoop);

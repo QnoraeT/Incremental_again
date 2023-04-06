@@ -90,21 +90,27 @@ class ComP
         this._multi = this._multi.mul(simplify.MP.effect);
         this._factors.push("<br> MP Effect: x" + format(simplify.MP.effect,true) + "  (" + format(this._multi,true) + "x)")
         }
+        if (inChallenge.includes("simp0")){
+            this._multi = this._multi.pow(0.75);
+            this._factors.push("<br> Magnifying Challenge 1: ^" + format(new Decimal(0.75),true,2) + "  (" + format(this._multi,true) + "x)")
+            this._multi = this._multi.div(1000);
+            this._factors.push("<br> Magnifying Challenge 1: /" + format(new Decimal(1000),true) + "  (" + format(this._multi,true) + "x)")
+        }
         if (mode == "softcap"){
-            if (this._multi.gte(100)){
-                this._multi = softcap(this._multi, "EP", 1/6, 100, "mul1," + this._index, false)[0]
+            if (this._multi.gte(10)){
+                this._multi = softcap(this._multi, "P", 0.1, 10, "mul1," + this._index, false)[0]
                 this._factors.push("<br><sc1> Softcap 1: /" + format(softcaps[softcaps.indexOf("mul1," + this._index)+1],true,3) + "  (" + format(this._multi,true) + "x)</sc1>")
             }
-            if (this._multi.gte(1e7)){
-                this._multi = softcap(this._multi, "EP", 1/3, 1e7, "mul2," + this._index, false)[0]
+            if (this._multi.gte(1e8)){
+                this._multi = softcap(this._multi, "E", 0.3, 1e8, "mul2," + this._index, false)[0]
                 this._factors.push("<br><sc2> Softcap 2: /" + format(softcaps[softcaps.indexOf("mul2," + this._index)+1],true,3) + "  (" + format(this._multi,true) + "x)</sc2>")
             }
-            if (this._multi.gte(1e49)){
-                this._multi = softcap(this._multi, "EP", 1/2, 1e49, "mul3," + this._index, false)[0]
+            if (this._multi.gte(1e15)){
+                this._multi = softcap(this._multi, "EP", 0.1, 1e15, "mul3," + this._index, false)[0]
                 this._factors.push("<br><sc3> Softcap 3: /" + format(softcaps[softcaps.indexOf("mul3," + this._index)+1],true,3) + "  (" + format(this._multi,true) + "x)</sc3>")
             }
-            if (this._multi.gte(1.797693e308)){
-                this._multi = softcap(this._multi, "EP", 1, 1.797693e308, "mul4," + this._index, false)[0]
+            if (this._multi.gte(1e25)){
+                this._multi = softcap(this._multi, "EP", 0.25, 1e25, "mul4," + this._index, false)[0]
                 this._factors.push("<br><sc4> Softcap 4: /" + format(softcaps[softcaps.indexOf("mul4," + this._index)+1],true,3) + "  (" + format(this._multi,true) + "x)</sc4>")
             }
         }
@@ -114,10 +120,17 @@ class ComP
     {
         //update cost, formula: 10^(4(comp) + 2x(comp) - 3), x = comps[comp].bought
         let temp = this._bought;
+        let cost
         if (temp.gte(compScale))
             temp = temp.div(compScale).pow(2).mul(compScale)
-        temp = new Decimal((this._index * 4) - 3).add(new Decimal(this._index)
+        cost = new Decimal((this._index * 4) - 3).add(new Decimal(this._index)
                     .mul(2).mul(temp));
-        this._cost = new Decimal(10).pow(temp);
+        if (inChallenge.includes("simp0")){
+            cost = cost.add(temp.mul(temp.add(1)).mul(0.30102999).div(2))
+        }
+        if (simplify.challenge.completed[0] == 1){
+            cost = cost.sub(temp.mul(simplify.challenge.MC1effect.log(10)))
+        }
+        this._cost = new Decimal(10).pow(cost);
     }
 }
