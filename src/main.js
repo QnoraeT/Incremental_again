@@ -334,7 +334,8 @@ function calcCompxPerSecond(comp)  {
 }
 
 function getProgress(delta) { // progressBar = 0-1
-    let prev = 1
+    let prev = new Decimal(1)
+    progressBarText = "All done! "
     if (totalPoints.lt(1e12)){
         prev = totalPoints.add(1).log(1e12)
         progressBarText = "Next layer: "
@@ -381,17 +382,17 @@ function maxAllComPS(){
     for (let comp = 8; comp >= 1; --comp) 
     {
         let x = points.log(10)
-        if (points.gte(comps[comp].cost))
-        {
-        buy = x.sub(new Decimal((comp * 4) - 3)).div(new Decimal(comp * 2).sub(simplify.challenge.MC1effect.log(10)))
-        if (buy.gte(compScale))
-        {
+        if (points.gte(comps[comp].cost)){
+            buy = new Decimal(comp * 2)
             if (simplify.challenge.completed[0] == 1){
-                buy = x.mul(compScale).add(compScale.mul(3)).sub(new Decimal(comp * 4).mul(compScale)).root(2).div(new Decimal(comp * 2).root(2))
+                buy = buy.sub(simplify.challenge.MC1effect.log(10))
+            }
+            buy = x.sub(new Decimal((comp * 4) - 3)).div(buy)
+        if (buy.gte(compScale)){
+            if (simplify.challenge.completed[0] == 1){
+                buy = x.add(3).sub(new Decimal(comp * 4)).mul(new Decimal(comp * 8)).div(compScale).add(simplify.challenge.MC1effect.log(10).pow(2)).root(2).mul(compScale).add(compScale.mul(simplify.challenge.MC1effect.log(10))).div(new Decimal(comp * 4))
             } else {
-                buy = x.sub(new Decimal(comp * 4)).add(3).mul(new Decimal(comp * 8)).div(compScale)
-                buy = buy.add(simplify.challenge.MC1effect.ln().pow(2).div(5.301898110478399)).root(2).mul(compScale)
-                buy = buy.add(simplify.challenge.MC1effect.ln().div(2.302585092994046).mul(compScale)).div(new Decimal(comp * 4)).add(1)
+                buy = x.mul(compScale).add(compScale.mul(3)).sub(new Decimal(comp * 4).mul(compScale)).root(2).div(new Decimal(comp * 2).root(2))
             }
         }
         comps[comp]._bought = buy.floor();

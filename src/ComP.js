@@ -123,10 +123,9 @@ class ComP
         let cost
         if (temp.gte(compScale))
             temp = temp.div(compScale).pow(2).mul(compScale)
-        cost = new Decimal((this._index * 4) - 3).add(new Decimal(this._index)
-                    .mul(2).mul(temp));
+        cost = new Decimal((this._index * 4) - 3).add(new Decimal(this._index * 2).mul(temp));
         if (inChallenge.includes("simp0")){
-            cost = cost.add(temp.mul(temp.add(1)).mul(0.30102999).div(2))
+            cost = cost.add(temp.mul(temp.add(1)).mul(0.15051499))
         }
         if (simplify.challenge.completed[0] == 1){
             cost = cost.sub(temp.mul(simplify.challenge.MC1effect.log(10)))

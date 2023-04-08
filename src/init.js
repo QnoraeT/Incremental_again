@@ -1,4 +1,4 @@
-const mode = "normal";
+const mode = "softcap";
 var compVisible = 1;
 let points = new Decimal(10);
 let pps = new Decimal(0);
