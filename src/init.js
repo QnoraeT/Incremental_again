@@ -1,4 +1,4 @@
-const mode = "softcap";
+const mode = "normal";
 var compVisible = 1;
 let points = new Decimal(10);
 let pps = new Decimal(0);
@@ -8,7 +8,7 @@ let inChallenge = []; // this is not in simplify list because theres potentially
 let notation = "Mixed Scientific";
 let totalTime = 0; // timespeed doesn't affect this
 let gameTime = new Decimal(0); // timespeed will affect this (totalGameTime)
-let timeSpeed = new Decimal(1000);
+let timeSpeed = new Decimal(1);
 let tab = [0,0,0];
 let expandMultComP = 0;
 let progressBar = new Decimal(0);
