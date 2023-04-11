@@ -213,9 +213,6 @@ function calcPointsPerSecond()
 function simpUPG1Cost() {
     let ret = new Decimal(simplify.upgrades.simplifyMainUPG)
     ret = new Decimal(10).pow(ret.pow(2)).mul(ret.factorial())
-    if (simplify.upgrades.simplifyMainUPG < 2){ // factorial inaccuracy (displays as 1 but actually 1.00123456789)
-        ret = ret.div(1.001)
-    }
     return ret
 }
 
@@ -299,9 +296,12 @@ function simplifyReset() {
 }
 
 function simplify1Upg() {
-    if (simplify.main.simplifyEnergy.gte(simpUPG1Cost()))
+    if (simplify.main.simplifyEnergy.gte_tolerance(simpUPG1Cost(), 0.001))
     {
         simplify.main.simplifyEnergy = simplify.main.simplifyEnergy.sub(simpUPG1Cost())
+        if (simplify.main.simplifyEnergy.lt(0)){
+            simplify.main.simplifyEnergy = new Decimal(0)
+        }
         simplify.upgrades.simplifyMainUPG++
     }
 }
