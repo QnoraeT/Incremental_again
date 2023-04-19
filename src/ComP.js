@@ -1,6 +1,8 @@
 let compExp = new Decimal(0.8);
 let compBM = new Decimal(2);
-let compScale = new Decimal(150);
+let compScale1 = new Decimal(150);
+let compScale2 = new Decimal(100000);
+let compScale2Pow = [new Decimal(1), new Decimal(1), new Decimal(1), new Decimal(1)];
 
 class ComP
 {
@@ -97,8 +99,8 @@ class ComP
             this._factors.push("<br> Magnifying Challenge 1: /" + format(new Decimal(1000),true) + "  (" + format(this._multi,true) + "x)")
         }
         if (mode == "softcap"){
-            if (this._multi.gte(10)){
-                this._multi = softcap(this._multi, "P", 0.1, 10, "mul1," + this._index, false)[0]
+            if (this._multi.gte(100)){
+                this._multi = softcap(this._multi, "P", 0.1, 100, "mul1," + this._index, false)[0]
                 this._factors.push("<br><sc1> Softcap 1: /" + format(softcaps[softcaps.indexOf("mul1," + this._index)+1],true,3) + "  (" + format(this._multi,true) + "x)</sc1>")
             }
             if (this._multi.gte(1e8)){
@@ -121,15 +123,22 @@ class ComP
         //update cost, formula: 10^(4(comp) + 2x(comp) - 3), x = comps[comp].bought
         let temp = this._bought;
         let cost
-        if (temp.gte(compScale))
-            temp = temp.div(compScale).pow(2).mul(compScale)
-        cost = new Decimal((this._index * 4) - 3).add(new Decimal(this._index * 2).mul(temp));
-        if (inChallenge.includes("simp0")){
-            cost = cost.add(temp.mul(temp.add(1)).mul(0.15051499))
+        if (temp.gte(compScale2)){
+            let a = new Decimal("e133333333").mul(this._index)
+            let b = new Decimal("e3000").mul(this._index)
+            let c = compScale2Pow[0]
+            let d = compScale2Pow[1].mul(0.0001).mul(this._index ** 0.25).add(1)
+            let e = compScale2Pow[2].mul(0.0001).mul(this._index ** 0.25)
+            let f = compScale2Pow[3].mul(2).mul(this._index ** 0.1)
+            cost = calcGeneralCosts("EEP", temp.sub(compScale2), false, a, b, c, d, e, f)
+        } else {
+            if (temp.gte(compScale1)){
+                cost = Decimal.pow(10, new Decimal(this._index).mul(temp.pow(2).mul(2).div(compScale1).add(4)).sub(3))
+            } else {   
+                cost = Decimal.pow(10, new Decimal(2 * this._index).mul(temp.add(2)).sub(3))
+            }
         }
-        if (simplify.challenge.completed[0] == 1){
-            cost = cost.sub(temp.mul(simplify.challenge.MC1effect.log(10)))
-        }
-        this._cost = new Decimal(10).pow(cost);
+        cost = cost.div(simplify.challenge.MC1effect.pow(temp)).div(simplify.challenge.SC3effect.pow(new Decimal(this._index).mul(temp)))
+        this._cost = cost;
     }
 }

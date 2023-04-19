@@ -23,23 +23,26 @@ pps {
   display: inline;
 }
 
+.defaultButton{
+  background-color: black;
+  transition-duration: 0.2s;
+}
+
 body {
   background-color: black;
 }
 
 #points {
-    font-family: "Verdana";
-    font-size: 24px;
-    text-align: left;
-    text-shadow: 2px 2px grey;
-    color: white;
+  font-family: "Verdana";
+  font-size: 24px;
+  text-align: left;
+  text-shadow: 2px 2px grey;
+  color: white;
 } 
 
 #simpEXP1b {
   border: 2px solid #FF0000;
   color: #FF0000;
-  background-color: black;
-  transition-duration: 0.2s;
 } 
 
 #simpEXP1b:hover{
@@ -49,8 +52,6 @@ body {
 #simpEXP2b {
   border: 2px solid #FFFF00;
   color: #FFFF00;
-  background-color: black;
-  transition-duration: 0.2s;
 } 
 
 #simpEXP2b:hover{
@@ -60,8 +61,6 @@ body {
 #simpEXP3b {
   border: 2px solid #00FF00;
   color: #00FF00;
-  background-color: black;
-  transition-duration: 0.2s;
 } 
 
 #simpEXP3b:hover{
@@ -71,8 +70,6 @@ body {
 #simpEXP4b {
   border: 2px solid #0000FF;
   color: #0000FF;
-  background-color: black;
-  transition-duration: 0.2s;
 } 
 
 #simpEXP4b:hover{
@@ -122,8 +119,6 @@ body {
 .defaultTab{
   border: 2px solid #FFFFFF;
   color: white;
-  background-color: black;
-  transition-duration: 0.2s;
 }
 
 .defaultTab:hover{
@@ -133,8 +128,6 @@ body {
 .defaultSimplifyTab{
   border: 2px solid #00FFFF;
   color: cyan;
-  background-color: black;
-  transition-duration: 0.2s;
 }
 
 .defaultSimplifyTab:hover{
@@ -144,8 +137,6 @@ body {
 #simplify_tab_simplify{
   border: 2px solid #0CF;
   color: #0CF;
-  background-color: black;
-  transition-duration: 0.2s;
   display: inline;
 }
 
@@ -156,8 +147,6 @@ body {
 #simplify_tab_tts{
   border: 2px solid #FFFFFF;
   color: white;
-  background-color: black;
-  transition-duration: 0.2s;
   display: inline;
 }
 
@@ -168,8 +157,6 @@ body {
 .ceMul{
   border: 2px solid #0080FF;
   color: #0080FF;
-  background-color: black;
-  transition-duration: 0.2s;
   margin-left: 4px
 }
 
@@ -180,15 +167,11 @@ body {
 .compNo{
   border: 2px solid #FF0000;
   cursor: not-allowed;
-  background-color: black;
-  transition-duration: 0.2s;
 }
 
 .compYes{
   border: 2px solid #00FF00;
   cursor: pointer;
-  background-color: black;
-  transition-duration: 0.2s;
 }
 
 .compNo:hover{
@@ -258,8 +241,6 @@ body {
   font-family: "Verdana";
   font-size: 14px;
   text-align: center;
-  background-color: black;
-  transition-duration: 0.2s;
   width: 30px;
   height: 30px;
 }
@@ -325,8 +306,6 @@ sc5{
   font-family: "Verdana";
   border: 2px solid #00FF00;
   color: #0F0;
-  background-color: black;
-  transition-duration: 0.2s;
   font-size: 16px;
   width: 180px;
   height: 30px;

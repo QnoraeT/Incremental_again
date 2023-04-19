@@ -1,4 +1,5 @@
 const mode = "normal";
+const ln10 = new Decimal(10).ln();
 var compVisible = 1;
 let points = new Decimal(10);
 let pps = new Decimal(0);
@@ -51,7 +52,8 @@ let simplify = {
     "challenge": {
         completed: Array(16).fill(0), // 0-3 Magnifying [] 4-7 Beginner [] 8-11 Articulated [] 12-15 77777777 []
         timeInChallenge: new Decimal(0), // time speed exists
-        MC1effect: new Decimal(2),
+        MC1effect: new Decimal(1),
+        SC3effect: new Decimal(1),
     },
     "upgrades": {
         simplifyMainUPG: 0, 

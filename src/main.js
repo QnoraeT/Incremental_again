@@ -33,19 +33,19 @@ document.getElementById("simpEXP1b").innerHTML = "Allocate all SE into PP."
 document.getElementById("simpEXP2b").innerHTML = "Allocate all SE into MP."
 document.getElementById("simpEXP3b").innerHTML = "Allocate all SE into 1P."
 document.getElementById("simpEXP4b").innerHTML = "Allocate all SE into DP."
-document.getElementById("challengeStart1").classList.add("challengeStart")
-document.getElementById("challengeStart1").classList.add("startChallenge")
-document.getElementById("completeChallenge1").classList.add("challengeStart")
-document.getElementById("completeChallenge1").classList.add("completeChallenge")
-document.getElementById("tab_comp").classList.add("defaultTab")
-document.getElementById("tab_other").classList.add("defaultTab")
-document.getElementById("tab_other_stat").classList.add("defaultTab")
-document.getElementById("tab_other_changeLog").classList.add("defaultTab")
-document.getElementById("tab_other").classList.add("defaultTab")
-document.getElementById("maxAll").classList.add("defaultTab")
-document.getElementById("SER").classList.add("defaultSimplifyTab")
-document.getElementById("SEUPG1").classList.add("defaultSimplifyTab")
-document.getElementById("tab_simplify").classList.add("defaultSimplifyTab")
+document.getElementById("challengeStart1").classList.add("challengeStart", "defaultButton")
+document.getElementById("challengeStart1").classList.add("startChallenge", "defaultButton")
+document.getElementById("completeChallenge1").classList.add("challengeStart", "defaultButton")
+document.getElementById("completeChallenge1").classList.add("completeChallenge", "defaultButton")
+document.getElementById("tab_comp").classList.add("defaultTab", "defaultButton")
+document.getElementById("tab_other").classList.add("defaultTab", "defaultButton")
+document.getElementById("tab_other_stat").classList.add("defaultTab", "defaultButton")
+document.getElementById("tab_other_changeLog").classList.add("defaultTab", "defaultButton")
+document.getElementById("tab_other").classList.add("defaultTab", "defaultButton")
+document.getElementById("maxAll").classList.add("defaultTab", "defaultButton")
+document.getElementById("SER").classList.add("defaultSimplifyTab", "defaultButton")
+document.getElementById("SEUPG1").classList.add("defaultSimplifyTab", "defaultButton")
+document.getElementById("tab_simplify").classList.add("defaultSimplifyTab", "defaultButton")
 changeLog()
 
 function changeLog(){
@@ -197,8 +197,7 @@ function simplifyXPtick(type,tickRate) {
     }
 }
 
-function calcPointsPerSecond()
-{
+function calcPointsPerSecond(){
     let tmp = comps[1].trueamount.mul(comps[1].multi)
     if (mode == "softcap"){
         tmp = softcap(tmp, "P", 0.1, 100, "pts1", false)[0]
@@ -210,7 +209,7 @@ function calcPointsPerSecond()
     return tmp;
 }
 
-function simpUPG1Cost() {
+function simpUPG1Cost(){
     let ret = new Decimal(simplify.upgrades.simplifyMainUPG)
     ret = new Decimal(10).pow(ret.pow(2)).mul(ret.factorial())
     return ret
@@ -377,28 +376,44 @@ function expandComPMULTI(comp){
     expandMultComP = (expandMultComP == comp) ? 0 : comp;
 }
 
+function getChalEffects(){
+    return 
+    let temp
+    temp = new Decimal(1)
+    if (simplify.challenge.completed[0] == 1){
+        temp = temp.add(1)
+    }
+    simplify.challenge.MC1effect = temp
+    temp = new Decimal(1)
+    if (simplify.challenge.completed[14] == 1){
+        temp = temp.add(0.25)
+    }
+    simplify.challenge.SC3effect = temp
+    
+}
+
 function maxAllComPS(){
     let buy
-    for (let comp = 8; comp >= 1; --comp) 
-    {
+    for (let comp = 8; comp >= 1; --comp){
         let x = points.log(10)
         if (points.gte(comps[comp].cost)){
-            buy = new Decimal(comp * 2)
-            if (simplify.challenge.completed[0] == 1){
-                buy = buy.sub(simplify.challenge.MC1effect.log(10))
+            buy = new Decimal(comp * 4).sub(x).sub(3).mul(ln10).div(new Decimal(comp).mul(simplify.challenge.SC3effect.ln().mul(-1)).add(new Decimal(comp * 2).mul(ln10)).sub(simplify.challenge.MC1effect.ln())).mul(-1)
+            if (buy.gte(compScale1)){
+                buy = x.add(3).sub(new Decimal(comp * 4)).mul(new Decimal(comp * 8)).div(compScale1).add(new Decimal(comp).mul(simplify.challenge.SC3effect.log(10)).add(simplify.challenge.MC1effect.log(10)).pow(2)).root(2).mul(compScale1).add(new Decimal(comp).mul(compScale1).mul(simplify.challenge.SC3effect.log(10))).add(compScale1.mul(simplify.challenge.MC1effect.log(10))).div(new Decimal(comp * 4))
             }
-            buy = x.sub(new Decimal((comp * 4) - 3)).div(buy)
-        if (buy.gte(compScale)){
-            if (simplify.challenge.completed[0] == 1){
-                buy = x.add(3).sub(new Decimal(comp * 4)).mul(new Decimal(comp * 8)).div(compScale).add(simplify.challenge.MC1effect.log(10).pow(2)).root(2).mul(compScale).add(compScale.mul(simplify.challenge.MC1effect.log(10))).div(new Decimal(comp * 4))
-            } else {
-                buy = x.mul(compScale).add(compScale.mul(3)).sub(new Decimal(comp * 4).mul(compScale)).root(2).div(new Decimal(comp * 2).root(2))
+            if (buy.gte(compScale2)){
+                let a = new Decimal("e133333333").mul(comp)
+                let b = new Decimal("e3000").mul(comp)
+                let c = compScale2Pow[0]
+                let d = compScale2Pow[1].mul(0.0001).mul(comp ** 0.25).add(1)
+                let e = compScale2Pow[2].mul(0.0001).mul(comp ** 0.25)
+                let f = compScale2Pow[3].mul(2).mul(comp ** 0.1)
+                buy = calcGeneralCosts("EEP", Decimal.pow(10, x), true, a, b, c, d, e, f).add(compScale2)
             }
-        }
-        comps[comp]._bought = buy.floor();
-        comps[comp]._updateCost(); 
-        points = points.sub(comps[comp].cost);
-        comps[comp].buy();
+            comps[comp]._bought = buy.floor();
+            comps[comp]._updateCost(); 
+            points = points.sub(comps[comp].cost);
+            comps[comp].buy();
         }
     }
 }
@@ -412,7 +427,6 @@ function maxAllComPS(){
         let delta = (timeStamp - oldTimeStamp) / 1000;
         const FPS = Math.round(1 / delta);
         let gameDelta = new Decimal(delta).mul(timeSpeed)
-
         softcaps = [];
         for (type of ["PP", "MP", "OP", "DP"])
             simplifyXPtick(type, gameDelta);
@@ -429,11 +443,10 @@ function maxAllComPS(){
         totalPoints = totalPoints.add(pps.times(gameDelta));
         totalPointsInSimplify = totalPointsInSimplify.add(pps.times(gameDelta));
         getProgress(delta)
+        getChalEffects()
 
-        for (let comp = 1; comp <= 8; ++comp) 
-        {
+        for (let comp = 1; comp <= 8; ++comp){
             comps[comp].changeAmount(calcCompxPerSecond(comp).times(gameDelta));
-
             if (tab[0] == 0){
                 let tr = comps[comp].amount.add(calcCompxPerSecond(comp)).pow(compExp).sub(comps[comp].amount.pow(compExp))
                 const perSecondText = " (" + format(tr, true, tr < 10 ? 1 : 0) + "/s),";
@@ -457,13 +470,12 @@ function maxAllComPS(){
                     document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled4")
                 if (comps[comp].bought.gte("ee1000")) // filler
                     document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled3")
-                if (comps[comp].bought.gte("1e400000")) // filler
+                if (comps[comp].bought.gte(compScale2))
                 document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled2")
-                if (comps[comp].bought.gte(compScale)) 
+                if (comps[comp].bought.gte(compScale1)) 
                     document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled1")
                 else 
                     document.getElementById("gen-comp" + comp + "-cost").classList.add("Scaled0")
-
                 //also somthing to consider for proformance reasons its better to change text when it needs to be changed
                 //rather than doing it every frame for example this could be moved to when a comP gets bought as its
                 //scaling only changes based on how many of that ComP has been bought.
@@ -501,7 +513,7 @@ function maxAllComPS(){
             }
         } 
         document.getElementById("fps").innerHTML = "FPS: " + FPS;
-        if (tab[0] == 2){ // i'm doing this because we should not update html stuff when it won't be seen at all so lets delay, even though the back-end continues updating the internal variables
+        if (tab[0] == 2){ 
             document.getElementById("SER").innerHTML = "You will gain " + format(getSimplifyGain().floor(), true) + " Simplify Energy. [ Next at " + format(new Decimal(10).pow(getSimplifyGain().floor().add(1).log(10).div(simplify.main.SEExp.log(10)).add(1).mul(simplify.main.simplifyReq.log(10))).sub(totalPointsInSimplify), true) + " ]";
             if (inSChallenge){
                 document.getElementById("SER").classList.add("inSimpChal");
@@ -514,7 +526,6 @@ function maxAllComPS(){
             document.getElementById("simpEXP2").innerHTML = "You have " + format(simplify.MP.allocated,true) + " SE allocated to " + format(simplify.MP.trueValue, true, 1) + " MP, increasing all multipliers by x" + format(simplify.MP.effect, true, 2) + ".";
             document.getElementById("simpEXP3").innerHTML = "You have " + format(simplify.OP.allocated,true) + " SE allocated to " + format(simplify.OP.trueValue, true, 1) + " 1P, improving 1st mult power to ^" + format(simplify.OP.effect, true, 3) + ".";
             document.getElementById("simpEXP4").innerHTML = "You have " + format(simplify.DP.allocated,true) + " SE allocated to " + format(simplify.DP.trueValue, true, 1) + " DP, causing DM per buy to be x" + format(compBM, true, 3) + ".";
-
         }
         hideShow("comp", tab[0] == 0)
         hideShow("maxAll", !(inChallenge.includes("simp0") || inChallenge.includes("simp1") || inChallenge.includes("simp2") || inChallenge.includes("simp3") || inChallenge.includes("simp8") || inChallenge.includes("simp11")))     

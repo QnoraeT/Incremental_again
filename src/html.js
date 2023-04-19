@@ -27,6 +27,7 @@ for (let comp = 1; comp <= 8; ++comp) {
     buyButton.classList.add("compNo");
     buyButton.classList.add("Scaled0");
     buyButton.classList.add("buttonRight");
+    buyButton.classList.add("defaultButton");
     div.appendChild(buyButton);
 
     let button2 = document.createElement("button");
@@ -34,6 +35,7 @@ for (let comp = 1; comp <= 8; ++comp) {
     button2.onclick = () => expandComPMULTI(comp);
     button2.class = "ceMul";
     button2.classList.add("ceMul");
+    button2.classList.add("defaultButton");
     div.appendChild(button2);
 
     let mbreakdown = document.createElement("p");
@@ -62,6 +64,7 @@ for (let chall = 0; chall < 16;) {
         challenge.class = "simpChal";
         challenge.classList.add("simpChal");
         challenge.classList.add("simpChalIncomplete");
+        challenge.classList.add("defaultButton");
         div.appendChild(challenge);
         chall++
     }
