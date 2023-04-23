@@ -1,3 +1,5 @@
+"use strict";
+
 const mode = "normal";
 const ln10 = new Decimal(10).ln();
 var compVisible = 1;
@@ -16,6 +18,8 @@ let progressBar = new Decimal(0);
 let progressBarText = "";
 let inSChallenge = 0;
 let simpChalSelected = 0;
+let softcaps = [];
+let sXPTypes = ["PP", "MP", "OP", "DP"]
 let simplify = {
     "main": {
         simplifyEnergy: new Decimal(0),

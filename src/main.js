@@ -1,3 +1,5 @@
+"use strict";
+
 /* 
 TODO:
  :make the tab for the challenge select (clicking any amount of times on the challenge numbers themselves won't do anything, there must be a "start challenge" button to the right side with its description and reward)
@@ -33,6 +35,10 @@ document.getElementById("simpEXP1b").innerHTML = "Allocate all SE into PP."
 document.getElementById("simpEXP2b").innerHTML = "Allocate all SE into MP."
 document.getElementById("simpEXP3b").innerHTML = "Allocate all SE into 1P."
 document.getElementById("simpEXP4b").innerHTML = "Allocate all SE into DP."
+document.getElementById("simpEXP1b").classList.add("defaultButton")
+document.getElementById("simpEXP2b").classList.add("defaultButton")
+document.getElementById("simpEXP3b").classList.add("defaultButton")
+document.getElementById("simpEXP4b").classList.add("defaultButton")
 document.getElementById("challengeStart1").classList.add("challengeStart", "defaultButton")
 document.getElementById("challengeStart1").classList.add("startChallenge", "defaultButton")
 document.getElementById("completeChallenge1").classList.add("challengeStart", "defaultButton")
@@ -46,6 +52,8 @@ document.getElementById("maxAll").classList.add("defaultTab", "defaultButton")
 document.getElementById("SER").classList.add("defaultSimplifyTab", "defaultButton")
 document.getElementById("SEUPG1").classList.add("defaultSimplifyTab", "defaultButton")
 document.getElementById("tab_simplify").classList.add("defaultSimplifyTab", "defaultButton")
+document.getElementById("simplify_tab_simplify").classList.add("defaultButton")
+document.getElementById("simplify_tab_tts").classList.add("defaultButton")
 changeLog()
 
 function changeLog(){
@@ -81,120 +89,30 @@ function buyComp(comp) {
     }
 }
 
-function softcap(amt, type, strength, start) {
-    softcaps.push(arguments[4]) // arg4 is name for listing
-    let sta = new Decimal(start)
-    if (amt.gte(sta))
-    {
-        let str = new Decimal(strength)
-        let temp
-        let reduce
-        switch(type) 
-        {
-            case "P": // polynomial
-                str = new Decimal(2).pow(str)
-                temp = amt.root(str).mul(sta.pow(new Decimal(1).sub(new Decimal(1).div(str))))
-                reduce = amt.div(temp)
-                softcaps.push(reduce)
-                return [temp, reduce] // "/{reduce}"
-            case "E": // exponential 
-                if (str.lt(0)){
-                    console.warn("case 'E' softcaps with strength less than 0 will not work properly!")
-                    str = new Decimal(0)
-                }
-                str = new Decimal(1).sub(new Decimal(2).pow(str).sub(1))
-                temp = amt.log(sta.mul(amt.div(sta).pow(str))).add(1).pow(sta.mul(amt.div(sta).pow(str)).log(2))
-                reduce = arguments[5] ? temp.log(amt) : amt.div(temp)
-                softcaps.push(reduce)
-                return [temp, reduce] // "^{reduce}" or "/{reduce}" if arg5 is false
-            case "EP":
-                str = new Decimal(2).pow(str)
-                temp = new Decimal(10).pow(amt.log(10).root(str).mul(sta.log(10).pow(new Decimal(1).sub(new Decimal(1).div(str)))))
-                reduce = arguments[5] ? temp.log(amt) : amt.div(temp)
-                softcaps.push(reduce)
-                return [temp, reduce] // "^{reduce}" or "/{reduce}" if arg5 is false
-            default:
-                console.error("Softcap type " + type + " is not defined!!")
-                return [amt, new Decimal(1)] // fallback amt
-        }
-    }
-    softcaps.push(new Decimal(1))
-    return [amt, new Decimal(1)] 
-}
-function calcGeneralCosts() {
-     // 1st arg is type, 2nd arg is effective bought, 3rd arg is if it's inverse, 4th+ are params
-    let type = arguments[0]
-    let x = new Decimal(arguments[1])
-    let a = new Decimal(arguments[3])
-    let b = new Decimal(arguments[4])
-    let c = new Decimal(arguments[5])
-    let d = new Decimal(arguments[6])
-    let f = new Decimal(arguments[7])
-    let g = new Decimal(arguments[8])
-    let temp
-    switch(type) {
-        case "EP": // a*b^(x+(cx)^2)) - exponential:polynomial
-            if (arguments[2] == false)
-                temp = b.pow(x.mul(c).pow(2).add(x)).mul(a)
-            else
-                temp = b.ln().add(x.div(a).ln().mul(c.pow(2).mul(4))).root(2).div(b.ln().root(2).mul(c.pow(2).mul(2))).sub(new Decimal(1).div(c.pow(2).mul(2)))
-            return temp
-        case "EEP": // a*b^(xcd^((fx)^g)) - exponential^2:polynomial
-            if (arguments[2] == false)
-                temp = a.mul(b.pow(d.pow(x.mul(f).pow(g)).mul(c).mul(x)))
-            else 
-                temp = x.div(a).ln().pow(g).mul(d.ln()).mul(f.pow(g)).mul(g).div(c.pow(g).mul(b.ln().pow(g))).lambertw().root(g).div(g.root(g).mul(f).mul(d.ln().root(g)))
-            return temp
-        case "ADt": // antimatter dimension's free tickspeed from time softcap (a = start [AD = 300000], b = normal base [AD = 1.33 or 1.25], c = scale base [AD = 1.000006])
-            if (arguments[2] == false){
-                if (x.gte(a))
-                {
-                    temp = x.sub(a).add(1)
-                    temp = b.pow(x).mul(c.pow(temp.sub(1).mul(temp).div(2)))
-                }
-                else
-                    temp = b.pow(x)
-            } 
-            else
-            {
-                if (x.gte(b.pow(a)))
-                {
-                    b = b.ln()
-                    c = c.ln()
-                    //((2ac-2b-c)/2c)+(sqrt(4bc-8abc+4b^2+8ln(x)*c+c^2)/2c)
-                    temp = a.mul(c).mul(2).sub(b.mul(2)).sub(c).div(c.mul(2)).add(b.mul(c).mul(4).sub(a.mul(b).mul(c).mul(8)).add(b.pow(2).mul(4)).add(x.ln().mul(8).mul(c)).add(c.pow(2)).root(2).div(c.mul(2)))
-                }
-                else
-                    temp = x.log(b)
-            }
-            return temp
-        default:
-            console.error("Cost scaling type " + type + " is not defined!!")
-            return new Decimal(10) // fallback cost
-    }
-}
-
 function simplifyXPtick(type,tickRate) {
     let temp
-    temp = simplify[type].allocated
-    simplify[type].generated = simplify[type].generated.add(temp.mul(tickRate))
-    simplify[type].trueValue = simplify[type].generated.add(1).pow(simplify.main.SAExp).sub(1)
-    if (type = "PP") {
-        temp = simplify.PP.trueValue
-        simplify.PP.effect = temp.pow(1.5).add(1)
+    temp = simplify[sXPTypes[type]].allocated // increase xP gain later...
+    simplify[sXPTypes[type]].generated = simplify[sXPTypes[type]].generated.add(temp.mul(tickRate))
+    simplify[sXPTypes[type]].trueValue = simplify[sXPTypes[type]].generated.add(1).pow(simplify.main.SAExp).sub(1)
+    temp = simplify[sXPTypes[type]].trueValue
+    switch(type){
+        case 0: 
+            temp = temp.pow(1.5).add(1)
+            break
+        case 1: 
+            temp = temp.pow(0.75).add(1)
+            break
+        case 2: 
+            temp = temp.add(10).log(10).root(8).add(1)
+            break
+        case 3: 
+            temp = temp.add(10).log(10).root(4)
+            break
+        default:
+            console.warning("Type " + type + "is unknown!")
+            break
     }
-    if (type = "MP") {
-        temp = simplify.MP.trueValue
-        simplify.MP.effect = temp.pow(0.75).add(1)
-    }
-    if (type = "OP") {
-        temp = simplify.OP.trueValue
-        simplify.OP.effect = temp.add(10).log(10).root(8).add(1)
-    }
-    if (type = "DP") {
-        temp = simplify.DP.trueValue
-        simplify.DP.effect = temp.add(10).log(10).root(4)
-    }
+    simplify[sXPTypes[type]].effect = temp
 }
 
 function calcPointsPerSecond(){
@@ -362,7 +280,7 @@ function getProgress(delta) { // progressBar = 0-1
     if (prev.gte(1)){
         prev = new Decimal(1)
     }
-    progressBar = progressBar.mul(0.01 ** delta).add(prev.mul(1 - (0.01 ** delta)))
+    progressBar = prev
     
 }
 
@@ -428,7 +346,7 @@ function maxAllComPS(){
         const FPS = Math.round(1 / delta);
         let gameDelta = new Decimal(delta).mul(timeSpeed)
         softcaps = [];
-        for (type of ["PP", "MP", "OP", "DP"])
+        for (let type = 0; type < 4; ++type)
             simplifyXPtick(type, gameDelta);
         compBM = simplify.DP.effect.mul(2)
 

@@ -26,6 +26,7 @@ pps {
 .defaultButton{
   background-color: black;
   transition-duration: 0.2s;
+  cursor: pointer;
 }
 
 body {
@@ -201,6 +202,7 @@ body {
   white-space: nowrap;
   bottom: 10px;
   position: absolute;
+  transition-duration: 0.25s;
 } 
 
 #progBarBase {

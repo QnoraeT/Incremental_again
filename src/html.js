@@ -1,3 +1,5 @@
+"use strict";
+
 for (let comp = 1; comp <= 8; ++comp) {
     let div = document.createElement("div");
     div.id = "gen-comp" + comp;

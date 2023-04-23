@@ -1,3 +1,5 @@
+"use strict";
+
 const abberivationSuffixes = ["","K","M","B","T","Qa","Qi","Sx","Sp","Oc","No","Dc",
 "UDc","DDc","TDc","QaDc","QiDc","SxDc","SpDc","OcDc","NoDc","Vg"];
 
@@ -10,16 +12,14 @@ function format(number, fixed = false, dec = 0)
     if (Number.isNaN(number.mag))
       return "NaN"
       
-    if (number.lessThan(1_000_000))                                         //display with commas
-    {
+    if (number.lessThan(1_000_000)){
       number = Number.parseFloat(number.toNumber().toFixed(dec));
       return number.toLocaleString("en-US");
     }
 
-    if (number.lessThan(new Decimal("1e" + (abberivationSuffixes.length * 3))))    //display abberviaed
+    if (number.lessThan(new Decimal("1e" + (abberivationSuffixes.length * 3))))
       return abberivate(number, fixed);
 
-  //display in scientific notation
   if (number.layer >= 6){
     return "F" + format(number.slog(10), fixed, dec)
   } else {
@@ -27,12 +27,10 @@ function format(number, fixed = false, dec = 0)
   }
 }
 
-function abberivate(number, fixed = false)
-{
+function abberivate(number, fixed = false){
   let powerOf1000 = Decimal.floor(number.log(1000));
   let mantissa = number.divide(Decimal.pow(1000, powerOf1000))
-  if (mantissa >= 999.999)
-  {
+  if (mantissa >= 999.999){
     mantissa = 1;
     ++powerOf1000
   }
@@ -45,7 +43,7 @@ function abberivate(number, fixed = false)
 function scientificNotation(number, fixed = false){
   if (number.eq(0))
     return "0";
-  let exponent = Decimal.floor(number.log10());
+  let exponent = Decimal.floor(number.log10().mul(Decimal.add(1, 1e-9)));
   let mantissa = number.divide(Decimal.pow(10, exponent));
   if (exponent.gte(1_000_000)){
     if (exponent.lessThan(new Decimal("1e" + (abberivationSuffixes.length * 3)))){

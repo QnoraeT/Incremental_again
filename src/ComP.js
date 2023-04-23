@@ -1,3 +1,5 @@
+"use strict";
+
 let compExp = new Decimal(0.8);
 let compBM = new Decimal(2);
 let compScale1 = new Decimal(150);
