@@ -6,10 +6,8 @@ let compScale1 = new Decimal(150);
 let compScale2 = new Decimal(100000);
 let compScale2Pow = [new Decimal(1), new Decimal(1), new Decimal(1), new Decimal(1)];
 
-class ComP
-{
-    constructor(index)
-    {
+class ComP{
+    constructor(index){
         this._amount = new Decimal(0);
         this._bought = new Decimal(0);
         this._multi = new Decimal(1);
@@ -18,52 +16,43 @@ class ComP
         this._factors = [];
     }
 
-    get cost()
-    {
+    get cost(){
         return this._cost;
     }
 
-    get amount()
-    {
+    get amount(){
         return this._amount;
     }
 
-    get bought()
-    {
+    get bought(){
         return this._bought;
     }
 
-    get multi()
-    {
+    get multi(){
         return this._multi;
     }
 
-    get trueamount()
-    {
+    get trueamount(){
         return this.amount.pow(compExp).add(this.bought);
     }
 
-    get index()
-    {
+    get index(){
         return this._index;
     }
 
-    buy()
-    {
+    buy(){
         this._bought = this._bought.add(1);
         this._updateMultiplier();
         this._updateCost(); 
     }
 
-    changeAmount(amount)
-    {
+    changeAmount(amount){
         this._amount = this._amount.add(amount);
         this._updateMultiplier();
         this._updateCost();
     }
 
-    _updateMultiplier()
-    {
+    _updateMultiplier(){
         this._factors = [];
         this._multi = new Decimal(1);
         if (this._bought.gte(2)){
@@ -120,8 +109,7 @@ class ComP
         }
     }
 
-    _updateCost()
-    {
+    _updateCost(){
         //update cost, formula: 10^(4(comp) + 2x(comp) - 3), x = comps[comp].bought
         let temp = this._bought;
         let cost

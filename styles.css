@@ -3,7 +3,7 @@
   src: url("danidanijrs-font.ttf");
 }
 
-fps {
+#fps {
   color: yellow;
   font-family: "Verdana";
   font-size: 18px;
