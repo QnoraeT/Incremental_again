@@ -14,7 +14,8 @@ TODO:
  w. the floating dots bg + the cursor lmao [most difficult]
  w+1. save function? perhaps?
 
-note: i'm seeing a lot of delays because of html aaaaaaa
+it's been weeks, yoreni
+asdfbsgbdhtfgndhnfhjynm
 */
 
 for (let [index, comp] of Object.entries(comps)) {
@@ -82,8 +83,7 @@ function getSimplifyGain() {
 }
 
 function buyComp(comp) {
-    if (points.gte(comps[comp].cost))
-    {
+    if (points.gte(comps[comp].cost)){
         points = points.minus(comps[comp].cost);
         comps[comp].buy();
     }
@@ -109,8 +109,7 @@ function simplifyXPtick(type,tickRate) {
             temp = temp.add(10).log(10).root(4)
             break
         default:
-            console.warning("Type " + type + "is unknown!")
-            break
+            throw new Error("Type " + type + "is unknown!")
     }
     simplify[sXPTypes[type]].effect = temp
 }
@@ -238,8 +237,7 @@ function simpExPAllocate(id) {
             simplify.DP.allocated = simplify.DP.allocated.add(simplify.main.simplifyEnergy)
             break;
         default:
-            console.error("idk which simplify xP are you talking about!!")
-            break;
+            throw new Error("Wtf!! xP doesn't exist")
     }
     simplify.main.simplifyEnergy=new Decimal(0)
 }
