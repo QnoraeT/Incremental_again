@@ -1,92 +1,103 @@
 "use strict";
 
 const mode = "normal";
-const ln10 = new Decimal(10).ln();
+const dZero = new Decimal(0);
+const dOne = new Decimal(1);
+const dTwo = new Decimal(2);
+const dTen = new Decimal(10);
+const ln10 = dTen.ln();
 var compVisible = 1;
-let points = new Decimal(10);
-let pps = new Decimal(0);
-let totalPointsInSimplify = new Decimal(10);
-let totalPoints = new Decimal(10);
+let points = dTen;
+let pps = dZero;
+let totalPointsInSimplify = dTen;
+let totalPoints = dTen;
 let inChallenge = []; // this is not in simplify list because theres potentially gonna be further layers with their own challenges (which can and will be nested)
 let notation = "Mixed Scientific";
 let totalTime = 0; // timespeed doesn't affect this
-let gameTime = new Decimal(0); // timespeed will affect this (totalGameTime)
-let timeSpeed = new Decimal(1);
+let gameTime = dZero; // timespeed will affect this (totalGameTime)
+let timeSpeed = dOne;
 let tab = [0,0,0];
 let expandMultComP = 0;
-let progressBar = new Decimal(0);
+let progressBar = dZero;
 let progressBarText = "";
 let inSChallenge = 0;
 let simpChalSelected = 0;
 let softcaps = [];
-let sXPTypes = ["PP", "MP", "OP", "DP"]
+let sXPTypes = ["PP", "MP", "OP", "DP"];
+let htmlCOMPS = [];
+let fpsList = [];
+let FPS = 0;
+let lastFPSCheck = 0;
 let simplify = {
     "main": {
-        simplifyEnergy: new Decimal(0),
-        simplifyStat: new Decimal(0),
+        simplifyEnergy: dZero,
+        simplifyStat: dZero,
         SEExp: new Decimal(1.75),
         SAExp: new Decimal(0.75),
         simplifyReq: new Decimal(1e12),
-        totalXP: new Decimal(0), // (TruePP + TrueMP + True1P + TrueDP)^SimpEXP
+        totalXP: dZero, // (TruePP + TrueMP + True1P + TrueDP)^SimpEXP
+        timeInSimplify: dZero,
     },
     "PP": {
-        allocated: new Decimal(0),
-        generated: new Decimal(0),
-        trueValue: new Decimal(0),
-        effect: new Decimal(1),
+        allocated: dZero,
+        generated: dZero,
+        trueValue: dZero,
+        effect: dOne,
     },
     "MP": {
-        allocated: new Decimal(0),
-        generated: new Decimal(0),
-        trueValue: new Decimal(0),
-        effect: new Decimal(1),
+        allocated: dZero,
+        generated: dZero,
+        trueValue: dZero,
+        effect: dOne,
     },
     "OP": {
-        allocated: new Decimal(0),
-        generated: new Decimal(0),
-        trueValue: new Decimal(0),
-        effect: new Decimal(2),
+        allocated: dZero,
+        generated: dZero,
+        trueValue: dZero,
+        effect: dTwo,
     },
     "DP": {
-        allocated: new Decimal(0),
-        generated: new Decimal(0),
-        trueValue: new Decimal(0),
-        effect: new Decimal(1),
+        allocated: dZero,
+        generated: dZero,
+        trueValue: dZero,
+        effect: dOne,
     },
     "challenge": {
         completed: Array(16).fill(0), // 0-3 Magnifying [] 4-7 Beginner [] 8-11 Articulated [] 12-15 77777777 []
-        timeInChallenge: new Decimal(0), // time speed exists
-        MC1effect: new Decimal(1),
-        SC3effect: new Decimal(1),
+        timeInChallenge: dZero, // time speed exists
+        MC1effect: dOne,
+        MC4effect: dOne,
+        AC2effect: dOne,
+        SC3effect: dOne,
     },
     "upgrades": {
         simplifyMainUPG: 0, 
-        simplifyUPGNum2: new Decimal(0), // the upgrades here will not be unique, and may be bulk auto'd in the future, so i'm letting it stay as decimal
-        PPUPG: new Decimal(0),
-        MPUPG: new Decimal(0),
-        OPUPG: new Decimal(0),
-        DPUPG: new Decimal(0),
+        simplifyUPGNum2: dZero, // the upgrades here will not be unique, and may be bulk auto'd in the future, so i'm letting it stay as decimal
+        PPUPG: dZero,
+        MPUPG: dZero,
+        OPUPG: dZero,
+        DPUPG: dZero,
     },
     "situation1": {
-        amount: new Decimal(0),
-        rank: new Decimal(0),
-        tier: new Decimal(0),
-        tetr: new Decimal(0),
-        pent: new Decimal(0),
+        amount: dZero,
+        rank: dZero,
+        tier: dZero,
+        tetr: dZero,
+        pent: dZero,
     },
     "situation2": {
-        amount: new Decimal(0),
-        bar1: new Decimal(0),
-        bar2: new Decimal(0),
-        bar3: new Decimal(0),
-        bar4: new Decimal(0),
+        amount: dZero,
+        bar1: dZero,
+        bar2: dZero,
+        bar3: dZero,
+        bar4: dZero,
     },
     "situation3": {
-        amount: new Decimal(0),
-        milestonePts: new Decimal(0),
-        milestoneComp8: new Decimal(0),
-        milestoneTotalBought: new Decimal(0),
-        milestoneMisc: new Decimal(0), // custom challenges and stuff ("don't buy comp1 more than once", "reach 1e100 in 15 seconds without comp6+", etc)
+        amount: dZero,
+        milestonePts: dZero,
+        milestoneComp8: dZero,
+        milestoneTotalBought: dZero,
+        milestoneMisc: dZero, // custom challenges and stuff ("don't buy comp1 more than once", "reach 1e100 in 15 seconds without comp6+", etc)
     },
 }
 
@@ -134,8 +145,8 @@ const simpChalReward = {
     6: "The ComP exponent is slightly increased. (^0.8 -> ^0.825)",
     7: "The 8th ComP gets a power bonus similar with the 2nd ComP.",
     8: "2nd ComP's bonus exponent is increased. (^1.585 -> ^1.625)",
-    9: "MP, 1P, and DP inceases PP's effect.",
-    10: "ComP's post 150 scaling is 5% weaker, and gets delayed by 0.01 per total ComP purchase.",
+    9: "MP, 1P, and DP increases PP's effect.",
+    10: "ComP's post-150 gets delayed by 0.01 per total ComP purchase.",
     11: "ComP costs slowly decay based off time in this Simplify.",
     12: "Simplify Energy's base exponent is increased by 0.025.",
     13: "You gain a modified version of the sub-layer, which doesn't reset on Simplify.",

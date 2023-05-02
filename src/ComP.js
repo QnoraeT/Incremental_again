@@ -67,13 +67,15 @@ class ComP{
             if (simplify.PP.effect.gt(1)){
                 this._multi = this._multi.mul(simplify.PP.effect);
                 this._factors.push("<br> PP Effect: x" + format(simplify.PP.effect,true) + "  (" + format(this._multi,true) + "x)")
-                }
+            }
         }
         if (this._index == 2){
             this._multi = this._multi.mul(4)
             this._factors.push("<br> ComP2 Bonus: x" + format(new Decimal(4),true,2) + "  (" + format(this._multi,true) + "x)")
-            this._multi = this._multi.pow(1.584962500721156)
-            this._factors.push("<br> ComP2 Bonus: ^" + format(new Decimal(1.584962500721156),true,3) + "  (" + format(this._multi,true) + "x)")
+            let temp = new Decimal(1.584962500721156)
+            if (simplify.challenge.completed[7] == 1){temp = new Decimal(1.625);}
+            this._multi = this._multi.pow(temp)
+            this._factors.push("<br> ComP2 Bonus: ^" + format(temp,true,3) + "  (" + format(this._multi,true) + "x)")
         }
         if (inChallenge.length == 0 && simplify.main.simplifyStat.gt(0)){
             this._multi = this._multi.mul(simplify.main.simplifyStat.add(1).root(new Decimal(this._index)));
@@ -88,6 +90,20 @@ class ComP{
             this._factors.push("<br> Magnifying Challenge 1: ^" + format(new Decimal(0.75),true,2) + "  (" + format(this._multi,true) + "x)")
             this._multi = this._multi.div(1000);
             this._factors.push("<br> Magnifying Challenge 1: /" + format(new Decimal(1000),true) + "  (" + format(this._multi,true) + "x)")
+        }
+        if (simplify.challenge.completed[4] == 1){
+            let temp = dOne
+            for (let comp = this._index; comp >= 1; --comp){
+                temp = temp.mul(comps[comp]._multi.pow(0.01))
+            }
+            this._multi = this._multi.mul(temp);
+            this._factors.push("<br> JC1 Effect: x" + format(temp,true) + "  (" + format(this._multi,true) + "x)")
+        }
+        if (simplify.challenge.completed[6] == 1 && this._index == 8){
+            this._multi = this._multi.mul(4)
+            this._factors.push("<br> JC3 Bonus: x" + format(new Decimal(4),true,2) + "  (" + format(this._multi,true) + "x)")
+            this._multi = this._multi.pow(1.584962500721156)
+            this._factors.push("<br> JC3 Bonus: ^" + format(new Decimal(1.584962500721156),true,3) + "  (" + format(this._multi,true) + "x)")
         }
         if (mode == "softcap"){
             if (this._multi.gte(100)){
@@ -112,6 +128,8 @@ class ComP{
     _updateCost(){
         //update cost, formula: 10^(4(comp) + 2x(comp) - 3), x = comps[comp].bought
         let temp = this._bought;
+        if (simplify.challenge.completed[2] == 1){temp = temp.mul(0.975);}
+        if (simplify.challenge.completed[3] == 1){temp = temp.sub(simplify.challenge.MC4effect);}
         let cost
         if (temp.gte(compScale2)){
             let a = new Decimal("e133333333").mul(this._index)
@@ -129,6 +147,8 @@ class ComP{
             }
         }
         cost = cost.div(simplify.challenge.MC1effect.pow(temp)).div(simplify.challenge.SC3effect.pow(new Decimal(this._index).mul(temp)))
+        cost = cost.div(simplify.challenge.AC2effect)
+        if (simplify.challenge.completed[1] == 1){cost = cost.pow(0.95);}
         this._cost = cost;
     }
 }
