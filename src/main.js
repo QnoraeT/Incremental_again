@@ -348,7 +348,7 @@ function getChalEffects(){
     if (player.simplify.challenge.completed[14] == 1){temp = temp.add(0.25);}
     player.simplify.challenge.SC3effect = temp
 
-    if (player.simplify.challenge.completed[3] == 1){temp = player.misc.points.max(10).log(10).div(4).add(0.75).pow(0.4).sub(1);}
+    if (player.simplify.challenge.completed[3] == 1){temp = player.misc.points.max(10).log(10).sub(1).div(4).add(1).pow(0.4).sub(1);}
     temp = Decimal.pow(10, softcap(temp.add(1).log(10), "EP", 1.475, 2.30102999)[0])
     player.simplify.challenge.MC4effect = temp
 

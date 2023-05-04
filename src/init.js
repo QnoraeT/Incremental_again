@@ -318,7 +318,7 @@ let player = {
                 1: "ComP costs are divided by 2 per purchase.",
                 2: "ComP costs are ^0.95.",
                 3: "ComP costs now act like they're 0.975x less. This also slightly delays Post-150 scaling.",
-                4: "All ComP costs are offset based off your points.",
+                4: "All ComP costs are offset based off your points. This gets softcapped after " + format(new Decimal(200),true) + ".",
                 5: "Higher order ComPs get a multiplier bonus based off of the previous ComP's multipliers.",
                 6: "The ComP exponent is slightly increased. (^0.8 -> ^0.825)",
                 7: "The 8th ComP gets a power bonus similar with the 2nd ComP.",
@@ -345,6 +345,111 @@ let player = {
                 2: "Unlock TTS Challenges.",
                 3: "Unlock Simplify upgrades where you can use your SE, xP, and total xP to get advantages.",
                 4: "Unlock 'Situations' where you can go on altered runs for different milestones.",
+            },
+            SimpUPG2: { // this forms a repeat
+                cost(x){
+                    let temp = x
+
+                    return temp
+                },
+                target(r){
+                    let temp = r
+
+                    return temp
+                },
+                power() {
+                    let temp = dOne
+                    return temp
+                },
+                display(type, total){
+                    let temp = player.simplify.upgrades.simplifyUPGNum2
+                    temp = temp.sub(type).div(8).add(1).floor()
+                    let t2 = (total)?player.simplify.upgrades.SimpUPG2.strengthTotal(type, temp):player.simplify.upgrades.SimpUPG2.strengthPer(type)
+                    switch(type){
+                        case 1: 
+                            temp = "ComP's effective bought amount for multipliers are multiplied by x"
+                            temp += format(t2,true,3)
+                            break;
+                        case 2: 
+                            temp = "MC1's effect is increased by +"
+                            temp += format(t2,true,3)
+                            break;
+                        case 3: 
+                            temp = "Simplify Energy's gain exponent is increased by +"
+                            temp += format(t2,true,3)
+                            break;
+                        case 4: 
+                            temp = "DP's root is reduced from " + format(new Decimal(5),true,3) + " by -"
+                            temp += format(t2,true,3)
+                            temp += ", softcapped when root < 3.75"
+                            break;
+                        case 5: 
+                            temp = "ComP's post-150 scaling is delayed by +"
+                            temp += format(t2,true,3)
+                            break;
+                        case 6: 
+                            temp = "JC1's effect exponent is increased by +"
+                            temp += format(t2,true,3)
+                            temp += ", weighted towards 8th ComP"
+                            break;
+                        case 7: 
+                            temp = "OP's root is reduced from " + format(new Decimal(6.5),true,3) + " by -"
+                            temp += format(t2,true,3)
+                            temp += ", softcapped when root < 5"
+                            break;
+                        case 8: 
+                            temp = "MC4's effect exponent is multiplied by x"
+                            temp += format(t2[0],true,3)
+                            temp += ", and it's effect divisor is decreased by /"
+                            temp += format(t2[1],true,3)
+                            break;
+                        default:
+                            throw new Error("Type " + type + "is unknown!");
+                    }
+                    return temp + "."
+                },
+                strengthPer(type){
+                    let temp = player.simplify.upgrades.SimpUPG2.power()
+                    switch(type){
+                        case 1: 
+                            return new Decimal(1.07).pow(temp)
+                        case 2: 
+                            return new Decimal(0.65).mul(temp)
+                        case 3: 
+                            return new Decimal(0.07).mul(temp)
+                        case 4: 
+                            return new Decimal(0.26).pow(temp)
+                        case 5: 
+                            return new Decimal(10.5).mul(temp)
+                        case 6: 
+                            return new Decimal(0.044444444444).mul(temp)
+                        case 7: 
+                            return new Decimal(0.45).mul(temp)
+                        case 8: 
+                            return [new Decimal(1.015).pow(temp), new Decimal(1.15).pow(temp)]
+                        default:
+                            throw new Error("Type " + type + "is unknown!");
+                    }
+                },
+                strengthTotal(type, x){
+                    let temp = x.root(2)
+                    let P = player.simplify.upgrades.SimpUPG2.strengthPer(type)
+                    switch(type){
+                        case 1: 
+                        case 4: 
+                            return P.pow(temp)
+                        case 2: 
+                        case 3: 
+                        case 5: 
+                        case 6: 
+                        case 7: 
+                            return P.mul(temp)
+                        case 8: 
+                            return [P[0].pow(temp), P[1].pow(temp)]
+                        default:
+                            throw new Error("Type " + type + "is unknown!");
+                    }
+                },
             },
         },
         "situation1": {
