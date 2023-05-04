@@ -12,41 +12,59 @@ function calcGeneralCosts() {
    let g = new Decimal(arguments[8])
    let temp
    switch(type) {
-       case "EP": // a*b^(x+(cx)^2)) - exponential:polynomial
-           if (arguments[2] == false)
-               temp = b.pow(x.mul(c).pow(2).add(x)).mul(a)
-           else
-               temp = b.ln().add(x.div(a).ln().mul(c.pow(2).mul(4))).root(2).div(b.ln().root(2).mul(c.pow(2).mul(2))).sub(new Decimal(1).div(c.pow(2).mul(2)))
-           return temp
-       case "EEP": // a*b^(xcd^((fx)^g)) - exponential^2:polynomial
-           if (arguments[2] == false)
-               temp = a.mul(b.pow(d.pow(x.mul(f).pow(g)).mul(c).mul(x)))
-           else 
-               temp = x.div(a).ln().pow(g).mul(d.ln()).mul(f.pow(g)).mul(g).div(c.pow(g).mul(b.ln().pow(g))).lambertw().root(g).div(g.root(g).mul(f).mul(d.ln().root(g)))
-           return temp
-       case "ADt": // antimatter dimension's free tickspeed from time softcap (a = start [AD = 300000], b = normal base [AD = 1.33 or 1.25], c = scale base [AD = 1.000006])
-           if (arguments[2] == false){
-               if (x.gte(a)){
-                   temp = x.sub(a).add(1)
-                   temp = b.pow(x).mul(c.pow(temp.sub(1).mul(temp).div(2)))
-               } else {
-                   temp = b.pow(x)
-               }
-           } else {
-               if (x.gte(b.pow(a)))
-               {
-                   b = b.ln()
-                   c = c.ln()
-                   //((2ac-2b-c)/2c)+(sqrt(4bc-8abc+4b^2+8ln(x)*c+c^2)/2c)
-                   temp = a.mul(c).mul(2).sub(b.mul(2)).sub(c).div(c.mul(2)).add(b.mul(c).mul(4).sub(a.mul(b).mul(c).mul(8)).add(b.pow(2).mul(4)).add(x.ln().mul(8).mul(c)).add(c.pow(2)).root(2).div(c.mul(2)))
-               }
-               else
-                   temp = x.log(b)
-           }
-           return temp
-       default:
-           console.error("Cost scaling type " + type + " is not defined!!")
-           return new Decimal(10) // fallback cost
+        case "P":
+            if (arguments[2] == false)
+                temp = x.pow(Decimal.pow(c, b)).div(a.pow(Decimal.pow(c, b).sub(1)))
+            else
+                temp = x.mul(a.pow(Decimal.pow(c, b).sub(1))).pow(c.pow(b.mul(-1)))
+            return temp
+        case "SE":
+            if (arguments[2] == false)
+                temp = Decimal.pow(a, x.log(a).pow(Decimal.pow(c, b)))
+            else
+                temp = Decimal.pow(a, x.log(a).root(Decimal.pow(c, b)))
+            return temp
+        case "E":
+            if (arguments[2] == false)
+                temp = Decimal.pow(Decimal.pow(c, b), x.div(a).sub(1)).mul(a)
+            else
+                temp = x.div(a).log(Decimal.pow(c, b)).add(1).mul(a)
+            return (arguments[2] == false)?(Decimal.max(temp,x)):temp // lmao 
+        case "EP": // a*b^(x+(cx)^2)) - exponential:polynomial
+            if (arguments[2] == false)
+                temp = b.pow(x.mul(c).pow(2).add(x)).mul(a)
+            else
+                temp = b.ln().add(x.div(a).ln().mul(c.pow(2).mul(4))).root(2).div(b.ln().root(2).mul(c.pow(2).mul(2))).sub(new Decimal(1).div(c.pow(2).mul(2)))
+            return temp
+        case "EEP": // a*b^(xcd^((fx)^g)) - exponential^2:polynomial
+            if (arguments[2] == false)
+                temp = a.mul(b.pow(d.pow(x.mul(f).pow(g)).mul(c).mul(x)))
+            else 
+                temp = x.div(a).ln().pow(g).mul(d.ln()).mul(f.pow(g)).mul(g).div(c.pow(g).mul(b.ln().pow(g))).lambertw().root(g).div(g.root(g).mul(f).mul(d.ln().root(g)))
+            return temp
+        case "ADt": // antimatter dimension's free tickspeed from time softcap (a = start [AD = 300000], b = normal base [AD = 1.33 or 1.25], c = scale base [AD = 1.000006])
+            if (arguments[2] == false){
+                if (x.gte(a)){
+                    temp = x.sub(a).add(1)
+                    temp = b.pow(x).mul(c.pow(temp.sub(1).mul(temp).div(2)))
+                } else {
+                    temp = b.pow(x)
+                }
+            } else {
+                if (x.gte(b.pow(a)))
+                {
+                    b = b.ln()
+                    c = c.ln()
+                    //((2ac-2b-c)/2c)+(sqrt(4bc-8abc+4b^2+8ln(x)*c+c^2)/2c)
+                    temp = a.mul(c).mul(2).sub(b.mul(2)).sub(c).div(c.mul(2)).add(b.mul(c).mul(4).sub(a.mul(b).mul(c).mul(8)).add(b.pow(2).mul(4)).add(x.ln().mul(8).mul(c)).add(c.pow(2)).root(2).div(c.mul(2)))
+                }
+                else
+                    temp = x.log(b)
+            }
+            return temp
+        default:
+            console.error("Cost scaling type " + type + " is not defined!!")
+            return new Decimal(10) // fallback cost
    }
 }
 
@@ -66,11 +84,8 @@ function softcap(amt, type, strength, start) {
                 softcaps.push(reduce)
                 return [temp, reduce] // "/{reduce}"
             case "E": // exponential 
-                if (str.lt(0)){
-                    console.warn("case 'E' softcaps with strength less than 0 will not work properly!")
-                    str = new Decimal(0)
-                }
-                str = new Decimal(1).sub(new Decimal(2).pow(str).sub(1))
+                if (str.gt(1)){console.warn("Softcap \"E\" cannot work correctly with strength > 1 !  (Str: " + format(str, true, 3) + ")");str=dOne}
+                str = Decimal.sub(1, new Decimal(2).pow(str).sub(1))
                 temp = amt.log(sta.mul(amt.div(sta).pow(str))).add(1).pow(sta.mul(amt.div(sta).pow(str)).log(2))
                 reduce = arguments[5] ? temp.log(amt) : amt.div(temp)
                 softcaps.push(reduce)
@@ -91,7 +106,7 @@ function softcap(amt, type, strength, start) {
 }
 
 function altFactorial(input){
-    if (input.lt(1)) return Decimal.factorial(input)
+    if (input.lt(2)) return Decimal.factorial(input)
     if (input.layer >= 2) return Decimal.exp(input)
     if (input.layer === 1) return Decimal.exp(input.mul(input.ln().sub(1)))
     let r = input

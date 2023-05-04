@@ -3,8 +3,7 @@
 const abberivationSuffixes = ["","K","M","B","T","Qa","Qi","Sx","Sp","Oc","No","Dc",
 "UDc","DDc","TDc","QaDc","QiDc","SxDc","SpDc","OcDc","NoDc","Vg"];
 
-function format(number, fixed = false, dec = 0)
-{
+function format(number, fixed = false, dec = 3){
     if (number.lt(0))
       return "-" + format(number.times(-1), fixed, dec)
     if (!Number.isFinite(number.mag))
@@ -39,8 +38,8 @@ function abberivate(number, fixed = false, dec){
   }
 
   if (fixed)
-  return mantissa.toFixed(3) + abberivationSuffixes[powerOf1000];
-return  Number.parseFloat(mantissa.toFixed(3)) + abberivationSuffixes[powerOf1000];
+  return mantissa.toFixed(dec) + abberivationSuffixes[powerOf1000];
+return  Number.parseFloat(mantissa.toFixed(dec)) + abberivationSuffixes[powerOf1000];
 }
 
 function scientificNotation(number, fixed = false, dec){
