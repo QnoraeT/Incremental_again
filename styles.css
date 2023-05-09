@@ -15,8 +15,10 @@ p {
   font-size: 18px;
 }
 
-pps {
+#pps {
   font-size: 16px;
+  text-shadow: 2px 2px grey;
+  color: white;
 }
 
 .text {
@@ -29,6 +31,10 @@ pps {
   cursor: pointer;
 }
 
+#ttsChalArea{
+  border: 5px solid #808080;
+}
+
 body {
   background-color: black;
 }
@@ -36,7 +42,7 @@ body {
 #points {
   font-family: "Verdana";
   font-size: 24px;
-  text-align: left;
+  text-align: center;
   text-shadow: 2px 2px grey;
   color: white;
 } 
@@ -368,3 +374,18 @@ sc5{
   font-size: 18px;
   display: inline;
 }
+
+#simpChalDesc{
+  text-align: center;
+  font-size: 16px;
+  text-shadow: 2px 2px grey;
+  color: white;
+}
+
+#simpChalRew{
+  text-align: center;
+  font-size: 18px;
+  text-shadow: 2px 2px grey;
+  color: white;
+}
+

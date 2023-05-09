@@ -60,14 +60,17 @@ for (let chall = 0; chall < 16;) {
     div.appendChild(chtext);
 
     for (let g = 0; g < 4; ++g) {
+        let trueID = chall + g // such a stupid bug
         let challenge = document.createElement("button");
-        challenge.id = "simpChal" + chall + "-id";
-        challenge.onclick = () => simpChalSelect(chall);
+        challenge.id = "simpChal" + trueID + "-id";
+        challenge.addEventListener('click', function() {
+            simpChalSelect(trueID)
+          });
         challenge.class = "simpChal";
         challenge.classList.add("simpChal");
         challenge.classList.add("simpChalIncomplete");
         challenge.classList.add("defaultButton");
         div.appendChild(challenge);
-        chall++
     }
+    chall += 4
 }

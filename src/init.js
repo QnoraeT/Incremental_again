@@ -164,22 +164,22 @@ class ComP{
         if (player.simplify.challenge.completed[2] == 1){temp = temp.mul(0.975); this._costFactors.push("<br> MC3 Completion: x" + format(new Decimal(0.975),true,3) + "  (" + format(temp,true) + " buys)");}
         if (player.simplify.challenge.completed[3] == 1){temp = temp.sub(player.simplify.challenge.MC4effect); this._costFactors.push("<br> MC4 Completion: -" + format(player.simplify.challenge.MC4effect,true,3) + "  (" + format(temp,true) + " buys)");}
         let cost
-        if (temp.gte(player.comps.compScale2)){
+        if (temp.gte(player.scaling.ComPs[1].start)){
             let a = new Decimal("e133333333").mul(this._index)
             let b = new Decimal("e3000").mul(this._index)
-            let c = player.comps.compScale2Pow[0]
-            let d = player.comps.compScale2Pow[1].mul(0.0001).mul(this._index ** 0.25).add(1)
-            let e = player.comps.compScale2Pow[2].mul(0.0001).mul(this._index ** 0.25)
-            let f = player.comps.compScale2Pow[3].mul(2).mul(this._index ** 0.1)
-            cost = calcGeneralCosts("EEP", temp.sub(player.comps.compScale2), false, a, b, c, d, e, f)
-            this._costFactors.push("<br> Exponential^2 Scaling: " + format(cost,true,3) + "  - Starting at " + format(player.comps.compScale2,true,3) + ", it has the quaternion power of x: " + format(player.comps.compScale2Pow[0].mul(100),true,3) + "%, y: " + format(player.comps.compScale2Pow[1].mul(100),true,3) + "%, z: " + format(player.comps.compScale2Pow[2].mul(100),true,3) + "%, w: " + format(player.comps.compScale2Pow[3].mul(100),true,3) + "%");
+            let c = player.scaling.ComPs[1].strength[0]
+            let d = player.scaling.ComPs[1].strength[1].mul(0.0001).mul(this._index ** 0.25).add(1)
+            let e = player.scaling.ComPs[1].strength[2].mul(0.0001).mul(this._index ** 0.25)
+            let f = player.scaling.ComPs[1].strength[3].mul(2).mul(this._index ** 0.1)
+            cost = calcGeneralCosts("EEP", temp.sub(player.scaling.ComPs[1].start), false, a, b, c, d, e, f)
+            this._costFactors.push("<br> Exponential^2 Scaling: " + format(cost,true,3) + "  - Starting at " + format(player.scaling.ComPs[1].start,true,3) + ", it has the quaternion power of x: " + format(player.scaling.ComPs[1].strength[0].mul(100),true,3) + "%, y: " + format(player.scaling.ComPs[1].strength[1].mul(100),true,3) + "%, z: " + format(player.scaling.ComPs[1].strength[2].mul(100),true,3) + "%, w: " + format(player.scaling.ComPs[1].strength[3].mul(100),true,3) + "%");
         } else {
-            if (temp.gte(player.comps.compScale1)){
-                cost = Decimal.pow(10, new Decimal(this._index).mul(temp.pow(2).mul(2).div(player.comps.compScale1).add(4)).sub(3));
-                this._costFactors.push("<br> Quadratic-Exponential Scaling: " + format(cost,true,3) + "  - Starting at " + format(player.comps.compScale1,true,3));
+            if (temp.gte(player.scaling.ComPs[0].start)){
+                cost = Decimal.pow(10, new Decimal(this._index).mul(temp.pow(2).mul(2).div(player.scaling.ComPs[0].start).add(4)).sub(3));
+                this._costFactors.push("<br> Quadratic-Exponential Scaling: " + format(cost,true,3) + "  - Starting at " + format(player.scaling.ComPs[0].start,true,3) + "  [Next Stage @" + format(player.scaling.ComPs[1].start,true,3) + "]");
             } else {   
                 cost = Decimal.pow(10, new Decimal(2 * this._index).mul(temp.add(2)).sub(3));
-                this._costFactors.push("<br> Exponential Scaling: " + format(cost,true,3));
+                this._costFactors.push("<br> Exponential Scaling: " + format(cost,true,3) + "  [Next Stage @" + format(player.scaling.ComPs[0].start,true,3) + "]");
             }
         }
 
@@ -224,23 +224,45 @@ let lastFPSCheck = 0;
 let player = {
     misc: {
         mode: "normal",
+        chapter: 0,
         points: dTen,
         pps: dZero,
         totalPointsInSimplify: dTen,
         totalPoints: dTen,
         inChallenge: [], // this is not in simplify list because theres potentially gonna be further layers with their own challenges (which can and will be nested)
-        notation: "Mixed Scientific",
         totalTime: 0, // timespeed doesn't affect this
         gameTime: dZero, // timespeed will affect this (totalGameTime)
         timeSpeed: dOne,
         inSChallenge: 0,
     },
+    settings: {
+        notation: "Mixed Scientific",
+        scalingNames: "DistInc",
+        showCharacterImgs: true,
+        nameChanges: false,
+        theme: "Neon",
+        background: ["Parallax", "Dots"],
+        // available: "Parallax" "Dots" "ChapterBased" "TabBased" "CharacterBased"
+        musicVolume: 0.00,
+        sfxVolume: 0.00,
+    },
+    scaling: {
+        names0: ["", "Scaled", "Superscaled", "Hyper", "Atomic"], // DISTINC
+        names1: ["", "Super", "Hyper", "Ultra", "Meta"], // IMR
+        names2: ["Standard", "Turbo", "Hyper", "Ultra", "Cruel"], // NATURAL DISASTERS
+        ComPs: {
+            0: {
+                start: new Decimal(150),
+            },
+            1: {
+                start: new Decimal(100000),
+                strength: [dOne, dOne, dOne, dOne],
+            },
+        },
+    },
     comps: {
         compExp: new Decimal(0.8),
         compBM: new Decimal(2),
-        compScale1: new Decimal(150),
-        compScale2: new Decimal(100000),
-        compScale2Pow: [new Decimal(1), new Decimal(1), new Decimal(1), new Decimal(1)],
         array: {
             "1": new ComP(1),
             "2": new ComP(2),

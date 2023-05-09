@@ -51,8 +51,7 @@ function calcGeneralCosts() {
                     temp = b.pow(x)
                 }
             } else {
-                if (x.gte(b.pow(a)))
-                {
+                if (x.gte(b.pow(a))){
                     b = b.ln()
                     c = c.ln()
                     //((2ac-2b-c)/2c)+(sqrt(4bc-8abc+4b^2+8ln(x)*c+c^2)/2c)
@@ -63,7 +62,7 @@ function calcGeneralCosts() {
             }
             return temp
         default:
-            console.error("Cost scaling type " + type + " is not defined!!")
+            console.warn("Cost scaling type " + type + " is not defined!!")
             return new Decimal(10) // fallback cost
    }
 }
@@ -97,7 +96,7 @@ function softcap(amt, type, strength, start) {
                 softcaps.push(reduce)
                 return [temp, reduce] // "^{reduce}" or "/{reduce}" if arg5 is false
             default:
-                console.error("Softcap type " + type + " is not defined!!")
+                console.warn("Softcap type " + type + " is not defined!!")
                 return [amt, new Decimal(1)] // fallback amt
         }
     }
