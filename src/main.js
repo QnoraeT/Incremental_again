@@ -1,13 +1,5 @@
 "use strict";
 
-/* 
-TODO:
- w. the floating dots bg + the cursor lmao [most difficult]
- possible!!. save function? perhaps?
-
-yoreni wtf man its been a month
-*/
-
 for (let [index, comp] of Object.entries(player.comps.array)) {
     document.getElementById("gen-comp" + index + "-cost").innerText = "Cost: " + format(comp.cost);
     document.getElementById("gen-comp" + index + "-multi").innerText = format(comp.multi) + "x ";
@@ -132,13 +124,6 @@ function simplifyXPtick(type,tickRate) {
 
 function calcPointsPerSecond(){
     let temp = player.comps.array[1].trueamount.mul(player.comps.array[1].multi);
-    if (player.misc.mode == "softcap"){
-        temp = softcap(temp, "P", 0.1, 100, "pts1", false)[0];
-        temp = softcap(temp, "E", 0.4, 1e8, "pts2", false)[0];
-        temp = softcap(temp, "EP", 0.1, 1e16, "pts3", false)[0];
-        temp = softcap(temp, "EP", 0.3, 1e25, "pts4", false)[0];
-        temp = softcap(temp, "EP", 0.5, 1e40, "pts5", true)[0];
-    }
     if (player.misc.inChallenge.includes("simp2")){temp = temp.root(2);}
     if (player.misc.inChallenge.includes("simp5")){temp = temp.pow(player.comps.compExp);}
     if (player.misc.inChallenge.includes("simp8")){temp = temp.root(3);}
@@ -217,7 +202,7 @@ function completeChallenge(type){
 
 function simpChalSelect(ex) {
     simpChalSelected = ex
-    player.simplify.challenge.simpChalDesc[ex]
+    simpChal.simpChalDesc[ex]
 }
 
 function simplifyReset(){
@@ -295,34 +280,42 @@ function getProgress() { // progressBar = 0-1
     if (player.misc.inSChallenge){
         progressBar = player.misc.totalPointsInSimplify.add(1).log(player.simplify.main.simplifyReq);
         progressBarText = "Complete Challenge: "; 
-        return;}
+        return;
+    }
     if (player.simplify.upgrades.simplifyMainUPG == 5){
         progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain()).div(1.2e27).log(Decimal.div(7.2e38, 1.2e27));
         progressBarText = "Next feature: "; 
-        return;}
+        return;
+    }
     if (player.simplify.upgrades.simplifyMainUPG == 4){
         progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain()).div(2.4e17).log(Decimal.div(1.2e27, 2.4e17));
         progressBarText = "Next feature: "; 
-        return;}
+        return;
+    }
     if (player.simplify.upgrades.simplifyMainUPG == 3){
         progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain()).div(6e9).log(Decimal.div(2.4e17, 6e9));
         progressBarText = "Next feature: "; 
-        return;}
+        return;
+    }
     if (player.simplify.upgrades.simplifyMainUPG == 2){
         progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain()).log(Decimal.div(6e9, 20_000));
         progressBarText = "Next feature: "; 
-        return;}
+        return;
+    }
     if (player.simplify.upgrades.simplifyMainUPG == 1){
         progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain()).div(10); 
         progressBarText = "Next feature: "; 
-        return;}
+        return;
+    }
     if (player.misc.totalPoints.lt(1e12)){
         progressBar = player.misc.totalPoints.add(1).log(1e12); 
         progressBarText = "Next layer: "; 
-        return;}
+        return;
+    }
     if (player.simplify.upgrades.simplifyMainUPG == 0){
         progressBarText = "Look in the \"Simplify\" tab! "; 
-        return;}
+        return;
+    }
 }
 
 function hideShow(id, condition){
@@ -358,7 +351,7 @@ function getChalEffects(){
     player.simplify.challenge.SC3effect = temp
 
     if (player.simplify.challenge.completed[3] == 1){temp = player.misc.points.max(10).log(10).sub(1).div(4).add(1).pow(0.4).sub(1);}
-    temp = Decimal.pow(10, softcap(temp.add(1).log(10), "EP", 1.5, 2.30102999)[0]) // this is a double log softcap lmfao
+    temp = Decimal.pow(10, scale("EP", temp.add(1).log(10), false, 2.30102999, 1, 1.5, 0)[0]) // this is a double log softcap lmfao
     player.simplify.challenge.MC4effect = temp
 
     temp = new Decimal(0.8)
@@ -447,8 +440,8 @@ function maxAllComPS(){
             if (player.simplify.challenge.completed[3] == 1){buy = buy.add(player.simplify.challenge.MC4effect);}
             if (player.simplify.challenge.completed[2] == 1){buy = buy.div(0.975);}
             if (player.misc.inChallenge.includes("simp14")){buy = buy.div(2);}
-            player.comps.array[comp]._bought = buy.floor();
-            player.comps.array[comp]._updateCost(); 
+            player.comps.array[comp].bought = buy.floor();
+            player.comps.array[comp].updateCost(); 
             player.misc.points = player.misc.points.sub(player.comps.array[comp].cost);
             player.comps.array[comp].buy();
         }
@@ -459,9 +452,10 @@ function maxAllComPS(){
     window.requestAnimationFrame(gameLoop);
     let oldTimeStamp = 0; 
     lastFPSCheck = 0; 
-    switchTab(0, 0)
+    switchTab(0, 0);
+    initDots();
     function gameLoop(timeStamp){
-            let delta = (timeStamp - oldTimeStamp) / 1000;
+            delta = (timeStamp - oldTimeStamp) / 1000;
             fpsList.push(delta)
             if (timeStamp > lastFPSCheck){
                 lastFPSCheck = timeStamp + 500;
@@ -477,7 +471,8 @@ function maxAllComPS(){
             player.misc.gameTime = player.misc.gameTime.add(gameDelta);
             player.simplify.main.timeInSimplify = player.simplify.main.timeInSimplify.add(gameDelta);
             player.simplify.challenge.JC1Time = player.simplify.challenge.JC1Time.add(gameDelta);
-            player.misc.totalTime = player.misc.totalTime + delta;
+            player.misc.totalTime += delta;
+            sessionTime += delta;
             softcaps = [];
             for (let type = 0; type < 4; ++type){
                 simplifyXPtick(type, gameDelta);          
@@ -486,9 +481,9 @@ function maxAllComPS(){
 
             player.misc.pps = calcPointsPerSecond();
             player.misc.points = player.misc.points.add(player.misc.pps.times(gameDelta));
-            // document.getElementById("points").innerHTML = format(player.misc.points, true, 3) + "<pps> ( " + format(player.misc.pps, true, 3) + " / s ) </pps>";
-            document.getElementById("points").innerText = format(player.misc.points, true, 3)
-            document.getElementById("pps").innerText = "(  " + format(player.misc.pps, true, 3) + " / s )";
+            document.getElementById("points").innerHTML = format(player.misc.points, true, 3) + "<pps> ( " + format(player.misc.pps, true, 3) + " / s ) </pps>";
+            // document.getElementById("points").innerText = format(player.misc.points, true, 3)
+            // document.getElementById("pps").innerText = "(  " + format(player.misc.pps, true, 3) + " / s )";
             
             if (compVisible < 8 && player.misc.points.gte(player.comps.array[compVisible + 1].cost.mul(0.1))){
                 ++compVisible;
@@ -497,7 +492,8 @@ function maxAllComPS(){
 
             player.misc.totalPoints = player.misc.totalPoints.add(player.misc.pps.times(gameDelta));
             player.misc.totalPointsInSimplify = player.misc.totalPointsInSimplify.add(player.misc.pps.times(gameDelta));
-            getProgress(); progressBar = Decimal.clamp(progressBar, 0, 1);
+            getProgress(); 
+            progressBar = Decimal.clamp(progressBar, 0, 1);
             getChalEffects();
 
             for (let comp = 1; comp <= 8; ++comp){
@@ -511,7 +507,7 @@ function maxAllComPS(){
                     document.getElementById("gen-comp" + comp + "-amount").innerText = format(player.comps.array[comp].trueamount, false, 3) + " " + text;
                     compCost.innerText = "Cost: " + format(player.comps.array[comp].cost, true, 3);
                     document.getElementById("gen-comp" + comp + "-multi").innerText = format(player.comps.array[comp].multi, true, 3) + "x ";
-                    tr = (expandMultComP == comp) ? ((expandMultComPType == 0) ? player.comps.array[comp]._multiFactors : player.comps.array[comp]._costFactors) : "";
+                    tr = (expandMultComP == comp) ? ((expandMultComPType == 0) ? player.comps.array[comp].multiFactors : player.comps.array[comp].costFactors) : "";
                     if (expandMultComPType == 0) {
                         document.getElementById("gen-comp" + comp + "-mbd").classList.replace("compCostBreakdown", "compMultBreakdown");
                         document.getElementById("gen-comp" + comp + "-breakdown").classList.replace("ceCost", "ceMul");
@@ -547,32 +543,6 @@ function maxAllComPS(){
             }
             //html stuff
             let htmlTemp = ""
-            if (player.misc.mode == "softcap"){
-                document.getElementById("scPts1").innerText = ""
-                document.getElementById("scPts2").innerText = ""
-                document.getElementById("scPts3").innerText = ""
-                document.getElementById("scPts4").innerText = ""
-                if (player.misc.pps.gte(100)){
-                    htmlTemp = "<pps><sc1> Your gain is being reduced by /" + format(softcaps[softcaps.indexOf("pts1")+1],true,3) + " ! </sc1></pps>";
-                    document.getElementById("scPts1").innerText = htmlTemp
-                }
-                if (player.misc.pps.gte(1e8)){
-                    htmlTemp = "<pps><sc2> Your gain is being reduced by /" + format(softcaps[softcaps.indexOf("pts2")+1],true,3) + " ! </sc2></pps>";
-                    document.getElementById("scPts2").innerText = htmlTemp
-                }
-                if (player.misc.pps.gte(1e16)){
-                    htmlTemp = "<pps><sc3> Your gain is being reduced by /" + format(softcaps[softcaps.indexOf("pts3")+1],true,3) + " ! </sc3></pps>";
-                    document.getElementById("scPts3").innerText = htmlTemp
-                }
-                if (player.misc.pps.gte(1e25)){
-                    htmlTemp = "<pps><sc4> Your gain is being reduced by /" + format(softcaps[softcaps.indexOf("pts4")+1],true,3) + " ! </sc4></pps>";
-                    document.getElementById("scPts4").innerText = htmlTemp
-                }
-                if (player.misc.pps.gte(1e40)){
-                    htmlTemp = "<pps><sc5> Your gain is being reduced by ^" + format(softcaps[softcaps.indexOf("pts5")+1],true,6) + " ! </sc5></pps>";
-                    document.getElementById("scPts5").innerText = htmlTemp
-                }
-            } 
             if (tab[0] == 2){ 
                 document.getElementById("SER").innerText = ((player.misc.points.gte(player.simplify.main.simplifyReq)) ? "You will gain " + format(getSimplifyGain().floor(), true) + " Simplify Energy. " : "Reset your current simplify run. ") + "[ Next at " + format(dTen.pow(getSimplifyGain().floor().add(1).log(10).div(player.simplify.main.SEExp.log(10)).add(1).mul(player.simplify.main.simplifyReq.log(10))).sub(player.misc.totalPointsInSimplify), true, 3, 3) + " ]";
                 if (player.misc.inSChallenge && player.misc.points.gte(player.simplify.main.simplifyReq)){
@@ -593,6 +563,7 @@ function maxAllComPS(){
             hideShow("tab_simplify", player.misc.totalPoints.gte(1e12))
             document.getElementById("progressBar1").innerText = progressBarText + (progressBar.toNumber() * 100).toFixed(2) + "%";
             document.getElementById("progressBar1").style.width = progressBar.toNumber() * 98 + "%";
+            drawing()
             // do not change order at all
             oldTimeStamp = timeStamp;
             window.requestAnimationFrame(gameLoop);

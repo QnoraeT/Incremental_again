@@ -65,7 +65,7 @@ for (let chall = 0; chall < 16;) {
         challenge.id = "simpChal" + trueID + "-id";
         challenge.addEventListener('click', function() {
             simpChalSelect(trueID)
-          });
+        });
         challenge.class = "simpChal";
         challenge.classList.add("simpChal");
         challenge.classList.add("simpChalIncomplete");
