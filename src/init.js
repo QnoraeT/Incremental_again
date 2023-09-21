@@ -188,7 +188,7 @@ let fpsList = [];
 let FPS = 0;
 let lastFPSCheck = 0;
 let sessionTime = 0;
-let delta;
+let delta = 0;
 
 const simpChal = {
     simpChalDesc: {
@@ -474,12 +474,14 @@ let player = {
 const draw = document.querySelector("#effects");
 const pen = draw.getContext("2d");
 let dots = [];
+let cursor = [];
+let mousePos = {x: 0, y: 0, time: 0};
 
 function initDots() {
-    for (let i = 0; i < 24; i++) {
+    for (let i = 0; i < 32; i++) {
         dots.push([0, rand(-3000, 3000), rand(-2000, 2000), rand(0.1, 0.4), rand(-0.02, 0.02), rand(-0.02, 0.02)])
     }
-    for (let i = 0; i < 96; i++) {
+    for (let i = 0; i < 128; i++) {
         dots.push([1, rand(-3000, 3000), rand(-2000, 2000), rand(1.1,3), rand(-0.1, 0.1), rand(-0.1, 0.1)])
     }
 }
@@ -504,9 +506,10 @@ const drawing = () => {
         }
         alpha = pad(Math.floor(alpha).toString(16), 2)
         pen.fillStyle = gRC((sessionTime + (i * (dots[i][0] === 0 ? 3 : 0.3))) / 64, 1, 1) + alpha
+        let j = Math.cos((sessionTime * dots[i][3] + i) / (2 * Math.PI))
         pen.arc(dots[i][1] % 3000, 
                 dots[i][2] % 2000, 
-                dots[i][0] == 0 ? 300 + 100 * Math.cos((sessionTime * dots[i][3] + i) / 40) : 8 + 2 * Math.cos((sessionTime * dots[i][3] + i) / 40), 
+                dots[i][0] == 0 ? (300 + 100 * j) : (8 + 2 * j), 
                 0, 
                 2 * Math.PI);
         pen.fill();

@@ -515,7 +515,7 @@ function maxAllComPS(){
                         document.getElementById("gen-comp" + comp + "-mbd").classList.replace("compMultBreakdown", "compCostBreakdown");
                         document.getElementById("gen-comp" + comp + "-breakdown").classList.replace("ceMul", "ceCost");
                     }
-                    document.getElementById("gen-comp" + comp + "-mbd").innerHTML = tr;
+                    document.getElementById("gen-comp" + comp + "-mbd").innerText = tr;
                     if (player.misc.points.gte(player.comps.array[comp].cost)) {
                         compCost.classList.replace("compNo", "compYes");
                     } else {
