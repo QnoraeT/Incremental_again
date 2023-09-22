@@ -67,7 +67,7 @@ function switchTab(t,id) {
 
 function getSimplifyGain() {
     let temp;
-    temp = player.simplify.main.SEExp.pow(player.misc.totalPointsInSimplify.log(player.simplify.main.simplifyReq).sub(1));
+    temp = Decimal.pow(player.simplify.main.SEExp, player.misc.totalPointsInSimplify.div(10).log(player.simplify.main.simplifyReq.div(10))).sub(1).div(player.simplify.main.SEExp.sub(1));
     return temp;
 }
 
@@ -499,7 +499,7 @@ function maxAllComPS(){
             for (let comp = 1; comp <= 8; ++comp){
                 player.comps.array[comp].changeAmount(calcCompxPerSecond(comp).times(gameDelta));
                 if (tab[0] == 0){
-                    let tr = player.comps.array[comp].amount.add(calcCompxPerSecond(comp)).pow(player.comps.array.compExp).sub(player.comps.array[comp].amount.pow(player.comps.compExp))
+                    let tr = calcCompxPerSecond(comp).add(player.comps.array[comp].amount).pow(player.comps.compExp).sub(player.comps.array[comp].amount.pow(player.comps.compExp))
                     const perSecondText = " (" + format(tr, false, tr < 10 ? 1 : 0) + "/s),";
                     const boughtText =  " [ " + format(player.comps.array[comp].bought) + " ]    "
                     const text = tr.gt(0) ? perSecondText + boughtText : boughtText;

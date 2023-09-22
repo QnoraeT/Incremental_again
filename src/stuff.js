@@ -7,21 +7,26 @@ const objectMap = (obj, fn) =>
     )
 )
 
+
 class Character {
-    constructor(id, name, ai, level, type, baseStats, xp, team) {
+    constructor(id, name, ai, level, config, type, baseStats, xp, team) {
         this.id = id
         this.name = name
         this.aiName = ai
         this.level = level
+        this.config = config
         this.type = type
         this.baseStats = baseStats
         this.stats = structuredClone(this.baseStats); // JAVASCRIPT YOU MOTHERFUCKER
         this.team = team
-        this.xp = 0
-        this.xpReq = xp[0]
         this.baseXP = xp
+        this.xp = 0
+        this.xpReq = Math.max(0, (xp[0] * (XP_SCALE.cube[xp[1]] * (level ** 3) + XP_SCALE.quad[xp[1]] * (level ** 2) + XP_SCALE.line[xp[1]] * level + XP_SCALE.base[xp[1]])) / 10)
         this.health = this.stats.hp
         this.mana = this.stats.mp
+        this.extraStats = {}
+        // this.random = {hp: 0, mp: 0, patk: 0, pdef: 0, matk: 0, mdef: 0, eva: 0, acc: 0}
+        // this.lastRandom = {hp: 0, mp: 0, patk: 0, pdef: 0, matk: 0, mdef: 0, eva: 0, acc: 0}
     }
 
     changeStats(stat, amt, name) {
@@ -31,8 +36,8 @@ class Character {
     }
 
     levelUp(every) {
-        if (this.xp < this.xpReq) {
-            console.log(`${this.name} now needs ${Math.round(this.xp - this.calcEXP(this.level - 1, this.baseXP))} / ${Math.round(this.calcEXP(this.level, this.baseXP) - this.calcEXP(this.level - 1, this.baseXP))} XP to level up again.`) 
+        if (this.xp < Math.round(this.xpReq)) {
+            console.log(`${this.name} needs ${Math.round(this.xp - this.calcEXP(this.level - 1))} / ${Math.round(this.calcEXP(this.level) - this.calcEXP(this.level - 1))} XP to level up again.`)
             return;
         }
         for (let iter = 0; (this.xp >= this.xpReq && every && iter < 1000) || (!every && iter < 1); iter++) {
@@ -41,27 +46,37 @@ class Character {
             console.log(`${this.name} leveled up to [ ${this.level} ] !`)
             this.xpReq = this.calcEXP(this.level, this.baseXP)
             let lf = this.level
+            lf--
+            let lp = (1 + 4 * ((lf - 1) / 99)) * (1 + 0.04 * Math.floor(lf / 4)) * (1 + 0.05 * Math.floor(lf / 10)) * (1 + Math.floor(lf / 50) / 6)
+            lf++
             lf = (1 + 4 * ((lf - 1) / 99)) * (1 + 0.04 * Math.floor(lf / 4)) * (1 + 0.05 * Math.floor(lf / 10)) * (1 + Math.floor(lf / 50) / 6)
     
             let newStats = structuredClone(this.baseStats);
-    
+            let prevStats = structuredClone(this.baseStats);
             for (let key in newStats) {
                 if (newStats.hasOwnProperty(key)) {
                     newStats[key] *= lf;
+                    prevStats[key] *= lp;
                 }
             }
-    
+
             let change = structuredClone(newStats)
+            let nChange = structuredClone(newStats)
             for (let key in change) {
                 if (change.hasOwnProperty(key)) {
                     change[key] -= this.stats[key];
+                    nChange[key] -= prevStats[key];
                 }
             }
     
             if (this.level % 25 !== 0) {
                 for (let key in change) {
                     if (change.hasOwnProperty(key)) {
+                        if (nChange[key] > change[key] * 2) {
+                            change[key] *= 2
+                        }
                         change[key] *= (Math.random() * 0.5) + 0.5;
+                        
                     }
                 }
             }
@@ -83,11 +98,11 @@ class Character {
             this.changeStats("eva", change.eva, "Evasion")
             this.changeStats("acc", change.acc, "Accuracy")
         }
-        console.log(`${this.name} now needs ${Math.round(this.xp - this.calcEXP(this.level - 1, this.baseXP))} / ${Math.round(this.calcEXP(this.level, this.baseXP) - this.calcEXP(this.level - 1, this.baseXP))} XP to level up again.`)
+        console.log(`${this.name} needs ${Math.round(this.xp - this.calcEXP(this.level - 1))} / ${Math.round(this.calcEXP(this.level) - this.calcEXP(this.level - 1))} XP to level up again.`)
     }
 
-    calcEXP(lvl, xp = [10, 1]) {
-        return (xp[0] * (XP_SCALE.cube[xp[1]] * (lvl ** 3) + XP_SCALE.quad[xp[1]] * (lvl ** 2) + XP_SCALE.line[xp[1]] * lvl + XP_SCALE.base[xp[1]])) / 10
+    calcEXP(lvl, xp = this.baseXP) {
+        return Math.max(0, (xp[0] * (XP_SCALE.cube[xp[1]] * (lvl ** 3) + XP_SCALE.quad[xp[1]] * (lvl ** 2) + XP_SCALE.line[xp[1]] * lvl + XP_SCALE.base[xp[1]])) / 10)
     }
 }
 
@@ -118,11 +133,17 @@ const XP_SCALE = {
     },
 }
 
-function makeCharacter(name, ai, level, type, stats, xp, team) {
+function makeCharacter(name, ai, level, config, elementType, stats, xp, team) {
     globalID++
-    return new Character(globalID - 1, name, ai, level, type, stats, xp, team)
+    return new Character(globalID - 1, name, ai, level, config, elementType, stats, xp, team)
 }
 
 let globalID = 0;
 let characters = [];
-characters.push(makeCharacter("FSBlue", "FSBlue", 1, ["Fighting"], {hp: 45, mp: 3, patk: 25, matk: 6, pdef: 19, mdef: 11, eva: 7, acc: 23}, [10, 3], 0))
+characters.push(makeCharacter("FSBlue",          "FSBlue",  1, {}, ["Fighting"],            {hp: 45,  mp: 3,  patk: 25,   matk: 6,  pdef: 19,  mdef: 11,   eva: 7,   acc: 23}, [12, 3], 0))
+characters.push(makeCharacter("HypSB",           "HypSB",   1, {}, ["Psychic"],             {hp: 20,  mp: 15, patk: 8,    matk: 20, pdef: 10,  mdef: 25,   eva: 10,  acc: 30}, [10, 1], 0))
+characters.push(makeCharacter("DesSB",           "DesSB",   1, {}, ["Normal"],              {hp: 12,  mp: 20, patk: 10,   matk: 24, pdef: 3,   mdef: 30,   eva: 15,  acc: 20}, [10, 0], 0))
+characters.push(makeCharacter("QsSB",            "QsSB",    1, {}, ["Ground"],              {hp: 32,  mp: 10, patk: 15,   matk: 12, pdef: 15,  mdef: 14,   eva: 4,   acc: 18}, [12, 2], 0))
+characters.push(makeCharacter("Natalie Skyler",  "Natsky",  1, {}, ["Electric", "Psychic"], {hp: 15,  mp: 25, patk: 9,    matk: 25, pdef: 7,   mdef: 18,   eva: 20,  acc: 30}, [12, 1], 0))
+characters.push(makeCharacter("Toxafel Skyler",  "Toxafel", 1, {}, ["Electric", "Poison"],  {hp: 16,  mp: 17, patk: 16.5, matk: 15, pdef: 12,  mdef: 13.5, eva: 17,  acc: 16}, [10, 1], 0))
+characters.push(makeCharacter("Alterian Skyler", "Altsky",  1, {}, ["Electric", "Normal"],  {hp: 100, mp: 15, patk: 17,   matk: 12, pdef: 1.5, mdef: 1.2,  eva: 1.8, acc: 40}, [15, 3], 0))

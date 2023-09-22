@@ -287,8 +287,8 @@ let player = {
         "main": {
             simplifyEnergy: dZero,
             simplifyStat: dZero,
-            SEExp: new Decimal(1.75),
-            SAExp: new Decimal(0.6),
+            SEExp: new Decimal(1.5),
+            SAExp: new Decimal(0.55),
             simplifyReq: new Decimal(1e12),
             totalXP: dZero, // (TruePP + TrueMP + True1P + TrueDP)^SimpEXP
             timeInSimplify: dZero,
@@ -500,16 +500,16 @@ const drawing = () => {
         pen.beginPath();
         let alpha
         if (dots[i][0] === 0) {
-            alpha = 16 + 12 * Math.cos((sessionTime + 11 * i) / 50)
+            alpha = 16 + 8 * Math.cos((sessionTime + 11 * i) / 50)
         } else {
-            alpha = 100 + 85 * Math.cos((sessionTime + 11 * i) / 50)
+            alpha = 128 + 64 * Math.cos((sessionTime + 11 * i) / 50)
         }
         alpha = pad(Math.floor(alpha).toString(16), 2)
-        pen.fillStyle = gRC((sessionTime + (i * (dots[i][0] === 0 ? 3 : 0.3))) / 64, 1, 1) + alpha
+        pen.fillStyle = gRC((sessionTime + (i * (dots[i][0] === 0 ? 1 : 0.1))) / 64, 1, 1) + alpha
         let j = Math.cos((sessionTime * dots[i][3] + i) / (2 * Math.PI))
-        pen.arc(dots[i][1] % 3000, 
-                dots[i][2] % 2000, 
-                dots[i][0] == 0 ? (300 + 100 * j) : (8 + 2 * j), 
+        pen.arc((dots[i][1] % 2200) - 700, 
+                (dots[i][2] % 2200) - 700, 
+                dots[i][0] == 0 ? (500 + 200 * j) : (15 + 5 * j), 
                 0, 
                 2 * Math.PI);
         pen.fill();
