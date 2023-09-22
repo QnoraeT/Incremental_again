@@ -479,10 +479,10 @@ let mousePos = {x: 0, y: 0, time: 0};
 
 function initDots() {
     for (let i = 0; i < 32; i++) {
-        dots.push([0, rand(-3000, 3000), rand(-2000, 2000), rand(0.1, 0.4), rand(-0.02, 0.02), rand(-0.02, 0.02)])
+        dots.push([0, rand(-10000, 10000), rand(-10000, 10000), rand(0.1, 0.4), rand(-0.02, 0.02), rand(-0.02, 0.02)])
     }
     for (let i = 0; i < 128; i++) {
-        dots.push([1, rand(-3000, 3000), rand(-2000, 2000), rand(1.1,3), rand(-0.1, 0.1), rand(-0.1, 0.1)])
+        dots.push([1, rand(-10000, 10000), rand(-10000, 10000), rand(1.1,3), rand(-0.1, 0.1), rand(-0.1, 0.1)])
     }
 }
 
@@ -497,21 +497,24 @@ const drawing = () => {
         dots[i][1] += dots[i][3] * delta * dots[i][4]
         dots[i][2] += dots[i][3] * delta * dots[i][5]
 
-        pen.beginPath();
-        let alpha
-        if (dots[i][0] === 0) {
-            alpha = 16 + 8 * Math.cos((sessionTime + 11 * i) / 50)
-        } else {
-            alpha = 128 + 64 * Math.cos((sessionTime + 11 * i) / 50)
+        if ((dots[i][1] % 4000) - 700 > (dots[i][0] === 0 ? 500 : 20) && (dots[i][2] % 2400) - 700 > (dots[i][0] === 0 ? 500 : 20)) {
+            pen.beginPath();
+            let alpha
+            if (dots[i][0] === 0) {
+                alpha = 20 + (4 * Math.cos((sessionTime + 11 * i) / 50))
+            } else {
+                alpha = 160 + (64 * Math.cos((sessionTime + 11 * i) / 50))
+            }
+            alpha = pad(Math.floor(alpha).toString(16), 2)
+            pen.fillStyle = gRC((sessionTime + (i * (dots[i][0] === 0 ? 1 : 0.1))) / 64, 1, 1) + alpha
+            let j = Math.cos((sessionTime * dots[i][3] + i) / (2 * Math.PI))
+            pen.arc((dots[i][1] % 4000) - 700, 
+                    (dots[i][2] % 2400) - 700, 
+                    dots[i][0] == 0 ? (500 + 200 * j) : (15 + 5 * j), 
+                    0, 
+                    2 * Math.PI);
+            pen.fill();
         }
-        alpha = pad(Math.floor(alpha).toString(16), 2)
-        pen.fillStyle = gRC((sessionTime + (i * (dots[i][0] === 0 ? 1 : 0.1))) / 64, 1, 1) + alpha
-        let j = Math.cos((sessionTime * dots[i][3] + i) / (2 * Math.PI))
-        pen.arc((dots[i][1] % 2200) - 700, 
-                (dots[i][2] % 2200) - 700, 
-                dots[i][0] == 0 ? (500 + 200 * j) : (15 + 5 * j), 
-                0, 
-                2 * Math.PI);
-        pen.fill();
+
     }
 }
