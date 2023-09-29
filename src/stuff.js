@@ -1,5 +1,43 @@
 "use strict";
 
+function showCharacter(id) {
+    let char = characters[id]
+    console.log(`  > ${char.name} [ ${char.type} ] Level %c${char.level}%c
+    HP:    %c${char.stats.hp}%c
+    MP:    %c${char.stats.mp}%c
+    PATK:  %c${char.stats.patk}%c
+    MATK:  %c${char.stats.matk}%c
+    PDEF:  %c${char.stats.pdef}%c
+    MDEF:  %c${char.stats.mdef}%c
+    EVA:   %c${char.stats.eva}%c
+    ACC:   %c${char.stats.acc}%c`, 
+    `color: #ffff00`,
+    ``,
+    `color: #ff0000`,
+    ``,
+    `color: #0000ff`,
+    ``,
+    `color: #ff6000`,
+    ``,
+    `color: #0080ff`,
+    ``,
+    `color: #00ff00`,
+    ``,
+    `color: #8000ff`,
+    ``,
+    `color: #a0a0a0`,
+    ``,
+    `color: #606060`,
+    ``,
+    )
+}
+
+function levelUp(id, level) {
+    let char = characters[id]
+    char.xp = char.calcEXP(level - 1) + 0.5
+    char.levelUp(true)
+}
+
 class Character {
     constructor(id, name, ai, level, config, type, baseStats, xp, team) {
         this.id = id
@@ -17,8 +55,6 @@ class Character {
         this.health = this.stats.hp
         this.mana = this.stats.mp
         this.extraStats = {}
-        // this.random = {hp: 0, mp: 0, patk: 0, pdef: 0, matk: 0, mdef: 0, eva: 0, acc: 0}
-        // this.lastRandom = {hp: 0, mp: 0, patk: 0, pdef: 0, matk: 0, mdef: 0, eva: 0, acc: 0}
     }
 
     changeStats(stat, amt, name, color) {
@@ -79,11 +115,11 @@ class Character {
             this.changeStats("eva", change.eva, "Evasion", "#a0a0a0")
             this.changeStats("acc", change.acc, "Accuracy", "#606060")
         }
-        console.log(`${this.name} needs ${Math.round(this.xp - this.calcEXP(this.level - 1))} / ${Math.round(this.calcEXP(this.level) - this.calcEXP(this.level - 1))} XP to level up again.`)
+        console.log(`${this.name} now needs ${Math.round(this.xp - this.calcEXP(this.level - 1))} / ${Math.round(this.calcEXP(this.level) - this.calcEXP(this.level - 1))} XP to level up again.`)
     }
 
     calcEXP(lvl, xp = this.baseXP) {
-        return Math.max(0, (xp[0] * (XP_SCALE.cube[xp[1]] * (lvl ** 3) + XP_SCALE.quad[xp[1]] * (lvl ** 2) + XP_SCALE.line[xp[1]] * lvl + XP_SCALE.base[xp[1]])) / 10)
+        return Math.max(0, (xp[0] * (XP_SCALE.cube[xp[1]] * ((lvl) ** 3) + XP_SCALE.quad[xp[1]] * (lvl ** 2) + XP_SCALE.line[xp[1]] * lvl + XP_SCALE.base[xp[1]])) / 10)
     }
 }
 
