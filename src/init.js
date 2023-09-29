@@ -1,195 +1,16 @@
 "use strict";
 
-class ComP {
-    constructor(index) {
-        this.amount = dZero;
-        this.bought = dZero;
-        this.multi = dOne;
-        this.cost = dTen;
-        this.index = index;
-        this.multiFactors = "";
-        this.costFactors = "";
-    }
-
-    get trueamount(){
-        return this.amount.pow(player.comps.compExp).add(this.bought);
-    }
-
-    buy() {
-        this.bought = this.bought.add(1);
-        this.updateMultiplier();
-        this.updateCost();
-        player.simplify.challenge.JC1Time = dZero;
-    }
-
-    changeAmount(amount) {
-        this.amount = this.amount.add(amount);
-        this.updateMultiplier();
-        this.updateCost();
-    }
-
-    updateMultiplier() {
-        this.multiFactors = "\n Multipliers:";
-        this.multi = new Decimal(1);
-        if (player.misc.inChallenge.includes("simp14")) { this.bought = this.bought.sub(player.simplify.main.timeInSimplify.mul(0.4)); }
-        if (this.bought.gte(2)) {
-            this.multi = this.multi.mul(player.comps.compBM.pow(this.bought.sub(1)))
-            this.multiFactors += "\n Buy Multiplier (Total): x" + format(player.comps.compBM.pow(this.bought.sub(1)), true, 2) + "  (" + format(this.multi, true) + "x)"
-        }
-        if (this.index == 1) {
-            this.multi = this.multi.mul(10)
-            this.multiFactors += "\n ComP1 Bonus: x" + format(new Decimal(10), true, 2) + "  (" + format(this.multi, true) + "x)"
-            let temp = player.simplify.OP.effect
-            if (player.misc.inChallenge.includes("simp12")) { temp = new Decimal(0.5); }
-            this.multi = this.multi.pow(temp)
-            this.multiFactors += "\n ComP1 Bonus: ^" + format(temp, true, 3) + "  (" + format(this.multi, true) + "x)"
-            if (player.simplify.PP.effect.gt(1)) {
-                this.multi = this.multi.mul(player.simplify.PP.effect);
-                this.multiFactors += "\n PP Effect: x" + format(player.simplify.PP.effect, true, 2) + "  (" + format(this.multi, true) + "x)"
-            }
-        }
-        if (this.index == 2) {
-            this.multi = this.multi.mul(4)
-            this.multiFactors += "\n ComP2 Bonus: x" + format(new Decimal(4), true, 2) + "  (" + format(this.multi, true) + "x)"
-            let temp = new Decimal(1.584962500721156)
-            if (player.simplify.challenge.completed[7] == 1) { temp = new Decimal(5 / 3); }
-            if (player.misc.inChallenge.includes("simp12")) { temp = new Decimal(0.5); }
-            this.multi = this.multi.pow(temp)
-            this.multiFactors += "\n ComP2 Bonus: ^" + format(temp, true, 3) + "  (" + format(this.multi, true) + "x)"
-        }
-        if (player.misc.inChallenge.length == 0 && player.simplify.main.simplifyStat.gt(0)) {
-            this.multi = this.multi.mul(player.simplify.main.simplifyStat.add(1).root(new Decimal(this.index)));
-            this.multiFactors += "\n Simplified amount: x" + format(player.simplify.main.simplifyStat.add(1).root(new Decimal(this.index)), true, 2) + "  (" + format(this.multi, true) + "x)"
-        }
-        if (player.simplify.MP.effect.gt(1)) {
-            this.multi = this.multi.mul(player.simplify.MP.effect);
-            this.multiFactors += "\n MP Effect: x" + format(player.simplify.MP.effect, true) + "  (" + format(this.multi, true) + "x)"
-        }
-        if (player.misc.inChallenge.includes("simp0")) {
-            this.multi = this.multi.pow(0.75);
-            this.multiFactors += "\n Magnifying Challenge 1: ^" + format(new Decimal(0.75), true, 2) + "  (" + format(this.multi, true) + "x)"
-            this.multi = this.multi.div(1000);
-            this.multiFactors += "\n Magnifying Challenge 1: /" + format(new Decimal(1000), true) + "  (" + format(this.multi, true) + "x)"
-        }
-        if (player.misc.inChallenge.includes("simp3")) {
-            this.multi = this.multi.pow(0.4);
-            this.multiFactors += "\n Magnifying Challenge 4: ^" + format(new Decimal(0.4), true, 2) + "  (" + format(this.multi, true) + "x)"
-        }
-        if (player.misc.inChallenge.includes("simp4")) {
-            let temp = Decimal.clamp(player.simplify.challenge.JC1Time.div(40), 0, 1)
-            this.multi = this.multi.pow(Decimal.add(0.25, temp.div(4)));
-            this.multiFactors += "\n Japanese Symbol Challenge 1: ^" + format(new Decimal(Decimal.add(0.25, temp.div(4))), true, 3) + "  (" + format(this.multi, true) + "x)"
-            this.multi = this.multi.div(Decimal.pow(10, Decimal.sub(16, temp.mul(8))));
-            this.multiFactors += "\n Japanese Symbol Challenge 1: /" + format(Decimal.pow(10, Decimal.sub(16, temp.mul(8))), true) + "  (" + format(this.multi, true) + "x)"
-        }
-        if (player.misc.inChallenge.includes("simp7")) {
-            this.multi = this.multi.pow(player.comps.compExp);
-            this.multiFactors += "\n Japanese Symbol Challenge 4: ^" + format(player.comps.compExp, true, 3) + "  (" + format(this.multi, true) + "x)"
-        }
-        if (player.misc.inChallenge.includes("simp10")) {
-            let temp = Decimal.div(0.5, player.simplify.challenge.JC1Time.max(0.4).add(0.6).pow(0.7))
-            this.multi = this.multi.pow(temp);
-            this.multiFactors += "\n Articulated Challenge 3: ^" + format(temp, true, 3) + "  (" + format(this.multi, true) + "x)"
-
-        }
-        if (player.simplify.challenge.completed[4] == 1) {
-            let temp = dOne
-            for (let comp = this.index; comp > 1; --comp) {
-                temp = temp.mul(player.comps.array[comp].multi.pow(0.1))
-            }
-            this.multi = this.multi.mul(temp);
-            this.multiFactors += "\n JC1 Effect: x" + format(temp, true) + "  (" + format(this.multi, true) + "x)"
-        }
-        if (player.simplify.challenge.completed[6] == 1 && this.index == 8) {
-            this.multi = this.multi.mul(4)
-            this.multiFactors += "\n JC3 Bonus: x" + format(new Decimal(4), true, 2) + "  (" + format(this.multi, true) + "x)"
-            this.multi = this.multi.pow(1.584962500721156)
-            this.multiFactors += "\n JC3 Bonus: ^" + format(new Decimal(1.584962500721156), true, 3) + "  (" + format(this.multi, true) + "x)"
-        }
-        if (player.misc.inChallenge.includes("simp14")) { this.bought = this.bought.add(player.simplify.main.timeInSimplify.mul(0.4)); }
-    }
-
-    updateCost() {
-        this.costFactors = `\n Cost Scaling:`;
-        let temp = this.bought;
-        if (player.misc.inChallenge.includes("simp14")) { temp = temp.mul(2); this.costFactors += "\n SC3 Scaling: x" + format(dTwo, true, 3) + "  (" + format(temp, true) + " buys)" }
-        if (player.misc.inChallenge.includes("simp3")) { temp = temp.pow(2); this.costFactors += "\n MC4 Scaling: ^" + format(dTwo, true, 3) + "  (" + format(temp, true) + " buys)" }
-        if (player.misc.inChallenge.includes("simp8")) {
-            let t2 = dZero
-            for (let comp = 8; comp >= 1; --comp) {
-                t2 = t2.add(player.comps.array[comp].bought)
-            }
-            temp = temp.add(t2);
-            this.costFactors += "\n AC1 Scaling: +" + format(t2, true, 3) + "  (" + format(temp, true) + " buys)"
-        }
-        if (player.misc.inChallenge.includes("simp11")) { temp = temp.add(player.simplify.main.timeInSimplify.mul(0.78)); this.costFactors += "\n AC4 Scaling: +" + format(player.simplify.main.timeInSimplify.mul(0.78), true, 3) + "  (" + format(temp, true) + " buys)" }
-        if (player.simplify.challenge.completed[2] == 1) { temp = temp.mul(0.975); this.costFactors += "\n MC3 Completion: x" + format(new Decimal(0.975), true, 3) + "  (" + format(temp, true) + " buys)" }
-        if (player.simplify.challenge.completed[3] == 1) { temp = temp.sub(player.simplify.challenge.MC4effect); this.costFactors += "\n MC4 Completion: -" + format(player.simplify.challenge.MC4effect, true, 3) + "  (" + format(temp, true) + " buys)" }
-        let cost
-        if (temp.gte(player.scaling.ComPs[1].start)) {
-            let a = new Decimal("e133333333").mul(this.index)
-            let b = new Decimal("e3000").mul(this.index)
-            let c = player.scaling.ComPs[1].strength[0]
-            let d = player.scaling.ComPs[1].strength[1].mul(0.0001).mul(this.index ** 0.25).add(1)
-            let e = player.scaling.ComPs[1].strength[2].mul(0.0001).mul(this.index ** 0.25)
-            let f = player.scaling.ComPs[1].strength[3].mul(2).mul(this.index ** 0.1)
-            cost = calcGeneralCosts("EEP", temp.sub(player.scaling.ComPs[1].start), false, a, b, c, d, e, f)
-            this.costFactors += "\n Exponential Scaling: " + format(cost, true, 3) + "  - Starting at " + format(player.scaling.ComPs[1].start, true, 3) + ", it has the quaternion power of x: " + format(player.scaling.ComPs[1].strength[0].mul(100), true, 3) + "%, y: " + format(player.scaling.ComPs[1].strength[1].mul(100), true, 3) + "%, z: " + format(player.scaling.ComPs[1].strength[2].mul(100), true, 3) + "%, w: " + format(player.scaling.ComPs[1].strength[3].mul(100), true, 3) + "%"
-        } else {
-            if (temp.gte(player.scaling.ComPs[0].start)) {
-                cost = Decimal.pow(10, new Decimal(this.index).mul(temp.pow(2).mul(2).div(player.scaling.ComPs[0].start).add(4)).sub(3));
-                this.costFactors += "\n Quadratic Scaling: " + format(cost, true, 3) + "  - Starting at " + format(player.scaling.ComPs[0].start, true, 3) + "  [Next Stage @" + format(player.scaling.ComPs[1].start, true, 3) + "]"
-            } else {
-                cost = Decimal.pow(10, new Decimal(2 * this.index).mul(temp.add(2)).sub(3));
-                this.costFactors += "\n Normal Scaling: " + format(cost, true, 3) + "  [Next Stage @" + format(player.scaling.ComPs[0].start, true, 3) + "]"
-            }
-        }
-
-        if (player.simplify.challenge.MC1effect.gt(1)) {
-            cost = cost.div(player.simplify.challenge.MC1effect.pow(temp))
-            //this.costFactors += "\n MC1 Completion: /" + format(player.simplify.challenge.MC1effect.pow(temp), true, 3) + "  (" + format(cost, true) + ")"
-        }
-        if (player.simplify.challenge.SC3effect.gt(1)) {
-            cost = cost.div(player.simplify.challenge.SC3effect.pow(new Decimal(this.index).mul(temp)))
-            //this.costFactors += "\n SC3 Completion: /" + format(player.simplify.challenge.SC3effect.pow(new Decimal(this.index).mul(temp)), true, 3) + "  (" + format(cost, true) + ")"
-        }
-
-        if (player.simplify.challenge.completed[1] == 1) { cost = cost.pow(0.95); this.costFactors += "\n MC2 Completion: ^" + format(new Decimal(0.95), true, 3) + "  (" + format(cost, true) + ")" }
-        if (player.simplify.challenge.AC2effect.gt(1)) {
-            cost = cost.div(player.simplify.challenge.AC2effect)
-            //this.costFactors += "\n AC2 Completion: /" + format(player.simplify.challenge.AC2effect, true, 3) + "  (" + format(cost, true) + ")"
-        }
-        if (player.misc.inChallenge.includes("simp2") && this.index >= 2) { cost = cost.mul(10000); this.costFactors += "\n MC3 Scaling: x" + format(new Decimal(10000), true, 3) + "  (" + format(cost, true) + ")" }
-        if (player.misc.inChallenge.includes("simp2")) {
-            cost = cost.pow(2); this.costFactors += "\n MC3 Scaling: ^" + format(new Decimal(2), true, 3) + "  (" + format(cost, true) + ")"
-        }
-        if (player.misc.inChallenge.includes("simp0")) {
-            cost = cost.mul(Decimal.pow(2, temp.mul(temp.add(1)).div(2))); this.costFactors += "\n MC1 Scaling: x" + format(Decimal.pow(2, temp.mul(temp.add(1)).div(2)), true, 3) + "  (" + format(cost, true) + ")"
-        }
-        if (this.index == 1 && this.bought.eq(0)) { cost = dTen; }
-        this.cost = cost;
-    }
+const simpUpg1Desc = {
+    1: "Invest in multiple energies to boost production.",
+    2: "Unlock TTS Challenges.",
+    3: "Unlock Simplify upgrades where you can use your SE, xP, and total xP to get advantages.",
+    4: "Unlock 'Situations' where you can go on altered runs for different milestones.",
 }
-
-const dZero = new Decimal(0);
-const dOne = new Decimal(1);
-const dTwo = new Decimal(2);
-const dTen = new Decimal(10);
-const ln10 = dTen.ln();
-let compVisible = 1;
-let tab = [0, 0, 0];
-let expandMultComP = 0;
-let expandMultComPType = 0;
-let progressBar = dZero;
-let progressBarText = "";
-let simpChalSelected = 0;
-let softcaps = [];
-let fpsList = [];
-let FPS = 0;
-let lastFPSCheck = 0;
-let sessionTime = 0;
-let delta = 0;
-
+const scalingNames = {
+    DistInc: ["Normal", "Scaled", "Superscaled", "Hyper", "Atomic"],
+    IncMass: ["Normal", "Super", "Hyper", "Ultra", "Meta"],
+    Disaster: ["Standard", "Turbo", "Hyper", "Ultra", "Cruel"],
+}
 const simpChal = {
     simpChalDesc: {
         1: "Max All is disabled. ComP costs grow by 2^x per purchase. Multipliers are ^0.75 then /" + format(new Decimal(1000), true) + ".",
@@ -228,6 +49,196 @@ const simpChal = {
         16: "???",
     }
 }
+const dZero = new Decimal(0);
+const dOne = new Decimal(1);
+const dTwo = new Decimal(2);
+const dTen = new Decimal(10);
+const ln10 = dTen.ln();
+const simplifyChalTypes = ["🔎", "🔰", "🚛", "777"]
+const simplifyXPTypes = ["PP", "MP", "OP", "DP"]
+const simplifyXPColor = ["#FF0000", "#FFFF00", "#00FF00", "#0000FF"]
+const simplifyXPDesc = ["increasing overall gain by x", "increasing all multipliers by x", "improving 1st mult power to ^", "boosting multiplier per bought by x"]
+let compVisible = 1;
+let tab = [0, 0, 0];
+let expandMultComP = 0;
+let expandMultComPType = 0;
+let progressBar = dZero;
+let progressBarText = "";
+let simpChalSelected = 0;
+let softcaps = [];
+let fpsList = [];
+let FPS = 0;
+let lastFPSCheck = 0;
+let sessionTime = 0;
+let delta = 0;
+let html = {};
+
+class ComP {
+    constructor(index) {
+        this.amount = dZero;
+        this.bought = dZero;
+        this.multi = dOne;
+        this.cost = dTen;
+        this.index = index;
+        this.multiFactors = "";
+        this.costFactors = "";
+    }
+
+    get trueamount() {
+        return this.amount.pow(player.comps.compExp).add(this.bought);
+    }
+
+    buy() {
+        this.bought = this.bought.add(1);
+        this.updateMultiplier();
+        this.updateCost();
+        player.simplify.challenge.JC1Time = dZero;
+    }
+
+    changeAmount(amount) {
+        this.amount = this.amount.add(amount);
+        this.updateMultiplier();
+        this.updateCost();
+    }
+
+    updateMultiplier() {
+        this.multiFactors = "<br> Multipliers:";
+        this.multi = new Decimal(1);
+        if (player.misc.inChallenge.includes("simp14")) { this.bought = this.bought.sub(player.simplify.main.timeInSimplify.mul(0.4)); }
+        if (this.bought.gte(2)) {
+            this.multi = this.multi.mul(player.comps.compBM.pow(this.bought.sub(1)))
+            this.multiFactors += "<br> Buy Multiplier (Total): x" + format(player.comps.compBM.pow(this.bought.sub(1)), true, 2) + "  (" + format(this.multi, true) + "x)"
+        }
+        if (this.index == 1) {
+            this.multi = this.multi.mul(10)
+            this.multiFactors += "<br> ComP1 Bonus: x" + format(new Decimal(10), true, 2) + "  (" + format(this.multi, true) + "x)"
+            let temp = player.simplify.OP.effect
+            if (player.misc.inChallenge.includes("simp12")) { temp = new Decimal(0.5); }
+            this.multi = this.multi.pow(temp)
+            this.multiFactors += "<br> ComP1 Bonus: ^" + format(temp, true, 3) + "  (" + format(this.multi, true) + "x)"
+            if (player.simplify.PP.effect.gt(1)) {
+                this.multi = this.multi.mul(player.simplify.PP.effect);
+                this.multiFactors += "<br> PP Effect: x" + format(player.simplify.PP.effect, true, 2) + "  (" + format(this.multi, true) + "x)"
+            }
+        }
+        if (this.index == 2) {
+            this.multi = this.multi.mul(4)
+            this.multiFactors += "<br> ComP2 Bonus: x" + format(new Decimal(4), true, 2) + "  (" + format(this.multi, true) + "x)"
+            let temp = new Decimal(1.584962500721156)
+            if (player.simplify.challenge.completed[7] == 1) { temp = new Decimal(5 / 3); }
+            if (player.misc.inChallenge.includes("simp12")) { temp = new Decimal(0.5); }
+            this.multi = this.multi.pow(temp)
+            this.multiFactors += "<br> ComP2 Bonus: ^" + format(temp, true, 3) + "  (" + format(this.multi, true) + "x)"
+        }
+        if (player.simplify.main.simplifyStat.gt(0)) {
+            if (player.misc.inChallenge.length == 0) {
+                this.multi = this.multi.mul(player.simplify.main.simplifyStat.add(1).root(new Decimal(this.index)));
+                this.multiFactors += "<br> Simplified Count (No Challenge): x" + format(player.simplify.main.simplifyStat.add(1).root(new Decimal(this.index)), true, 2) + "  (" + format(this.multi, true) + "x)"
+            }
+            this.multi = this.multi.mul(player.simplify.main.totalSE.add(1).root(new Decimal(this.index).add(8).mul(1.25)));
+            this.multiFactors += "<br> Total SE: x" + format(player.simplify.main.totalSE.add(1).root(new Decimal(this.index).add(8).mul(1.25)), true, 2) + "  (" + format(this.multi, true) + "x)"
+        }
+        if (player.simplify.MP.effect.gt(1)) {
+            this.multi = this.multi.mul(player.simplify.MP.effect);
+            this.multiFactors += "<br> MP Effect: x" + format(player.simplify.MP.effect, true) + "  (" + format(this.multi, true) + "x)"
+        }
+        if (player.misc.inChallenge.includes("simp0")) {
+            this.multi = this.multi.pow(0.75);
+            this.multiFactors += "<br> Magnifying Challenge 1: ^" + format(new Decimal(0.75), true, 2) + "  (" + format(this.multi, true) + "x)"
+            this.multi = this.multi.div(1000);
+            this.multiFactors += "<br> Magnifying Challenge 1: /" + format(new Decimal(1000), true) + "  (" + format(this.multi, true) + "x)"
+        }
+        if (player.misc.inChallenge.includes("simp3")) {
+            this.multi = this.multi.pow(0.4);
+            this.multiFactors += "<br> Magnifying Challenge 4: ^" + format(new Decimal(0.4), true, 2) + "  (" + format(this.multi, true) + "x)"
+        }
+        if (player.misc.inChallenge.includes("simp4")) {
+            let temp = Decimal.clamp(player.simplify.challenge.JC1Time.div(40), 0, 1)
+            this.multi = this.multi.pow(Decimal.add(0.3, temp.mul(0.3)));
+            this.multiFactors += "<br> Japanese Symbol Challenge 1: ^" + format(new Decimal(Decimal.add(0.3, temp.mul(0.3))), true, 3) + "  (" + format(this.multi, true) + "x)"
+            this.multi = this.multi.div(Decimal.pow(10, Decimal.sub(15, temp.mul(8))));
+            this.multiFactors += "<br> Japanese Symbol Challenge 1: /" + format(Decimal.pow(10, Decimal.sub(15, temp.mul(8))), true) + "  (" + format(this.multi, true) + "x)"
+        }
+        if (player.misc.inChallenge.includes("simp7")) {
+            this.multi = this.multi.pow(player.comps.compExp);
+            this.multiFactors += "<br> Japanese Symbol Challenge 4: ^" + format(player.comps.compExp, true, 3) + "  (" + format(this.multi, true) + "x)"
+        }
+        if (player.misc.inChallenge.includes("simp10")) {
+            let temp = Decimal.div(0.5, player.simplify.challenge.JC1Time.max(0.4).add(0.6).pow(0.7))
+            this.multi = this.multi.pow(temp);
+            this.multiFactors += "<br> Articulated Challenge 3: ^" + format(temp, true, 3) + "  (" + format(this.multi, true) + "x)"
+
+        }
+        if (player.simplify.challenge.completed[4] == 1) {
+            let temp = dOne
+            for (let comp = this.index; comp > 1; --comp) {
+                temp = temp.mul(player.comps.array[comp].multi.pow(0.1))
+            }
+            this.multi = this.multi.mul(temp);
+            this.multiFactors += "<br> JC1 Effect: x" + format(temp, true) + "  (" + format(this.multi, true) + "x)"
+        }
+        if (player.simplify.challenge.completed[6] == 1 && this.index == 8) {
+            this.multi = this.multi.mul(4)
+            this.multiFactors += "<br> JC3 Bonus: x" + format(new Decimal(4), true, 2) + "  (" + format(this.multi, true) + "x)"
+            this.multi = this.multi.pow(1.584962500721156)
+            this.multiFactors += "<br> JC3 Bonus: ^" + format(new Decimal(1.584962500721156), true, 3) + "  (" + format(this.multi, true) + "x)"
+        }
+        if (player.misc.inChallenge.includes("simp14")) { this.bought = this.bought.add(player.simplify.main.timeInSimplify.mul(0.4)); }
+    }
+
+    updateCost() {
+        this.costFactors = `<br> Cost Scaling:`;
+        let temp = this.bought;
+        let cost
+        if (player.misc.inChallenge.includes("simp14")) { temp = temp.mul(2); this.costFactors += "<br> SC3 Scaling: x" + format(dTwo, true, 3) + "  (" + format(temp, true) + " buys)" }
+        if (player.misc.inChallenge.includes("simp3")) { temp = temp.pow(2); this.costFactors += "<br> MC4 Scaling: ^" + format(dTwo, true, 3) + "  (" + format(temp, true) + " buys)" }
+        if (player.misc.inChallenge.includes("simp8")) {
+            let t2 = dZero
+            for (let comp = 8; comp >= 1; --comp) {
+                t2 = t2.add(player.comps.array[comp].bought)
+            }
+            temp = temp.add(t2);
+            this.costFactors += "<br> AC1 Scaling: +" + format(t2, true, 3) + "  (" + format(temp, true) + " buys)"
+        }
+        if (player.misc.inChallenge.includes("simp11")) { temp = temp.add(player.simplify.main.timeInSimplify.mul(0.78)); this.costFactors += "<br> AC4 Scaling: +" + format(player.simplify.main.timeInSimplify.mul(0.78), true, 3) + "  (" + format(temp, true) + " buys)" }
+        if (player.simplify.challenge.completed[2] == 1) { temp = temp.mul(0.975); this.costFactors += "<br> MC3 Completion: x" + format(new Decimal(0.975), true, 3) + "  (" + format(temp, true) + " buys)" }
+        if (player.simplify.challenge.completed[3] == 1) { temp = temp.sub(player.simplify.challenge.MC4effect); this.costFactors += "<br> MC4 Completion: -" + format(player.simplify.challenge.MC4effect, true, 3) + "  (" + format(temp, true) + " buys)" }
+
+        let k = -1
+        for (let i = Object.keys(player.scaling.ComPs).length - 1; i >= 0; i--) {
+            if (temp.gte(player.scaling.ComPs[i].start)) {
+                k = Math.max(k, i)
+                temp = scale(["P", "E"][i], temp, false, player.scaling.ComPs[i].start, player.scaling.ComPs[i].strength, 3, 0)[0]
+            }
+        }
+
+        cost = Decimal.pow(10, new Decimal(2 * this.index).mul(temp.add(2)).sub(3)).div(player.simplify.challenge.MC1effect.pow(temp)).div(player.simplify.challenge.SC3effect.pow(Decimal.mul(this.index, temp)));
+        this.costFactors += `<br> ${scalingNames[player.settings.scalingNames][k + 1]} Scaling: ${format(cost, true, 3)}   `
+        this.costFactors += `[${(k >= Object.keys(player.scaling.ComPs).length) ? "Final Stage" : "Next Stage @" + format(player.scaling.ComPs[k + 1].start, true, 3)}]`
+        if (player.simplify.challenge.MC1effect.gt(1)) {
+            this.costFactors += "<br> MC1 Completion: /" + format(player.simplify.challenge.MC1effect.pow(temp), true, 3) + "  (" + format(cost, true) + ")"
+        }
+        if (player.simplify.challenge.SC3effect.gt(1)) {
+            this.costFactors += "<br> SC3 Completion: /" + format(player.simplify.challenge.SC3effect.pow(Decimal.mul(this.index, temp)), true, 3) + "  (" + format(cost, true) + ")"
+        }
+
+        if (player.simplify.challenge.completed[1] == 1) { cost = cost.pow(0.95); this.costFactors += "<br> MC2 Completion: ^" + format(new Decimal(0.95), true, 3) + "  (" + format(cost, true) + ")" }
+        if (player.simplify.challenge.AC2effect.gt(1)) {
+            cost = cost.div(player.simplify.challenge.AC2effect)
+            this.costFactors += "<br> AC2 Completion: /" + format(player.simplify.challenge.AC2effect, true, 3) + "  (" + format(cost, true) + ")"
+        }
+        if (player.misc.inChallenge.includes("simp2") && this.index >= 2) { cost = cost.mul(10000); this.costFactors += "<br> MC3 Scaling: x" + format(new Decimal(10000), true, 3) + "  (" + format(cost, true) + ")" }
+        if (player.misc.inChallenge.includes("simp2")) {
+            cost = cost.pow(2);
+            this.costFactors += "<br> MC3 Scaling: ^" + format(new Decimal(2), true, 3) + "  (" + format(cost, true) + ")"
+        }
+        if (player.misc.inChallenge.includes("simp0")) {
+            cost = cost.mul(Decimal.pow(2, temp.mul(temp.add(1)).div(2))); this.costFactors += "<br> MC1 Scaling: x" + format(Decimal.pow(2, temp.mul(temp.add(1)).div(2)), true, 3) + "  (" + format(cost, true) + ")"
+        }
+        if (this.index == 1 && this.bought.eq(0)) { cost = dTen; }
+        this.cost = cost;
+    }
+}
 
 let player = {
     misc: {
@@ -255,9 +266,6 @@ let player = {
         sfxVolume: 0.00,
     },
     scaling: {
-        names0: ["", "Scaled", "Superscaled", "Hyper", "Atomic"], // DISTINC
-        names1: ["", "Super", "Hyper", "Ultra", "Meta"], // IMR
-        names2: ["Standard", "Turbo", "Hyper", "Ultra", "Cruel"], // NATURAL DISASTERS
         ComPs: {
             0: {
                 start: new Decimal(150),
@@ -287,12 +295,12 @@ let player = {
         "main": {
             simplifyEnergy: dZero,
             simplifyStat: dZero,
+            totalSE: dZero,
             SEExp: new Decimal(1.5),
-            SAExp: new Decimal(0.55),
+            SAExp: new Decimal(0.6),
             simplifyReq: new Decimal(1e12),
             totalXP: dZero, // (TruePP + TrueMP + True1P + TrueDP)^SimpEXP
             timeInSimplify: dZero,
-            sXPTypes: ["PP", "MP", "OP", "DP"],
         },
         "PP": {
             allocated: dZero,
@@ -316,7 +324,7 @@ let player = {
             allocated: dZero,
             generated: dZero,
             trueValue: dZero,
-            effect: dOne,
+            effect: dTwo,
         },
         "challenge": {
             completed: Array(16).fill(0), // 0-3 Magnifying [] 4-7 Beginner [] 8-11 Articulated [] 12-15 77777777 []
@@ -335,12 +343,6 @@ let player = {
             MPUPG: dZero,
             OPUPG: dZero,
             DPUPG: dZero,
-            SimpUPG1: {
-                1: "Invest in multiple energies to boost production.",
-                2: "Unlock TTS Challenges.",
-                3: "Unlock Simplify upgrades where you can use your SE, xP, and total xP to get advantages.",
-                4: "Unlock 'Situations' where you can go on altered runs for different milestones.",
-            },
             SimpUPG2: { // this forms a repeat
                 cost(x) {
                     let temp = x
@@ -474,15 +476,13 @@ let player = {
 const draw = document.querySelector("#effects");
 const pen = draw.getContext("2d");
 let dots = [];
-let cursor = [];
-let mousePos = {x: 0, y: 0, time: 0};
 
 function initDots() {
     for (let i = 0; i < 32; i++) {
         dots.push([0, rand(-10000, 10000), rand(-10000, 10000), rand(0.1, 0.4), rand(-0.02, 0.02), rand(-0.02, 0.02)])
     }
     for (let i = 0; i < 128; i++) {
-        dots.push([1, rand(-10000, 10000), rand(-10000, 10000), rand(1.1,3), rand(-0.1, 0.1), rand(-0.1, 0.1)])
+        dots.push([1, rand(-10000, 10000), rand(-10000, 10000), rand(1.1, 3), rand(-0.1, 0.1), rand(-0.1, 0.1)])
     }
 }
 
@@ -497,24 +497,23 @@ const drawing = () => {
         dots[i][1] += dots[i][3] * delta * dots[i][4]
         dots[i][2] += dots[i][3] * delta * dots[i][5]
 
-        if ((dots[i][1] % 4000) - 700 > (dots[i][0] === 0 ? 500 : 20) && (dots[i][2] % 2400) - 700 > (dots[i][0] === 0 ? 500 : 20)) {
-            pen.beginPath();
-            let alpha
-            if (dots[i][0] === 0) {
-                alpha = 20 + (4 * Math.cos((sessionTime + 11 * i) / 50))
-            } else {
-                alpha = 160 + (64 * Math.cos((sessionTime + 11 * i) / 50))
-            }
-            alpha = pad(Math.floor(alpha).toString(16), 2)
-            pen.fillStyle = gRC((sessionTime + (i * (dots[i][0] === 0 ? 1 : 0.1))) / 64, 1, 1) + alpha
-            let j = Math.cos((sessionTime * dots[i][3] + i) / (2 * Math.PI))
-            pen.arc((dots[i][1] % 4000) - 700, 
-                    (dots[i][2] % 2400) - 700, 
-                    dots[i][0] == 0 ? (500 + 200 * j) : (15 + 5 * j), 
-                    0, 
-                    2 * Math.PI);
-            pen.fill();
+        pen.beginPath();
+        let alpha
+        if (dots[i][0] === 0) {
+            alpha = 20 + (4 * Math.cos((sessionTime + 11 * i) / 50))
+        } else {
+            alpha = 160 + (64 * Math.cos((sessionTime + 11 * i) / 50))
         }
+        alpha = Math.max(alpha, 8)
+        alpha = pad(Math.floor(alpha).toString(16), 2)
+        pen.fillStyle = gRC((sessionTime + (i * (dots[i][0] === 0 ? 1 : 0.1))) / 64, 1, 1) + alpha
+        let j = Math.cos((sessionTime * dots[i][3] + i) / (2 * Math.PI))
+        pen.arc((Math.abs(dots[i][1] % 3800) - 700),
+            (Math.abs(dots[i][2] % 2400) - 700),
+            dots[i][0] == 0 ? (300 + 100 * j) : (10 + 4 * j),
+            0,
+            2 * Math.PI);
+        pen.fill();
 
     }
 }

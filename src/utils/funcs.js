@@ -147,12 +147,11 @@ function intRand(min, max) {
 }
 
 function scale(type, amt, inv, start, pow, powScale, change) {
-    let temp = amt;
-    let str = Decimal.pow(powScale, pow);
     if (amt.lt(start)) {
         return [amt, new Decimal(1)]
     }
-
+    let temp = amt;
+    let str = Decimal.pow(powScale, pow);
     switch (type) {
         case "P":
             if (!inv) {
@@ -166,6 +165,13 @@ function scale(type, amt, inv, start, pow, powScale, change) {
                 temp = Decimal.pow(start, amt.log(start).pow(str).sub(1).div(str).add(1))
             } else {
                 temp = Decimal.pow(start, amt.log(start).sub(1).mul(str).add(1).root(str))
+            }
+            break;
+        case "E":
+            if (!inv) {
+                temp = amt.mul(Decimal.pow(str, amt.div(start).sub(1)))
+            } else {
+                temp = amt.mul(str).mul(str.ln()).div(start).lambertw().mul(start).div(str.ln())
             }
             break;
         default:

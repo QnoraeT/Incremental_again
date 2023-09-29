@@ -56,42 +56,6 @@ body {
   color: white;
 } 
 
-#simpEXP1b {
-  border: 2px solid #FF0000;
-  color: #FF0000;
-} 
-
-#simpEXP1b:hover{
-  background-color: #600000;
-}
-
-#simpEXP2b {
-  border: 2px solid #FFFF00;
-  color: #FFFF00;
-} 
-
-#simpEXP2b:hover{
-  background-color: #606000;
-}
-
-#simpEXP3b {
-  border: 2px solid #00FF00;
-  color: #00FF00;
-} 
-
-#simpEXP3b:hover{
-  background-color: #006000;
-}
-
-#simpEXP4b {
-  border: 2px solid #0000FF;
-  color: #0000FF;
-} 
-
-#simpEXP4b:hover{
-  background-color: #000060;
-}
-
 #simpEXP1 {
   font-family: "Verdana";
   font-size: 16px;
@@ -123,6 +87,50 @@ body {
   text-shadow: 1px 1px #000080;
   color: blue;
 } 
+
+#simpEXP1b {
+  border: 2px solid #FF0000;
+  text-shadow: 1px 1px #800000;
+  color: #FF0000;
+  background-color: #200000;
+} 
+
+#simpEXP1b:hover{
+  background-color: #800000;
+}
+
+#simpEXP2b {
+  text-shadow: 1px 1px #808000;
+  border: 2px solid #FFFF00;
+  color: #FFFF00;
+  background-color: #202000;
+} 
+
+#simpEXP2b:hover{
+  background-color: #808000;
+}
+
+#simpEXP3b {
+  text-shadow: 1px 1px #008000;
+  border: 2px solid #00FF00;
+  color: #00FF00;
+  background-color: #002000;
+} 
+
+#simpEXP3b:hover{
+  background-color: #008000;
+}
+
+#simpEXP4b {
+  text-shadow: 1px 1px #000080;
+  border: 2px solid #0000FF;
+  color: #0000FF;
+  background-color: #000020;
+} 
+
+#simpEXP4b:hover{
+  background-color: #000080;
+}
 
 #simpEnergy {
   font-family: "Verdana";
@@ -291,14 +299,29 @@ body {
   border: 2px solid #808080;
 }
 
+.simpChalSelected{
+  color: #C0C0C0;
+  border: 2px solid #C0C0C0;
+}
+
 .simpChalComplete{
   color: #00FF00;
   border: 2px solid #00FF00;
 }
 
+.simpChalCompleteSelected{
+  color: #80FF80;
+  border: 2px solid #80FF80;
+}
+
 .inSimpChal{
   color: #FFFF00;
   border: 2px solid #FFFF00;
+}
+
+.inSimpChalSelected{
+  color: #FFFF80;
+  border: 2px solid #FFFF80;
 }
 
 .inSimpChal:hover{
