@@ -1,5 +1,20 @@
 "use strict";
 
+/*
+levelUp(0, 84)
+characters[0].xp += 61996
+characters[0].levelUp()
+characters[0].stats.hp = 862
+characters[0].stats.mp = 58
+characters[0].stats.patk = 670
+characters[0].stats.matk = 172
+characters[0].stats.pdef = 631
+characters[0].stats.mdef = 249
+characters[0].stats.eva = 190
+characters[0].stats.acc = 570
+showCharacter(0)
+*/
+
 function showCharacter(id) {
     let char = characters[id]
     console.log(`  > ${char.name} [ ${char.type} ] Level %c${char.level}%c
@@ -15,11 +30,11 @@ function showCharacter(id) {
     ``,
     `color: #ff0000`,
     ``,
-    `color: #0000ff`,
+    `color: #0060ff`,
     ``,
     `color: #ff6000`,
     ``,
-    `color: #0080ff`,
+    `color: #00acff`,
     ``,
     `color: #00ff00`,
     ``,
@@ -48,6 +63,11 @@ class Character {
         this.type = type
         this.baseStats = baseStats
         this.stats = structuredClone(this.baseStats);
+        for (let key in this.stats) {
+            if (this.stats.hasOwnProperty(key)) {
+                this.stats[key] = Math.round(this.stats[key]);
+            }
+        }
         this.team = team
         this.baseXP = xp
         this.xp = 0
@@ -106,10 +126,10 @@ class Character {
 
             this.changeStats("hp", change.hp, "Maximum HP", "#ff0000")
             this.health += change.hp
-            this.changeStats("mp", change.mp, "Maximum MP", "#0000ff")
+            this.changeStats("mp", change.mp, "Maximum MP", "#0060ff")
             this.mana += change.mp
             this.changeStats("patk", change.patk, "Strength", "#ff6000")
-            this.changeStats("matk", change.matk, "Wisdom", "#0080ff")
+            this.changeStats("matk", change.matk, "Wisdom", "#00acff")
             this.changeStats("pdef", change.pdef, "Endurance", "#00ff00")
             this.changeStats("mdef", change.mdef, "Resistance", "#8000ff")
             this.changeStats("eva", change.eva, "Evasion", "#a0a0a0")
@@ -129,24 +149,28 @@ const XP_SCALE = {
         1: 0.99,
         2: 1.23,
         3: 1.48,
+        4: 1.98,
     },
     quad: {
         0: 0.92,
         1: 0.9,
         2: 1.9,
         3: 1.88,
+        4: 1.85,
     },
     line: {
         0: 8,
         1: 10.02,
         2: 10.03,
         3: 12.03,
+        4: 15.04,
     },
     base: {
         0: 0,
         1: -1.91,
         2: -3.16,
         3: -3.39,
+        4: -3.86,
     },
 }
 
@@ -157,7 +181,7 @@ function makeCharacter(name, ai, level, config, elementType, stats, xp, team) {
 
 let globalID = 0;
 let characters = [];
-characters.push(makeCharacter("FSBlue", "FSBlue", 1, {}, ["Fighting"], { hp: 45, mp: 3, patk: 25, matk: 6, pdef: 19, mdef: 11, eva: 7, acc: 23 }, [15, 3], 0))
+characters.push(makeCharacter("FSBlue", "FSBlue", 1, {}, ["Fighting"], { hp: 45, mp: 3, patk: 35, matk: 9, pdef: 32.5, mdef: 12, eva: 10, acc: 30 }, [15, 4], 0))
 characters.push(makeCharacter("HypSB", "HypSB", 1, {}, ["Psychic"], { hp: 20, mp: 15, patk: 8, matk: 20, pdef: 10, mdef: 25, eva: 10, acc: 30 }, [10, 1], 0))
 characters.push(makeCharacter("DesSB", "DesSB", 1, {}, ["Normal"], { hp: 12, mp: 20, patk: 10, matk: 24, pdef: 3, mdef: 30, eva: 15, acc: 20 }, [10, 0], 0))
 characters.push(makeCharacter("QsSB", "QsSB", 1, {}, ["Ground"], { hp: 32, mp: 10, patk: 15, matk: 12, pdef: 15, mdef: 14, eva: 4, acc: 18 }, [12, 2], 0))

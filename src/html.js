@@ -4,6 +4,9 @@ class Element {
     constructor(el) {
         this.id = typeof el == "string" ? el : el.id;
         this.el = document.getElementById(this.id);
+        if (this.el === null) {
+            throw new Error(`${el} could not be found in the DOM!`)
+        }
     }
 
     get style() {
@@ -226,21 +229,21 @@ function setupHTMLSimplifyXP() {
 }
 
 function setupHTMLSimplifyChal() {
-    let el = new Element("ttsChal")
+    let el = new Element("ttsChals")
     let table = ""
     for (let chall = 0; chall < 4; chall++) {
         table += `
         <div id="simpChal${chall}">
             <p id="simpChal${chall}-type" class="simpChText">${simplifyChalTypes[chall]} Challenges</p>
-            <button id="simpChal${(4 * chall)}-id" class="simpChal simpChalIncomplete defaultButton">${(4 * chall)}</button>
-            <button id="simpChal${(4 * chall) + 1}-id" class="simpChal simpChalIncomplete defaultButton">${(4 * chall) + 1}</button>
-            <button id="simpChal${(4 * chall) + 2}-id" class="simpChal simpChalIncomplete defaultButton">${(4 * chall) + 2}</button>
-            <button id="simpChal${(4 * chall) + 3}-id" class="simpChal simpChalIncomplete defaultButton">${(4 * chall) + 3}</button>
+            <button id="simpChal${(4 * chall)}-id" onclick="simpChalSelect(${(4 * chall)});" class="simpChal simpChalIncomplete defaultButton">${(4 * chall)}</button>
+            <button id="simpChal${(4 * chall) + 1}-id" onclick="simpChalSelect(${(4 * chall) + 1});" class="simpChal simpChalIncomplete defaultButton">${(4 * chall) + 1}</button>
+            <button id="simpChal${(4 * chall) + 2}-id" onclick="simpChalSelect(${(4 * chall) + 2});" class="simpChal simpChalIncomplete defaultButton">${(4 * chall) + 2}</button>
+            <button id="simpChal${(4 * chall) + 3}-id" onclick="simpChalSelect(${(4 * chall) + 3});" class="simpChal simpChalIncomplete defaultButton">${(4 * chall) + 3}</button>
         </div>
         `
     }
     el.setHTML(table)
-    html["ttsChal"] = el
+    html["ttsChals"] = el
     for (let chall = 0; chall < 4; chall++) {
         toHTMLvar(`simpChal${chall}`)
         toHTMLvar(`simpChal${(4 * chall)}-id`)
@@ -248,8 +251,10 @@ function setupHTMLSimplifyChal() {
         toHTMLvar(`simpChal${(4 * chall) + 2}-id`)
         toHTMLvar(`simpChal${(4 * chall) + 3}-id`)
     }
+    toHTMLvar("ttsChal")
     toHTMLvar("challengeStart1")
     toHTMLvar(`completeChallenge1`)
+    toHTMLvar(`ttsChalArea`)
 }
 
 function updateHTML() {
@@ -307,26 +312,31 @@ function updateCompHTML() {
 function updateSimpHTML() {
     html['simplify'].setDisplay(tab[0] == 2)
     html['simpTabs'].setDisplay(player.simplify.upgrades.simplifyMainUPG >= 2)
-    html['simpExP'].setDisplay(player.simplify.upgrades.simplifyMainUPG >= 1)
+    html['simpExP'].setDisplay(player.simplify.upgrades.simplifyMainUPG >= 1 && tab[0] == 2 && tab[1] == 0)
     html['ttsChal'].setDisplay(tab[0] == 2 && tab[1] == 1)
     if (tab[0] !== 2) {
         return;
     }
+    html["simpEnergy"].setTxt("You have " + format(player.simplify.main.simplifyEnergy, true) + " Simplify Energy.");
+    html["SEUPG1"].setTxt(simpUpg1Desc[player.simplify.upgrades.simplifyMainUPG + 1] + " Cost: " + format(simpUPG1Cost(), false) + " Simplify Energy")
+    html["SER"].setClasses({ defaultButton: true, defaultSimplifyTab: true, inSimpChal: player.misc.inSChallenge && player.misc.points.gte(player.simplify.main.simplifyReq) })
+    let txt = `${(player.misc.points.gte(player.simplify.main.simplifyReq)) ? "You will gain " + format(getSimplifyGain().floor(), true) + " Simplify Energy. " : "Reset your current simplify run. "} `
+    if (getSimplifyGain().lte(10000)) {
+        txt += `[ Next at ${format(player.simplify.main.SEExp.sub(1).mul(getSimplifyGain().floor().add(3)).pow(player.simplify.main.simplifyReq.log(player.simplify.main.SEExp).sub(new Decimal(10).log(player.simplify.main.SEExp))).mul(10), true, 3, 3)} ]`
+    } else {
+        txt += `[ Next OoM at ${format(player.simplify.main.SEExp.sub(1).mul(Decimal.pow(10, getSimplifyGain().log(10).ceil()).add(2)).pow(player.simplify.main.simplifyReq.log(player.simplify.main.SEExp).sub(new Decimal(10).log(player.simplify.main.SEExp))).mul(10), true, 3, 3)} ]`
+    }
+    html["SER"].setTxt(txt)
     switch (tab[1]) {
         case 0:
-            html["simpEnergy"].setTxt("You have " + format(player.simplify.main.simplifyEnergy, true) + " Simplify Energy.");
-            html["SEUPG1"].setTxt(simpUpg1Desc[player.simplify.upgrades.simplifyMainUPG + 1] + " Cost: " + format(simpUPG1Cost(), false) + " Simplify Energy")
-            html["SER"].setClasses({ defaultButton: true, defaultSimplifyTab: true, inSimpChal: player.misc.inSChallenge && player.misc.points.gte(player.simplify.main.simplifyReq) })
-            // have to use trash ln() instead of a cleaner method because somehow it is not fucking working
-            html["SER"].setTxt(`${(player.misc.points.gte(player.simplify.main.simplifyReq)) ? "You will gain " + format(getSimplifyGain().floor(), true) + " Simplify Energy. " : "Reset your current simplify run. "} [ Next at ${format(player.simplify.main.SEExp.sub(1).mul(getSimplifyGain().floor().add(3)).pow(player.simplify.main.simplifyReq.log(player.simplify.main.SEExp).sub(new Decimal(10).log(player.simplify.main.SEExp))).mul(10), true, 3, 3)} ]`)
             if (player.simplify.upgrades.simplifyMainUPG < 1) break;
             for (let i = 0; i < 4; i++) {
                 html[`simpEXP${i + 1}`].setTxt(`You have ${format(player.simplify[simplifyXPTypes[i]].allocated, true)} SE allocated to ${format(player.simplify[simplifyXPTypes[i]].trueValue, true, 1)} ${simplifyXPTypes[i]}, ${simplifyXPDesc[i]}${format(player.simplify[simplifyXPTypes[i]].effect, true, 3)}.`)
             }
             break;
         case 1:
-            html[`challengeStart1`].setClasses({ challengeStart: true, startChallenge: true, defaultButton: true })
-            html[`completeChallenge1`].setClasses({ challengeStart: true, completeChallenge: true, defaultButton: true })
+            html[`challengeStart1`].setSize(0, player.misc.totalPointsInSimplify.gte(player.simplify.main.simplifyReq) && player.misc.inSChallenge ? 180 : 360)
+            html[`completeChallenge1`].setDisplay(player.misc.totalPointsInSimplify.gte(player.simplify.main.simplifyReq) && player.misc.inSChallenge)
             break;
     }
 }

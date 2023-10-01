@@ -40,10 +40,6 @@ p {
   cursor: pointer;
 }
 
-#ttsChalArea{
-  border: 5px solid #808080;
-}
-
 body {
   background-color: black;
 }
@@ -286,7 +282,7 @@ body {
   text-align: center;
   width: 30px;
   height: 30px;
-  position: relative
+  position: relative;
 }
 
 .simpChal:hover{
@@ -336,31 +332,6 @@ body {
   display: inline;
 }
 
-sc1{
-  color: #F00;
-  text-shadow: 1px 1px #800;
-}
-
-sc2{
-  color: #F50;
-  text-shadow: 1px 1px #830;
-}
-
-sc3{
-  color: #FA0;
-  text-shadow: 1px 1px #850;
-}
-
-sc4{
-  color: #FF0;
-  text-shadow: 1px 1px #880;
-}
-
-sc5{
-  color: #AF0;
-  text-shadow: 1px 1px #580;
-}
-
 .challengeStart{
   font-family: "Verdana";
   border: 2px solid #00FF00;
@@ -407,17 +378,17 @@ sc5{
   display: inline;
 }
 
-#simpChalDesc{
+.simpChalDesc{
   text-align: center;
-  font-size: 16px;
-  text-shadow: 2px 2px grey;
-  color: white;
+  font-size: 14px;
+  text-shadow: 1px 1px #0aa;
+  color: cyan;
+  border: 3.5px solid #0ff;
+  background-color: #022;
+  transition-duration: 0.2s;
+  cursor: pointer;
 }
 
-#simpChalRew{
-  text-align: center;
-  font-size: 18px;
-  text-shadow: 2px 2px grey;
-  color: white;
+.simpChalDesc:hover{
+  background-color: #033;
 }
-

@@ -336,10 +336,6 @@ function expandComPMULTI(comp){
     }
 }
 
-function getStupidScaleNames(x){
-    return player.scaling.names2[Math.floor(x / 25) % 5] + " " + player.scaling.names1[Math.floor(x / 5) % 5] + " " + player.scaling.names0[x % 5] + " Scaling"
-}
-
 function getChalEffects(){
     let temp
     temp = dOne
