@@ -20,7 +20,7 @@ function simplifyXPtick(type, tickRate) {
         case 0:
             temp = temp.pow(1.5).add(1);
             if (player.simplify.challenge.completed[8]) {
-                temp = temp.mul(player.simplify[simplifyXPTypes[1]].effect.pow(0.5))
+                temp = temp.mul(player.simplify[simplifyXPTypes[1]].effect.pow(1.1))
                     .pow(player.simplify[simplifyXPTypes[2]].effect.sub(1).max(1).root(1.7))
                     .mul(player.simplify[simplifyXPTypes[3]].effect.pow(64))
             }
@@ -68,8 +68,8 @@ function simpExPAllocate(id) {
     player.simplify.main.simplifyEnergy = dZero
 }
 
-function simplifyReset() {
-    if (player.misc.points.gte(player.simplify.main.simplifyReq) && player.misc.inSChallenge) {
+function simplifyReset(...param) {
+    if (player.misc.points.gte(player.simplify.main.simplifyReq) && player.misc.inSChallenge && !param.noChalComplete) {
         completeChallenge("simp")
         updateChallenge("simp")
     }

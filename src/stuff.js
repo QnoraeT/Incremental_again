@@ -113,7 +113,7 @@ class Character {
             if (this.level % 25 !== 0) {
                 for (let key in change) {
                     if (change.hasOwnProperty(key)) {
-                        change[key] *= (Math.random() * 0.5) + 0.5;
+                        change[key] *= (Math.random() * 0.75) + 0.5;
                     }
                 }
             }

@@ -295,7 +295,7 @@ function updateCompHTML() {
         html[`gen-comp${comp}-cost`].setClasses({ buttonRight: true, defaultButton: true, compNo: !can, compYes: can })
         html[`gen-comp${comp}-cost`].addClass(`Scaled0`)
         for (let i = 0; i < Object.keys(player.scaling.ComPs).length; ++i) {
-            if (player.comps.array[comp].bought.gte(player.scaling.ComPs[i].start)) {
+            if (player.comps.array[comp].trueCost.gte(player.scaling.ComPs[i].start)) {
                 html[`gen-comp${comp}-cost`].removeClass(`Scaled${i}`)
                 html[`gen-comp${comp}-cost`].addClass(`Scaled${i + 1}`)
             }

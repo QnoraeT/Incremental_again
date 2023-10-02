@@ -19,7 +19,7 @@ function maxAllComPS() {
             buy = x.add(3).mul(ln10).sub(ln10.mul(Decimal.mul(comp, 4))).div(Decimal.mul(comp, player.simplify.challenge.SC3effect.ln().negate()).add(Decimal.mul(comp * 2, ln10)).sub(player.simplify.challenge.MC1effect.ln()))
             for (let i = 0; i < Object.keys(player.scaling.ComPs).length; i++) {
                 if (buy.gte(player.scaling.ComPs[i].start)) {
-                    buy = scale(["P", "E"][i], buy, true, player.scaling.ComPs[i].start, player.scaling.ComPs[i].strength, 3, 0)[0]
+                    buy = scale(["P", "E", "P"][i], buy, true, player.scaling.ComPs[i].start, player.scaling.ComPs[i].strength, 3, 0)[0]
                 }
             }
             if (player.simplify.challenge.completed[3]) { buy = buy.add(player.simplify.challenge.MC4effect); }
@@ -150,15 +150,15 @@ function getChalEffects() {
             temp = temp.add(player.comps.array[comp].bought.mul(0.25))
         }
     }
-    player.scaling.ComPs[0].start = temp
+    player.scaling.ComPs[0].start = temp.max(1)
 
     temp = dOne
     if (player.simplify.challenge.completed[10]) { temp = Decimal.pow(player.simplify.main.timeInSimplify.add(1), 32); }
     player.simplify.challenge.AC2effect = temp
 
-    temp = new Decimal(0.75)
+    temp = new Decimal(1.5)
     if (player.simplify.challenge.completed[11]) { temp = temp.add(0.025); }
-    player.simplify.main.SAExp = temp
+    player.simplify.main.SEExp = temp
 
     temp = new Decimal(1e12);
     if (player.misc.inChallenge.includes("simp2")) { temp = new Decimal(1e20); }
@@ -169,7 +169,7 @@ function getChalEffects() {
     player.simplify.main.simplifyReq = temp
 
     if (player.misc.inChallenge.includes("simp13")) {
-        temp = player.misc.pps.div(Decimal.pow(3.3, player.simplify.main.timeInSimplify));
+        temp = player.misc.pps.div(Decimal.pow(1.3, player.simplify.main.timeInSimplify));
         player.simplify.challenge.SC2RG = temp;
     }
 }
@@ -177,7 +177,6 @@ function getChalEffects() {
 function challengeToggle(type) {
     switch (type) {
         case "simp":
-            simplifyReset();
             if (player.misc.inSChallenge) {
                 for (let i = 0; i < 16; ++i) {
                     if (player.misc.inChallenge.includes("simp" + i)) {
@@ -186,6 +185,22 @@ function challengeToggle(type) {
                 }
             } else {
                 player.misc.inChallenge.push("simp" + simpChalSelected);
+            }
+            simplifyReset({noChalComplete: true});
+            break;
+        default:
+            throw new Error("challenge type " + type + " does not exist.")
+    }
+    updateChallenge(type)
+}
+
+function exitChallenge(type) {
+    switch (type) {
+        case "simp":
+            for (let i = 0; i < 16; ++i) {
+                if (player.misc.inChallenge.includes("simp" + i)) {
+                    player.misc.inChallenge.splice(player.misc.inChallenge.indexOf("simp" + i), 1);
+                }
             }
             break;
         default:
@@ -301,7 +316,8 @@ window.addEventListener('DOMContentLoaded', () => {
                 player.comps.array[comp].changeAmount(calcCompxPerSecond(comp).times(gameDelta));
             }
             document.getElementById("progressBar1").innerText = progressBarText + (progressBar.toNumber() * 100).toFixed(2) + "%";
-            document.getElementById("progressBar1").style.width = `calc(${progressBar.toNumber() * 100}% - 300px)`
+            document.getElementById("progressBar1").style.width = `calc(${progressBar.toNumber() * 100}% - 20px)`
+            document.getElementById("progBarBase").style.width = `calc(100% - 20px)`
             updateHTML()
             drawing()
         } catch (e) {

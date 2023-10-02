@@ -347,7 +347,7 @@
       }
     }
 
-    throw Error("Iteration failed to converge: ".concat(z.toString())); //return Number.NaN;
+    throw new Error("Iteration failed to converge: ".concat(z.toString())); //return Number.NaN;
   }; //from https://github.com/scipy/scipy/blob/8dba340293fe20e62e173bdf2c10ae208286692f/scipy/special/lambertw.pxd
   // The evaluation can become inaccurate very close to the branch point
   // at ``-1/e``. In some corner cases, `lambertw` might currently
@@ -387,7 +387,7 @@
       }
     }
 
-    throw Error("Iteration failed to converge: ".concat(z.toString())); //return Decimal.dNaN;
+    throw new Error("Iteration failed to converge: ".concat(z.toString())); //return Decimal.dNaN;
   }
   /**
    * The Decimal's value is simply mantissa * 10^exponent.
@@ -1330,7 +1330,7 @@
           return FC(a.sign * b.sign, _newmag.layer + 1, _newmag.sign * _newmag.mag);
         }
 
-        throw Error("Bad arguments to mul: " + this + ", " + value);
+        throw new Error("Bad arguments to mul: " + this + ", " + value);
       }
     }, {
       key: "multiply",
@@ -2316,7 +2316,7 @@
       key: "lambertw",
       value: function lambertw() {
         if (this.lt(-0.3678794411710499)) {
-          throw Error("lambertw is unimplemented for results less than -1, sorry!");
+          throw new RangeError(`LambertW failed to calculate result of ${this} (Limit: -0.3678794411710499)`);
         } else if (this.mag < 0) {
           return Decimal.fromNumber(f_lambertw(this.toNumber()));
         } else if (this.layer === 0) {
@@ -2331,7 +2331,7 @@
           return FC_NN(this.sign, this.layer - 1, this.mag);
         }
 
-        throw "Unhandled behavior in lambertw()";
+        throw new Error(`Unhandled behavior in lambertw(): Tried to get lambertw of ${this}`);
       } //The super square-root function - what number, tetrated to height 2, equals this?
       //Other sroots are possible to calculate probably through guess and check methods, this one is easy though.
       // https://en.wikipedia.org/wiki/Tetration#Super-root
