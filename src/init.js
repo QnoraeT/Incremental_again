@@ -117,10 +117,6 @@ class ComP {
             if (player.misc.inChallenge.includes("simp12")) { temp = new Decimal(0.5); }
             this.multi = this.multi.pow(temp)
             this.multiFactors += "<br> ComP1 Bonus: ^" + format(temp, true, 3) + "  (" + format(this.multi, true) + "x)"
-            if (player.simplify.PP.effect.gt(1)) {
-                this.multi = this.multi.mul(player.simplify.PP.effect);
-                this.multiFactors += "<br> PP Effect: x" + format(player.simplify.PP.effect, true, 2) + "  (" + format(this.multi, true) + "x)"
-            }
         }
         if (this.index == 2 || (this.index == 8 && player.simplify.challenge.completed[6])) {
             this.multi = this.multi.mul(4)
@@ -136,12 +132,16 @@ class ComP {
                 this.multi = this.multi.mul(player.simplify.main.simplifyStat.add(1).root(new Decimal(this.index)));
                 this.multiFactors += `<br> Simplified Count ${player.simplify.upgrades.simplifyMainUPG >= 1?" (Outside Challenge):":""} x${format(player.simplify.main.simplifyStat.add(1).root(new Decimal(this.index)), true, 2)}  (${format(this.multi, true)}x)`
             }
-            this.multi = this.multi.mul(player.simplify.main.totalSE.add(1).root(new Decimal(this.index).add(8).mul(1.25)));
+            this.multi = this.multi.mul(player.simplify.main.totalSE.add(1).root(new Decimal((this.index) - 1 / 1.75 + 4)));
             this.multiFactors += "<br> Total SE: x" + format(player.simplify.main.totalSE.add(1).root(new Decimal((this.index) - 1 / 1.75 + 4)), true, 2) + "  (" + format(this.multi, true) + "x)"
         }
         if (player.simplify.MP.effect.gt(1)) {
             this.multi = this.multi.mul(player.simplify.MP.effect);
             this.multiFactors += "<br> MP Effect: x" + format(player.simplify.MP.effect, true) + "  (" + format(this.multi, true) + "x)"
+        }
+        if (player.simplify.PP.effect.gt(1) && this.index == 1) {
+            this.multi = this.multi.mul(player.simplify.PP.effect);
+            this.multiFactors += "<br> PP Effect: x" + format(player.simplify.PP.effect, true, 2) + "  (" + format(this.multi, true) + "x)"
         }
         if (player.misc.inChallenge.includes("simp0")) {
             this.multi = this.multi.pow(0.75);

@@ -11,6 +11,7 @@ function numberWithCommas(x) {
 function format(number, fixed, dec = 0, expdec = 3) {
     let n = new Decimal(number)
     if (n.lt(0)) return "-" + format(n.negate(), fixed, dec, expdec)
+    if (n.eq(0)) return "0"
     if (!Decimal.isFinite(n.mag)) return "Infinity"
     if (Decimal.isNaN(n.mag)) return "NaN"
     if (n.lt(0.001)) {
