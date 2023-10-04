@@ -530,9 +530,7 @@ const drawing = () => {
         } else {
             alpha = 160 + (64 * Math.cos((sessionTime + 11 * i) / 50))
         }
-        alpha = Math.max(alpha, 8)
-        alpha = pad(Math.floor(alpha).toString(16), 2)
-        pen.fillStyle = gRC((sessionTime + (i * (dots[i][0] === 0 ? 1 : 0.1))) / 64, 1, 1) + alpha
+        pen.fillStyle = `hsla(${sessionTime + (i * (dots[i][0] === 0 ? 1 : 0.1))}, 100%, 50%, ${alpha / 255})`
         let j = Math.cos((sessionTime * dots[i][3] + i) / (2 * Math.PI))
         pen.arc((Math.abs(dots[i][1] % 3800) - 700),
             (Math.abs(dots[i][2] % 2400) - 700),
