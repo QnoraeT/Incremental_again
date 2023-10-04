@@ -178,7 +178,9 @@ class ComP {
             this.multi = this.multi.mul(temp);
             this.multiFactors += "<br> JC1 Effect: x" + format(temp, true) + "  (" + format(this.multi, true) + "x)"
         }
-        if (player.misc.inChallenge.includes("simp14")) { this.bought = this.bought.add(player.simplify.main.timeInSimplify.mul(0.4)); }
+        if (player.misc.inChallenge.includes("simp14")) { 
+            this.bought = this.bought.add(player.simplify.main.timeInSimplify.mul(0.4)); 
+        }
     }
 
     updateCost() {
@@ -309,7 +311,7 @@ let player = {
             SEExp: new Decimal(1.5),
             SAExp: new Decimal(0.6),
             simplifyReq: new Decimal(1e12),
-            totalXP: dZero, // (TruePP + TrueMP + True1P + TrueDP)^SimpEXP
+            totalXP: dZero, // ((TruePP + TrueMP + TrueOP + TrueDP) / 4) ^ SimpEXP
             timeInSimplify: dZero,
         },
         "PP": {
@@ -353,7 +355,7 @@ let player = {
             MPUPG: dZero,
             OPUPG: dZero,
             DPUPG: dZero,
-            SimpUPG2: { // this forms a repeat
+            SimpUPG2: {
                 cost(x) {
                     let temp = x
 
@@ -370,7 +372,7 @@ let player = {
                 },
                 display(type, total) {
                     let temp = player.simplify.upgrades.simplifyUPGNum2
-                    temp = temp.sub(type).div(8).add(1).floor()
+                    temp = temp.sub(type).div(10).add(1).floor()
                     let t2 = (total) ? player.simplify.upgrades.SimpUPG2.strengthTotal(type, temp) : player.simplify.upgrades.SimpUPG2.strengthPer(type)
                     switch (type) {
                         case 1:
@@ -386,9 +388,9 @@ let player = {
                             temp += format(t2, true, 3)
                             break;
                         case 4:
-                            temp = "DP's root is reduced from " + format(new Decimal(5), true, 3) + " by -"
+                            temp = "DP's root is reduced from " + format(new Decimal(7), true, 3) + " by -"
                             temp += format(t2, true, 3)
-                            temp += ", softcapped when root < 3.75"
+                            temp += `, it's effect severely weakens when the root has been weakened to ${format(new Decimal(5))} or lower.`
                             break;
                         case 5:
                             temp = "ComP's post-150 scaling is delayed by +"
@@ -400,9 +402,9 @@ let player = {
                             temp += ", weighted towards 8th ComP"
                             break;
                         case 7:
-                            temp = "OP's root is reduced from " + format(new Decimal(6.5), true, 3) + " by -"
+                            temp = "OP's root is reduced from " + format(new Decimal(5.5), true, 3) + " by -"
                             temp += format(t2, true, 3)
-                            temp += ", softcapped when root < 5"
+                            temp += `, it's effect weakens when the root has been weakened to ${format(new Decimal(4))} or lower.`
                             break;
                         case 8:
                             temp = "MC4's effect exponent is multiplied by x"
@@ -410,6 +412,14 @@ let player = {
                             temp += ", and it's effect divisor is decreased by /"
                             temp += format(t2[1], true, 3)
                             break;
+                        case 9:
+                            temp = "ComP's post-150 scaling is weakened by "
+                            temp += format(t2, true, 3)
+                            temp += "%"
+                            break;
+                        case 10:
+                            temp = "AC2's effect exponent is increased by x"
+                            temp += format(t2, true, 3)
                         default:
                             throw new Error("Type " + type + "is unknown!");
                     }
@@ -433,7 +443,11 @@ let player = {
                         case 7:
                             return new Decimal(0.45).mul(temp)
                         case 8:
-                            return [new Decimal(1.015).pow(temp), new Decimal(1.15).pow(temp)]
+                            return [new Decimal(1.01).pow(temp), new Decimal(1.1).pow(temp)]
+                        case 9:
+                            return new Decimal(1.01).pow(temp)
+                        case 10:
+                            return new Decimal(1.15).mul(temp)
                         default:
                             throw new Error("Type " + type + "is unknown!");
                     }
@@ -444,12 +458,14 @@ let player = {
                     switch (type) {
                         case 1:
                         case 4:
+                        case 9:
                             return P.pow(temp)
                         case 2:
                         case 3:
                         case 5:
                         case 6:
                         case 7:
+                        case 10:
                             return P.mul(temp)
                         case 8:
                             return [P[0].pow(temp), P[1].pow(temp)]

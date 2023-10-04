@@ -289,7 +289,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 }
                 FPS = (fpsList.length / FPS).toFixed(1);
                 fpsList = [];
-                document.getElementById("fps").innerText = "FPS: " + FPS;
+                document.getElementById("fps").innerText = `FPS: ${FPS}`;
             }
             let gameDelta = Decimal.mul(delta, player.misc.timeSpeed);
             player.misc.gameTime = player.misc.gameTime.add(gameDelta);

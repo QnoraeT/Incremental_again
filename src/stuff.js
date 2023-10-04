@@ -1,6 +1,8 @@
 "use strict";
 
 /*
+konnor
+characters.push(makeCharacter("FSBlue", "FSBlue", 1, {}, ["Fighting"], { hp: 45, mp: 3, patk: 35, matk: 9, pdef: 32.5, mdef: 12, eva: 10, acc: 30 }, [15, 4], 0))
 levelUp(0, 84)
 characters[0].xp += 61996
 characters[0].levelUp()
@@ -13,6 +15,34 @@ characters[0].stats.mdef = 249
 characters[0].stats.eva = 190
 characters[0].stats.acc = 570
 showCharacter(0)
+
+fs4.5
+characters.push(makeCharacter("FSBlue", "FSBlue", 1, {}, ["Fighting"], { hp: 30, mp: 2.5, patk: 8, matk: 2, pdef: 7, mdef: 2.75, eva: 3, acc: 6 }, [10, 3], 0))
+characters[0].xp += 0
+characters[0].levelUp()
+characters[0].stats.hp = 30
+characters[0].stats.mp = 3
+characters[0].stats.patk = 8
+characters[0].stats.matk = 2
+characters[0].stats.pdef = 7
+characters[0].stats.mdef = 3
+characters[0].stats.eva = 3
+characters[0].stats.acc = 6
+showCharacter(0)
+
+characters.push(makeCharacter("Natalie Skyler", "Natsky", 1, {}, ["Electric", "Psychic"], { hp: 15, mp: 20, patk: 3, matk: 7, pdef: 3.5, mdef: 6.5, eva: 6, acc: 5.5 }, [10, 2], 0))
+characters[1].xp += 0
+characters[1].levelUp()
+characters[1].stats.hp = 15
+characters[1].stats.mp = 20
+characters[1].stats.patk = 3
+characters[1].stats.matk = 7
+characters[1].stats.pdef = 4
+characters[1].stats.mdef = 7
+characters[1].stats.eva = 6
+characters[1].stats.acc = 6
+showCharacter(1)
+
 */
 
 function showCharacter(id) {
@@ -49,7 +79,7 @@ function showCharacter(id) {
 
 function levelUp(id, level) {
     let char = characters[id]
-    char.xp = char.calcEXP(level - 1) + 0.5
+    char.xp = char.calcEXP(level) + 1
     char.levelUp(true)
 }
 
@@ -71,7 +101,7 @@ class Character {
         this.team = team
         this.baseXP = xp
         this.xp = 0
-        this.xpReq = Math.max(0, (xp[0] * (XP_SCALE.cube[xp[1]] * (level ** 3) + XP_SCALE.quad[xp[1]] * (level ** 2) + XP_SCALE.line[xp[1]] * level + XP_SCALE.base[xp[1]])) / 10)
+        this.xpReq = this.calcEXP(this.level, this.baseXP)
         this.health = this.stats.hp
         this.mana = this.stats.mp
         this.extraStats = {}
@@ -88,7 +118,7 @@ class Character {
             console.log(`${this.name} needs ${Math.round(this.xp - this.calcEXP(this.level - 1))} / ${Math.round(this.calcEXP(this.level) - this.calcEXP(this.level - 1))} XP to level up again.`)
             return;
         }
-        for (let iter = 0; (this.xp >= this.xpReq && every && iter < 1000) || (!every && iter < 1); iter++) {
+        for (let iter = 0; (this.xp >= Math.round(this.xpReq) && every && iter < 1000) || (!every && iter < 1); iter++) {
             this.prevStats = this.stats
             this.level++
             console.log(`${this.name} leveled up to [ ${this.level} ] !`)
@@ -139,38 +169,36 @@ class Character {
     }
 
     calcEXP(lvl, xp = this.baseXP) {
-        return Math.max(0, (xp[0] * (XP_SCALE.cube[xp[1]] * ((lvl) ** 3) + XP_SCALE.quad[xp[1]] * (lvl ** 2) + XP_SCALE.line[xp[1]] * lvl + XP_SCALE.base[xp[1]])) / 10)
+        let g = (100/99) * (lvl - 1) + 1
+        return Math.max(0, xp[0] * (XP_SCALE.tess[xp[1]] * (g ** 4) + XP_SCALE.cube[xp[1]] * (g ** 3) + XP_SCALE.quad[xp[1]] * (g ** 2) + XP_SCALE.line[xp[1]] * g) / 10890)
+        // return Math.max(0, (xp[0] * (XP_SCALE.cube[xp[1]] * (g ** 3) + XP_SCALE.quad[xp[1]] * (g ** 2) + XP_SCALE.line[xp[1]] * g + XP_SCALE.base[xp[1]])) / 10)
     }
 }
 
 const XP_SCALE = {
+    tess: {
+        0: 8,
+        1: 10,
+        2: 12,
+        3: 15
+    },
     cube: {
-        0: 0.79,
-        1: 0.99,
-        2: 1.23,
-        3: 1.48,
-        4: 1.98,
+        0: 65,
+        1: 80,
+        2: 95,
+        3: 120,
     },
     quad: {
-        0: 0.92,
-        1: 0.9,
-        2: 1.9,
-        3: 1.88,
-        4: 1.85,
+        0: 540,
+        1: 800,
+        2: 1080,
+        3: 1230,
     },
     line: {
-        0: 8,
-        1: 10.02,
-        2: 10.03,
-        3: 12.03,
-        4: 15.04,
-    },
-    base: {
-        0: 0,
-        1: -1.91,
-        2: -3.16,
-        3: -3.39,
-        4: -3.86,
+        0: 8000,
+        1: 10000,
+        2: 10000,
+        3: 12000,
     },
 }
 
@@ -181,10 +209,10 @@ function makeCharacter(name, ai, level, config, elementType, stats, xp, team) {
 
 let globalID = 0;
 let characters = [];
-characters.push(makeCharacter("FSBlue", "FSBlue", 1, {}, ["Fighting"], { hp: 45, mp: 3, patk: 35, matk: 9, pdef: 32.5, mdef: 12, eva: 10, acc: 30 }, [15, 4], 0))
-characters.push(makeCharacter("HypSB", "HypSB", 1, {}, ["Psychic"], { hp: 20, mp: 15, patk: 8, matk: 20, pdef: 10, mdef: 25, eva: 10, acc: 30 }, [10, 1], 0))
-characters.push(makeCharacter("DesSB", "DesSB", 1, {}, ["Normal"], { hp: 12, mp: 20, patk: 10, matk: 24, pdef: 3, mdef: 30, eva: 15, acc: 20 }, [10, 0], 0))
-characters.push(makeCharacter("QsSB", "QsSB", 1, {}, ["Ground"], { hp: 32, mp: 10, patk: 15, matk: 12, pdef: 15, mdef: 14, eva: 4, acc: 18 }, [12, 2], 0))
-characters.push(makeCharacter("Natalie Skyler", "Natsky", 1, {}, ["Electric", "Psychic"], { hp: 15, mp: 25, patk: 9, matk: 25, pdef: 7, mdef: 18, eva: 20, acc: 30 }, [12, 1], 0))
-characters.push(makeCharacter("Toxafel Skyler", "Toxafel", 1, {}, ["Electric", "Poison"], { hp: 16, mp: 17, patk: 16.5, matk: 15, pdef: 12, mdef: 13.5, eva: 17, acc: 16 }, [10, 1], 0))
-characters.push(makeCharacter("Alterian Skyler", "Altsky", 1, {}, ["Electric", "Normal"], { hp: 100, mp: 15, patk: 17, matk: 12, pdef: 1.5, mdef: 1.2, eva: 1.8, acc: 40 }, [12, 3], 0))
+// characters.push(makeCharacter("FSBlue", "FSBlue", 1, {}, ["Fighting"], { hp: 45, mp: 3, patk: 35, matk: 9, pdef: 32.5, mdef: 12, eva: 10, acc: 30 }, [15, 4], 0))
+// characters.push(makeCharacter("HypSB", "HypSB", 1, {}, ["Psychic"], { hp: 20, mp: 15, patk: 8, matk: 20, pdef: 10, mdef: 25, eva: 10, acc: 30 }, [10, 1], 0))
+// characters.push(makeCharacter("DesSB", "DesSB", 1, {}, ["Normal"], { hp: 12, mp: 20, patk: 10, matk: 24, pdef: 3, mdef: 30, eva: 15, acc: 20 }, [10, 0], 0))
+// characters.push(makeCharacter("QsSB", "QsSB", 1, {}, ["Ground"], { hp: 32, mp: 10, patk: 15, matk: 12, pdef: 15, mdef: 14, eva: 4, acc: 18 }, [12, 2], 0))
+// characters.push(makeCharacter("Natalie Skyler", "Natsky", 1, {}, ["Electric", "Psychic"], { hp: 15, mp: 25, patk: 9, matk: 25, pdef: 7, mdef: 18, eva: 20, acc: 30 }, [12, 1], 0))
+// characters.push(makeCharacter("Toxafel Skyler", "Toxafel", 1, {}, ["Electric", "Poison"], { hp: 16, mp: 17, patk: 16.5, matk: 15, pdef: 12, mdef: 13.5, eva: 17, acc: 16 }, [10, 1], 0))
+// characters.push(makeCharacter("Alterian Skyler", "Altsky", 1, {}, ["Electric", "Normal"], { hp: 100, mp: 15, patk: 17, matk: 12, pdef: 1.5, mdef: 1.2, eva: 1.8, acc: 40 }, [12, 3], 0))

@@ -18,7 +18,7 @@ function simplifyXPtick(type, tickRate) {
     if (player.misc.inChallenge.includes("simp8") && !temp == 0) { temp = dZero; }
     switch (type) {
         case 0:
-            temp = temp.pow(1.5).add(1);
+            temp = temp.div(10).add(1).pow(2.1);
             if (player.simplify.challenge.completed[8]) {
                 temp = temp.mul(player.simplify[simplifyXPTypes[1]].effect.pow(1.1))
                     .pow(player.simplify[simplifyXPTypes[2]].effect.sub(1).max(1).root(1.7))
@@ -33,7 +33,7 @@ function simplifyXPtick(type, tickRate) {
             if (player.misc.inChallenge.includes("simp4")) { temp = dOne; }
             break
         case 1:
-            temp = temp.pow(0.75).add(1);
+            temp = temp.div(25).add(1).pow(0.8);
             if (player.misc.inChallenge.includes("simp1")) { temp = temp.root(2).div(1000); }
             break
         case 2:
