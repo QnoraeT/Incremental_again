@@ -8,63 +8,8 @@ function switchTab(t, id) {
     }
 }
 
-function maxAllComPS() {
-    let buy
-    for (let comp = 8; comp >= 1; --comp) {
-        let x = player.misc.points.log(10)
-        x = x.add(player.simplify.challenge.AC2effect.log(10))
-        if (player.misc.inChallenge.includes("simp13")) { x = x.div(0.1); }
-        if (player.simplify.challenge.completed[1]) { x = x.div(0.95); }
-        if (player.misc.points.gte(player.comps.array[comp].cost)) {
-            buy = x.add(3).mul(ln10).sub(ln10.mul(Decimal.mul(comp, 4))).div(Decimal.mul(comp, player.simplify.challenge.SC3effect.ln().negate()).add(Decimal.mul(comp * 2, ln10)).sub(player.simplify.challenge.MC1effect.ln()))
-            for (let i = 0; i < Object.keys(player.scaling.ComPs).length; i++) {
-                if (buy.gte(player.scaling.ComPs[i].start)) {
-                    buy = scale(["P", "E", "P"][i], buy, true, player.scaling.ComPs[i].start, player.scaling.ComPs[i].strength, 3, 0)[0]
-                }
-            }
-            if (player.simplify.challenge.completed[3]) { buy = buy.add(player.simplify.challenge.MC4effect); }
-            if (player.simplify.challenge.completed[2]) { buy = buy.div(0.975); }
-            if (player.misc.inChallenge.includes("simp14")) { buy = buy.div(2); }
-            player.comps.array[comp].bought = buy.floor();
-            player.comps.array[comp].updateCost();
-            player.misc.points = player.misc.points.sub(player.comps.array[comp].cost);
-            player.comps.array[comp].buy();
-        }
-    }
-}
-
-function buyComp(comp) {
-    if (player.misc.points.gte(player.comps.array[comp].cost)) {
-        player.misc.points = player.misc.points.minus(player.comps.array[comp].cost);
-        player.comps.array[comp].buy();
-    }
-}
-
-function expandComPMULTI(comp) {
-    if (expandMultComP == comp) {
-        if (expandMultComPType == 0) {
-            expandMultComPType = 1
-        } else {
-            expandMultComP = 0
-            expandMultComPType = 0
-        }
-    } else {
-        expandMultComP = comp
-    }
-}
-
-function calcCompxPerSecond(comp) {
-    if (comp === 9) { throw new Error("comp >= 9 is not defined you stoopid!!") }
-    if (comp === 8) {
-        let temp = dZero
-        if (player.simplify.challenge.completed[13]) { temp = player.comps.array[1].trueamount.mul(player.comps.array[1].multi).pow(0.075); }
-        return temp;
-    }
-    return player.comps.array[comp + 1].trueamount.mul(player.comps.array[comp + 1].multi);
-}
-
 function calcPointsPerSecond() {
-    let temp = player.comps.array[1].trueamount.mul(player.comps.array[1].multi);
+    let temp = player.comps.array[1].trueAmount.mul(player.comps.array[1].multi);
     if (player.misc.inChallenge.includes("simp2")) { temp = temp.root(2); }
     if (player.misc.inChallenge.includes("simp5")) { temp = temp.pow(player.comps.compExp); }
     if (player.misc.inChallenge.includes("simp8")) { temp = temp.root(3); }
@@ -118,26 +63,26 @@ function getProgress() { // progressBar = 0-1
 }
 
 function getChalEffects() {
-    let temp
-    temp = dOne
+    let temp;
+    temp = dOne;
     if (player.simplify.challenge.completed[0]) { temp = temp.add(1); }
-    player.simplify.challenge.MC1effect = temp
+    player.simplify.challenge.MC1effect = temp;
 
-    temp = dOne
+    temp = dOne;
     if (player.simplify.challenge.completed[14]) { temp = temp.add(0.25); }
-    player.simplify.challenge.SC3effect = temp
+    player.simplify.challenge.SC3effect = temp;
 
-    temp = dOne
+    temp = dOne;
     if (player.simplify.challenge.completed[3]) { temp = player.misc.points.max(10).log(10).sub(1).div(4).add(1).pow(0.4).sub(1); }
-    temp = Decimal.pow(10, scale("EP", temp.add(1).log(10), false, 2.30102999, 1, 1.5, 0)[0]) // this is a double log softcap lmfao
-    player.simplify.challenge.MC4effect = temp
+    temp = Decimal.pow(10, scale("EP", temp.add(1).log(10), false, 2.30102999, 1, 1.5, 0)[0]); // this is a double log softcap lmfao
+    player.simplify.challenge.MC4effect = temp;
 
-    temp = new Decimal(0.8)
+    temp = new Decimal(0.8);
     if (player.simplify.challenge.completed[5]) { temp = temp.add(0.025); }
     if (player.misc.inChallenge.includes("simp11")) { temp = new Decimal(0.5); }
-    player.comps.compExp = temp
+    player.comps.compExp = temp;
 
-    temp = new Decimal(150)
+    temp = new Decimal(150);
     if (player.simplify.challenge.completed[9]) {
         for (let comp = 8; comp >= 1; --comp) {
             temp = temp.add(player.comps.array[comp].bought.mul(0.01))
@@ -147,18 +92,18 @@ function getChalEffects() {
     if (player.misc.inChallenge.includes("simp9")) {
         temp = temp.sub(player.simplify.main.timeInSimplify.mul(15));
         for (let comp = 8; comp >= 1; --comp) {
-            temp = temp.add(player.comps.array[comp].bought.mul(0.25))
+            temp = temp.add(player.comps.array[comp].bought.mul(0.25));
         }
     }
-    player.scaling.ComPs[0].start = temp.max(1)
+    player.scaling.ComPs[0].start = temp.max(1);
 
     temp = dOne
     if (player.simplify.challenge.completed[10]) { temp = Decimal.pow(player.simplify.main.timeInSimplify.add(1), 32); }
-    player.simplify.challenge.AC2effect = temp
+    player.simplify.challenge.AC2effect = temp;
 
     temp = new Decimal(1.5)
     if (player.simplify.challenge.completed[11]) { temp = temp.add(0.025); }
-    player.simplify.main.SEExp = temp
+    player.simplify.main.SEExp = temp;
 
     temp = new Decimal(1e12);
     if (player.misc.inChallenge.includes("simp2")) { temp = new Decimal(1e20); }
@@ -166,7 +111,7 @@ function getChalEffects() {
     if (player.misc.inChallenge.includes("simp12")) { temp = new Decimal(1.111e111); }
     if (player.misc.inChallenge.includes("simp14")) { temp = new Decimal(1e55); }
     if (player.misc.inChallenge.includes("simp15")) { temp = new Decimal(1.797693e308); }
-    player.simplify.main.simplifyReq = temp
+    player.simplify.main.simplifyReq = temp;
 
     if (player.misc.inChallenge.includes("simp13")) {
         temp = player.misc.pps.div(Decimal.pow(1.3, player.simplify.main.timeInSimplify));
@@ -189,9 +134,9 @@ function challengeToggle(type) {
             simplifyReset({noChalComplete: true});
             break;
         default:
-            throw new Error("challenge type " + type + " does not exist.")
+            throw new Error("challenge type " + type + " does not exist.");
     }
-    updateChallenge(type)
+    updateChallenge(type);
 }
 
 function exitChallenge(type) {
@@ -204,23 +149,23 @@ function exitChallenge(type) {
             }
             break;
         default:
-            throw new Error("challenge type " + type + " does not exist.")
+            throw new Error("challenge type " + type + " does not exist.");
     }
-    updateChallenge(type)
+    updateChallenge(type);
 }
 
 function updateChallenge(type) {
     switch (type) {
         case "simp": case "all":
-            player.misc.inSChallenge = false
+            player.misc.inSChallenge = false;
             for (let i = 0; i < 16; ++i) {
                 if (player.misc.inChallenge.includes("simp" + i)) {
-                    player.misc.inSChallenge = true
+                    player.misc.inSChallenge = true;
                 }
             }
-            html[`challengeStart1`].setClasses({ challengeStart: true, startChallenge: !player.misc.inSChallenge, exitChallenge: player.misc.inSChallenge, defaultButton: true })
-            html[`challengeStart1`].setTxt(player.misc.inSChallenge ? "Exit Challenge" : "Start Challenge")
-            html[`completeChallenge1`].setClasses({ challengeStart: true, completeChallenge: true, defaultButton: true })
+            html[`challengeStart1`].setClasses({ challengeStart: true, startChallenge: !player.misc.inSChallenge, exitChallenge: player.misc.inSChallenge, defaultButton: true });
+            html[`challengeStart1`].setTxt(player.misc.inSChallenge ? "Exit Challenge" : "Start Challenge");
+            html[`completeChallenge1`].setClasses({ challengeStart: true, completeChallenge: true, defaultButton: true });
             let c = player.simplify.challenge.completed
             for (let i = 0; i < 4; i++) {
                 html[`simpChal${i}`].setDisplay(
@@ -228,27 +173,27 @@ function updateChallenge(type) {
                     c[4 * (i - 1) + 1] ||
                     c[4 * (i - 1) + 2] ||
                     c[4 * (i - 1) + 3] ||
-                    i == 0)
+                    i == 0);
                 for (let j = 0; j < 4; j++) {
                     html[`simpChal${4 * i + j}-id`].setDisplay(c[4 * (i - 1) + j] || i == 0)
                     html[`simpChal${4 * i + j}-id`].setClasses({ simpChal: true, simpChalIncomplete: !c[4 * i + j], simpChalComplete: c[4 * i + j], inSimpChal: player.misc.inChallenge.includes(`simp${4 * i + j}`), defaultButton: true })
                     if (simpChalSelected == 4 * i + j) {
                         if (!c[4 * i + j]) {
-                            html[`simpChal${4 * i + j}-id`].removeClass("simpChalIncomplete")
-                            html[`simpChal${4 * i + j}-id`].addClass("simpChalSelected")
+                            html[`simpChal${4 * i + j}-id`].removeClass("simpChalIncomplete");
+                            html[`simpChal${4 * i + j}-id`].addClass("simpChalSelected");
                         }
                         if (c[4 * i + j]) {
-                            html[`simpChal${4 * i + j}-id`].removeClass("simpChalComplete")
-                            html[`simpChal${4 * i + j}-id`].addClass("simpChalCompleteSelected")
+                            html[`simpChal${4 * i + j}-id`].removeClass("simpChalComplete");
+                            html[`simpChal${4 * i + j}-id`].addClass("simpChalCompleteSelected");
                         }
                         if (player.misc.inChallenge.includes(`simp${4 * i + j}`)) {
-                            html[`simpChal${4 * i + j}-id`].removeClass("inSimpChal")
-                            html[`simpChal${4 * i + j}-id`].addClass("inSimpChalSelected")
+                            html[`simpChal${4 * i + j}-id`].removeClass("inSimpChal");
+                            html[`simpChal${4 * i + j}-id`].addClass("inSimpChalSelected");
                         }
                     }
                 }
-                html[`ttsChalArea`].setClasses({ simpChalDesc: true })
-                html[`ttsChalArea`].setHTML(`${simplifyChalTypes[Math.floor(simpChalSelected / 4)]} Challenge ${(simpChalSelected % 4) + 1}: <br> ${simpChal.simpChalDesc[simpChalSelected + 1]} <br> <br> Reward: ${simpChal.simpChalReward[simpChalSelected + 1]}`)
+                html[`ttsChalArea`].setClasses({ simpChalDesc: true });
+                html[`ttsChalArea`].setHTML(`${simplifyChalTypes[Math.floor(simpChalSelected / 4)]} Challenge ${(simpChalSelected % 4) + 1}: <br> ${simpChal.simpChalDesc[simpChalSelected + 1]} <br> <br> Reward: ${simpChal.simpChalReward[simpChalSelected + 1]}`);
             }
         default:
         // do
@@ -266,24 +211,59 @@ function completeChallenge(type) {
             }
             break;
         default:
-            throw new Error("challenge type " + type + " does not exist.")
+            throw new Error("challenge type " + type + " does not exist.");
     }
 }
 
+function resetTheFrickingGame() {
+    localStorage.setItem("tearonq_incremental_save", null);
+    document.location.reload(true);
+}
+
+function saveTheFrickingGame() {
+    try {
+        game[currentSave].player = player
+        localStorage.setItem("tearonq_incremental_save", JSON.stringify(game));
+        return "Game was saved!"
+    } catch(e) {
+        console.warn("Something went wrong while trying to save the game!!")
+        throw e
+    }
+}
 window.addEventListener('DOMContentLoaded', () => {
     window.requestAnimationFrame(gameLoop);
     let oldTimeStamp = 0;
     lastFPSCheck = 0;
+
+    resetPlayer();
+    game = {
+        0: {
+            name: "Save #1",
+            mode: "normal",
+            player: player
+        }
+    }
+
+    let loadgame = JSON.parse(localStorage.getItem("tearonq_incremental_save"));
+    if (loadgame !== null) {
+        game = fixData(game, loadgame);
+        player = game[currentSave].player;
+    } else {
+        currentSave = 0;
+        console.log("reset");
+    }
+
     switchTab(0, 0);
     initDots();
     setupHTML();
+
     function gameLoop(timeStamp) {
         try {
             delta = (timeStamp - oldTimeStamp) / 1000;
-            fpsList.push(delta)
+            fpsList.push(delta);
             if (timeStamp > lastFPSCheck) {
                 lastFPSCheck = timeStamp + 500;
-                FPS = 0
+                FPS = 0;
                 for (let i = 0; i < fpsList.length; ++i) {
                     FPS += fpsList[i];
                 }
@@ -291,16 +271,19 @@ window.addEventListener('DOMContentLoaded', () => {
                 fpsList = [];
                 document.getElementById("fps").innerText = `FPS: ${FPS}`;
             }
-            let gameDelta = Decimal.mul(delta, player.misc.timeSpeed);
+            let gameDelta = Decimal.mul(delta, player.misc.timeSpeed).mul(player.misc.setTimeSpeed);
             player.misc.gameTime = player.misc.gameTime.add(gameDelta);
             player.simplify.main.timeInSimplify = player.simplify.main.timeInSimplify.add(gameDelta);
             player.simplify.challenge.JC1Time = player.simplify.challenge.JC1Time.add(gameDelta);
             player.misc.totalTime += delta;
             sessionTime += delta;
             softcaps = [];
+            player.simplify.main.totalXP = dOne;
             for (let type = 0; type < 4; ++type) {
                 simplifyXPtick(type, gameDelta);
+                player.simplify.main.totalXP = Decimal.mul(player.simplify.main.totalXP, player.simplify[simplifyXPTypes[type]].trueValue);
             }
+            player.simplify.main.totalXP = player.simplify.main.totalXP.pow(player.simplify.main.SAExp);
             player.comps.compBM = player.simplify.DP.effect;
 
             player.misc.pps = calcPointsPerSecond();
@@ -313,17 +296,27 @@ window.addEventListener('DOMContentLoaded', () => {
             progressBar = Decimal.clamp(progressBar, 0, 1);
             getChalEffects();
             for (let comp = 1; comp <= 8; ++comp) {
-                player.comps.array[comp].changeAmount(calcCompxPerSecond(comp).times(gameDelta));
+                COMP_FUNCTIONS.updateMulti(comp);
+                COMP_FUNCTIONS.updateCost(comp);
+                COMP_FUNCTIONS.updateAmount(comp, calcCompxPerSecond(comp).times(gameDelta));
             }
+            
+            if (timeStamp > lastSave + saveTime) {
+                console.log(saveTheFrickingGame());
+                lastSave = timeStamp;
+            }
+
+            // display
             document.getElementById("progressBar1").innerText = progressBarText + (progressBar.toNumber() * 100).toFixed(2) + "%";
-            document.getElementById("progressBar1").style.width = `calc(${progressBar.toNumber() * 100}% - 20px)`
-            document.getElementById("progBarBase").style.width = `calc(100% - 20px)`
-            updateHTML()
-            drawing()
+            document.getElementById("progressBar1").style.width = `calc(${progressBar.toNumber() * 100}% - 20px)`;
+            document.getElementById("progBarBase").style.width = `calc(100% - 20px)`;
+            updateHTML();
+            drawing();
         } catch (e) {
             console.error(e)
             document.getElementById("points").innerHTML = (e)
-            document.getElementById("fps").innerText = "FPS: ;~; (Look in the console to see what happened, and especially look at the call stack)"
+            document.getElementById("fps").innerHTML = "FPS: ;~; (Look in the console to see what happened, and especially look at the call stack) <br> How to bring up console on... <br>   - Firefox, Chrome: Right-Click -> Inspect"
+            console.log("Game saving has been paused. It's likely that your save is broken or the programmer (TearonQ) is an idiot?")
             return;
         }
         // do not change order at all

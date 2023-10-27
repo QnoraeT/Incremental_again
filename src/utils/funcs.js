@@ -168,6 +168,9 @@ function scale(type, amt, inv, start, pow, powScale, change) {
             }
             break;
         case "E":
+            if (str.lt(1)) {
+                console.warn("type E scaling should not be used with strength lower than 1! (using STRENGTH^x)")
+            }
             if (!inv) {
                 temp = amt.mul(Decimal.pow(str, amt.div(start).sub(1)))
             } else {

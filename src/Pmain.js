@@ -268,10 +268,10 @@ function calcCompxPerSecond(comp)  {
     if (comp === 9) {throw new Error("comp >= 9 is not defined you stoopid!!")}
     if (comp === 8) {
         let temp = dZero
-        if (player.simplify.challenge.completed[13] == 1) {temp = player.comps.array[1].trueamount.mul(player.comps.array[1].multi).pow(0.075);}
+        if (player.simplify.challenge.completed[13] == 1) {temp = player.comps.array[1].trueAmount.mul(player.comps.array[1].multi).pow(0.075);}
         return temp;
     }
-    return player.comps.array[comp + 1].trueamount.mul(player.comps.array[comp + 1].multi);
+    return player.comps.array[comp + 1].trueAmount.mul(player.comps.array[comp + 1].multi);
 }
 
 function getProgress() { // progressBar = 0-1
