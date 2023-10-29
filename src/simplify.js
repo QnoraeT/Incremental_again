@@ -138,7 +138,7 @@ function simplifyXPtick(type, tickRate) {
     if (player.misc.inChallenge.includes("simp8") && !temp == 0) { temp = dZero; }
     switch (type) {
         case 0:
-            temp = temp.div(10).add(1).pow(2.1);
+            temp = temp.div(20).add(1).pow(2.1);
             if (player.simplify.challenge.completed[8]) {
                 temp = temp.mul(player.simplify[simplifyXPTypes[1]].effect.pow(1.1))
                     .pow(player.simplify[simplifyXPTypes[2]].effect.sub(1).max(1).root(1.7))

@@ -182,11 +182,24 @@ function setupHTMLComPs() {
     toHTMLvar(`maxAll`);
 }
 
+function changeLog() {
+    let changeLog = ""
+    changeLog += "<br><changeLog><p class='date0'> v0.0.0 - Apr 5, 2023 </p>";
+    changeLog += "<br> Progress on TTS Challenges #1";
+    changeLog += "<br> Added a new mode 'softcapped', currently unavaliable as an option";
+
+    document.getElementById("changeLog").innerHTML = changeLog;
+}
+
 function setupHTMLOther() {
     toHTMLvar(`other`);
     toHTMLvar(`tab_other_stat`);
     toHTMLvar(`tab_other_changeLog`);
     toHTMLvar(`tab_other_note`);
+    toHTMLvar(`changeLog`);
+    let changeLog = ""
+
+    html[`changeLog`].setHTML(changeLog)
     html[`tab_other_stat`].setClasses({ defaultTab: true, defaultButton: true });
     html[`tab_other_changeLog`].setClasses({ defaultTab: true, defaultButton: true });
     html[`tab_other_note`].setClasses({ defaultTab: true, defaultButton: true });
@@ -286,9 +299,9 @@ function updateCompHTML() {
         player.comps.compVisible++;
     }
     for (let comp = 1; comp <= 8; ++comp) {
-        html[`gen-comp${player.comps.compVisible}`].setDisplay(comp <= player.comps.compVisible);
+        html[`gen-comp${comp}`].setDisplay(comp < player.comps.compVisible);
         let tr = calcCompxPerSecond(comp).add(player.comps.array[comp].amount).pow(player.comps.compExp).sub(player.comps.array[comp].amount.pow(player.comps.compExp));
-        const perSecondText = " (" + format(tr, false, tr < 10 ? 1 : 0) + "/s),";
+        const perSecondText = " (" + format(tr, false, tr < 10 ? 1 : 3) + "/s),";
         const boughtText = " [ " + format(player.comps.array[comp].bought) + " ]    ";
         const text = tr.gt(0) ? perSecondText + boughtText : boughtText;
         html[`gen-comp${comp}-amount`].setTxt(format(player.comps.array[comp].trueAmount, false, 3) + " " + text);

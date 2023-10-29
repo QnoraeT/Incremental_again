@@ -26,23 +26,28 @@ function getProgress() { // progressBar = 0-1
         progressBarText = "Complete Challenge: ";
         return;
     }
-    if (player.simplify.upgrades.simplifyMainUPG == 5) {
+    if (player.simplify.upgrades.simplifyMainUPG == 6) {
         progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain()).div(1.2e27).add(1).log(Decimal.div(7.2e38, 1.2e27));
         progressBarText = "Next feature: ";
         return;
     }
-    if (player.simplify.upgrades.simplifyMainUPG == 4) {
+    if (player.simplify.upgrades.simplifyMainUPG == 5) {
         progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain()).div(2.4e17).add(1).log(Decimal.div(1.2e27, 2.4e17));
         progressBarText = "Next feature: ";
         return;
     }
-    if (player.simplify.upgrades.simplifyMainUPG == 3) {
+    if (player.simplify.upgrades.simplifyMainUPG == 4) {
         progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain()).div(6e9).add(1).log(Decimal.div(2.4e17, 6e9));
         progressBarText = "Next feature: ";
         return;
     }
+    if (player.simplify.upgrades.simplifyMainUPG == 3) {
+        progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain().add(1)).div(20000).max(1).log(Decimal.div(6e9, 20000));
+        progressBarText = "Next feature: ";
+        return;
+    }
     if (player.simplify.upgrades.simplifyMainUPG == 2) {
-        progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain().add(1)).log(Decimal.div(6e9, 20_000));
+        progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain().add(1)).log(Decimal.div(20000, 10));
         progressBarText = "Next feature: ";
         return;
     }
@@ -131,7 +136,7 @@ function challengeToggle(type) {
             } else {
                 player.misc.inChallenge.push("simp" + simpChalSelected);
             }
-            simplifyReset({noChalComplete: true});
+            simplifyReset({ noChalComplete: true });
             break;
         default:
             throw new Error("challenge type " + type + " does not exist.");
@@ -225,11 +230,21 @@ function saveTheFrickingGame() {
         game[currentSave].player = player
         localStorage.setItem("tearonq_incremental_save", JSON.stringify(game));
         return "Game was saved!"
-    } catch(e) {
+    } catch (e) {
         console.warn("Something went wrong while trying to save the game!!")
         throw e
     }
 }
+
+function updatePlayerData(player) {
+    let play = player;
+    let vers = player.misc.version||-1;
+    if (vers < 0) {
+        vers = 0;
+    }
+    player = play;
+}
+
 window.addEventListener('DOMContentLoaded', () => {
     window.requestAnimationFrame(gameLoop);
     let oldTimeStamp = 0;
@@ -248,6 +263,8 @@ window.addEventListener('DOMContentLoaded', () => {
     if (loadgame !== null) {
         game = fixData(game, loadgame);
         player = game[currentSave].player;
+        updatePlayerData(player)
+        player
     } else {
         currentSave = 0;
         console.log("reset");
@@ -300,7 +317,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 COMP_FUNCTIONS.updateCost(comp);
                 COMP_FUNCTIONS.updateAmount(comp, calcCompxPerSecond(comp).times(gameDelta));
             }
-            
+
             if (timeStamp > lastSave + saveTime) {
                 console.log(saveTheFrickingGame());
                 lastSave = timeStamp;
@@ -316,7 +333,7 @@ window.addEventListener('DOMContentLoaded', () => {
             console.error(e)
             document.getElementById("points").innerHTML = (e)
             document.getElementById("fps").innerHTML = "FPS: ;~; (Look in the console to see what happened, and especially look at the call stack) <br> How to bring up console on... <br>   - Firefox, Chrome: Right-Click -> Inspect"
-            console.log("Game saving has been paused. It's likely that your save is broken or the programmer (TearonQ) is an idiot?")
+            console.log("Game saving has been paused. It's likely that your save is broken or the programmer (TearonQ) is an idiot? Don't call them that, though.")
             return;
         }
         // do not change order at all

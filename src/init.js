@@ -83,7 +83,6 @@ function makeComp(index) {
     obj.cost = dTen;
     obj.trueCost = dZero;
     obj.trueAmount = dZero;
-    obj.baseCost = 
     obj.multiFactors = "";
     obj.costFactors = "";
     return obj;
@@ -107,6 +106,7 @@ function resetPlayer() {
             timeSpeed: dOne,
             setTimeSpeed: dOne, // change this if you think the game is going too fast or slow, i won't judge you =P
             inSChallenge: 0,
+            version: 0,
         },
         settings: {
             notation: "Mixed Scientific",
@@ -258,7 +258,7 @@ function fixData(defaultData, newData) {
             }
         }
     }
-    return newData
+    return newData;
 }
 
 const draw = document.querySelector("#effects");
