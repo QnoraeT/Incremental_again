@@ -12,58 +12,69 @@ function calcPointsPerSecond() {
     let temp = player.comps.array[1].trueAmount.mul(player.comps.array[1].multi);
     if (player.misc.inChallenge.includes("simp2")) { temp = temp.root(2); }
     if (player.misc.inChallenge.includes("simp5")) { temp = temp.pow(player.comps.compExp); }
-    if (player.misc.inChallenge.includes("simp8")) { temp = temp.root(3); }
+    if (player.misc.inChallenge.includes("simp8")) { temp = temp.root(4); }
     if (player.misc.inChallenge.includes("simp9")) { temp = temp.root(2).div(1e150); }
     if (player.misc.inChallenge.includes("simp13")) { temp = temp.pow(0.05); }
     return temp;
 }
 
 function getProgress() { // progressBar = 0-1
-    progressBar = dOne
-    progressBarText = "All done! "
-    if (player.misc.inSChallenge) {
+    progressBar = dOne;
+    progressBarProg = (progressBar.toNumber() * 100).toFixed(2) + "%";
+    progressBarText = "All done! ";
+    let canSet = true
+    let m
+    if (player.misc.inSChallenge && canSet) {
         progressBar = player.misc.totalPointsInSimplify.add(1).log(player.simplify.main.simplifyReq);
-        progressBarText = "Complete Challenge: ";
-        return;
+        m = progressBar.clamp(0, 1);
+        progressBarText = `Complete Challenge: ${(m.toNumber() * 100).toFixed(2)}% ( ${format(player.misc.totalPointsInSimplify)} / ${format(player.simplify.main.simplifyReq)} )`;
+        canSet = false
     }
-    if (player.simplify.upgrades.simplifyMainUPG == 6) {
-        progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain()).div(1.2e27).add(1).log(Decimal.div(7.2e38, 1.2e27));
-        progressBarText = "Next feature: ";
-        return;
+    if (player.simplify.upgrades.simplifyMainUPG == 6 && canSet) {
+        progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain()).div(1.2e27).max(1).log(Decimal.div(7.2e38, 1.2e27));
+        m = progressBar.clamp(0, 1);
+        progressBarText = `Next feature: ${(m.toNumber() * 100).toFixed(2)}% ( ${format(player.simplify.main.simplifyEnergy.add(getSimplifyGain()))} / 720.000 UDc )`;
+        canSet = false
     }
-    if (player.simplify.upgrades.simplifyMainUPG == 5) {
-        progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain()).div(2.4e17).add(1).log(Decimal.div(1.2e27, 2.4e17));
-        progressBarText = "Next feature: ";
-        return;
+    if (player.simplify.upgrades.simplifyMainUPG == 5 && canSet) {
+        progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain()).div(2.4e17).max(1).log(Decimal.div(1.2e27, 2.4e17));
+        m = progressBar.clamp(0, 1);
+        progressBarText = `Next feature: ${(m.toNumber() * 100).toFixed(2)}% ( ${format(player.simplify.main.simplifyEnergy.add(getSimplifyGain()))} / 1.200 Oc )`;
+        canSet = false
     }
-    if (player.simplify.upgrades.simplifyMainUPG == 4) {
-        progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain()).div(6e9).add(1).log(Decimal.div(2.4e17, 6e9));
-        progressBarText = "Next feature: ";
-        return;
+    if (player.simplify.upgrades.simplifyMainUPG == 4 && canSet) {
+        progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain()).div(6e9).max(1).log(Decimal.div(2.4e17, 6e9));
+        m = progressBar.clamp(0, 1);
+        progressBarText = `Next feature: ${(m.toNumber() * 100).toFixed(2)}% ( ${format(player.simplify.main.simplifyEnergy.add(getSimplifyGain()))} / 240.000 Qa )`;
+        canSet = false
     }
-    if (player.simplify.upgrades.simplifyMainUPG == 3) {
-        progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain().add(1)).div(20000).max(1).log(Decimal.div(6e9, 20000));
-        progressBarText = "Next feature: ";
-        return;
+    if (player.simplify.upgrades.simplifyMainUPG == 3 && canSet) {
+        progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain()).div(20000).max(1).log(Decimal.div(6e9, 20000));
+        m = progressBar.clamp(0, 1);
+        progressBarText = `Next feature: ${(m.toNumber() * 100).toFixed(2)}% ( ${format(player.simplify.main.simplifyEnergy.add(getSimplifyGain()))} / 6.000 B )`;
+        canSet = false
     }
-    if (player.simplify.upgrades.simplifyMainUPG == 2) {
-        progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain().add(1)).log(Decimal.div(20000, 10));
-        progressBarText = "Next feature: ";
-        return;
+    if (player.simplify.upgrades.simplifyMainUPG == 2 && canSet) {
+        progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain()).div(10).max(1).log(Decimal.div(20000, 10));
+        m = progressBar.clamp(0, 1);
+        progressBarText = `Next feature: ${(m.toNumber() * 100).toFixed(2)}% ( ${format(player.simplify.main.simplifyEnergy.add(getSimplifyGain()))} / 20,000 )`;
+        canSet = false
     }
-    if (player.simplify.upgrades.simplifyMainUPG == 1) {
+    if (player.simplify.upgrades.simplifyMainUPG == 1 && canSet) {
         progressBar = player.simplify.main.simplifyEnergy.add(getSimplifyGain()).div(10);
-        progressBarText = "Next feature: ";
-        return;
+        m = progressBar.clamp(0, 1);
+        progressBarText = `Next feature: ${(m.toNumber() * 100).toFixed(2)}% ( ${format(player.simplify.main.simplifyEnergy.add(getSimplifyGain()))} / 10.000 )`;
+        canSet = false
     }
-    if (player.misc.totalPoints.lt(1e12)) {
+    if (player.misc.totalPoints.lt(1e12) && canSet) {
         progressBar = player.misc.totalPoints.div(10).max(1).log(1e11);
-        progressBarText = "Next layer: ";
-        return;
+        m = progressBar.clamp(0, 1);
+        progressBarText = `Next layer: ${(m.toNumber() * 100).toFixed(2)}% ( ${format(player.misc.totalPoints)} / 1.000e12 )`;
+        canSet = false
     }
-    if (player.simplify.upgrades.simplifyMainUPG == 0) {
-        progressBarText = "Look in the \"Simplify\" tab! ";
-        return;
+    if (player.simplify.upgrades.simplifyMainUPG == 0 && canSet) {
+        progressBarText = `Look in the \"Simplify\" tab! `;
+        canSet = false
     }
 }
 
@@ -78,13 +89,14 @@ function getChalEffects() {
     player.simplify.challenge.SC3effect = temp;
 
     temp = dOne;
-    if (player.simplify.challenge.completed[3]) { temp = player.misc.points.max(10).log(10).sub(1).div(4).add(1).pow(0.4).sub(1); }
+    if (player.simplify.challenge.completed[3]) { temp = player.misc.points.max(10).log(10).log(10).pow(2); }
     temp = Decimal.pow(10, scale("EP", temp.add(1).log(10), false, 2.30102999, 1, 1.5, 0)[0]); // this is a double log softcap lmfao
     player.simplify.challenge.MC4effect = temp;
 
     temp = new Decimal(0.8);
     if (player.simplify.challenge.completed[5]) { temp = temp.add(0.025); }
     if (player.misc.inChallenge.includes("simp11")) { temp = new Decimal(0.5); }
+    if (player.misc.inChallenge.includes("simp7")) { temp = new Decimal(0.4); }
     player.comps.compExp = temp;
 
     temp = new Decimal(150);
@@ -111,8 +123,8 @@ function getChalEffects() {
     player.simplify.main.SEExp = temp;
 
     temp = new Decimal(1e12);
-    if (player.misc.inChallenge.includes("simp2")) { temp = new Decimal(1e20); }
     if (player.misc.inChallenge.includes("simp5")) { temp = new Decimal("1e395"); }
+    if (player.misc.inChallenge.includes("simp6")) { temp = new Decimal("1e15"); }
     if (player.misc.inChallenge.includes("simp12")) { temp = new Decimal(1.111e111); }
     if (player.misc.inChallenge.includes("simp14")) { temp = new Decimal(1e55); }
     if (player.misc.inChallenge.includes("simp15")) { temp = new Decimal(1.797693e308); }
@@ -324,7 +336,7 @@ window.addEventListener('DOMContentLoaded', () => {
             }
 
             // display
-            document.getElementById("progressBar1").innerText = progressBarText + (progressBar.toNumber() * 100).toFixed(2) + "%";
+            document.getElementById("progressBar1").innerText = progressBarText;
             document.getElementById("progressBar1").style.width = `calc(${progressBar.toNumber() * 100}% - 20px)`;
             document.getElementById("progBarBase").style.width = `calc(100% - 20px)`;
             updateHTML();

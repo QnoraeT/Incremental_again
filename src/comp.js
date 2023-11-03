@@ -32,13 +32,13 @@ let COMP_FUNCTIONS = {
             player.comps.array[index].costFactors += "<br> MC4 Completion: -" + format(player.simplify.challenge.MC4effect, true, 3) + "  (" + format(temp, true) + " buys)"
         }
 
-        player.comps.array[index].trueCost = temp
+        player.comps.array[index].trueCost = temp;
 
-        let k = -1
+        let k = -1;
         for (let i = Object.keys(player.scaling.ComPs).length - 1; i >= 0; i--) {
             if (temp.gte(player.scaling.ComPs[i].start)) {
-                k = Math.max(k, i)
-                temp = scale(["P", "E", "P"][i], temp, false, player.scaling.ComPs[i].start, player.scaling.ComPs[i].strength, 3, 0)[0]
+                k = Math.max(k, i);
+                temp = scale(["P", "E", "P"][i], temp, false, player.scaling.ComPs[i].start, player.scaling.ComPs[i].strength, 3, 0)[0];
             }
         }
 
@@ -65,8 +65,8 @@ let COMP_FUNCTIONS = {
         }
 
         if (player.misc.inChallenge.includes("simp2") && index >= 2) {
-            cost = cost.mul(10000);
-            player.comps.array[index].costFactors += "<br> MC3 Scaling: x" + format(new Decimal(10000), true, 3) + "  (" + format(cost, true) + ")"
+            cost = cost.mul(10);
+            player.comps.array[index].costFactors += "<br> MC3 Scaling: x" + format(new Decimal(10), true, 3) + "  (" + format(cost, true) + ")"
         }
 
         if (player.misc.inChallenge.includes("simp2")) {
@@ -152,8 +152,8 @@ let COMP_FUNCTIONS = {
             let temp = Decimal.clamp(player.simplify.challenge.JC1Time.div(40), 0, 1)
             player.comps.array[index].multi = player.comps.array[index].multi.pow(Decimal.add(0.3, temp.mul(0.3)));
             player.comps.array[index].multiFactors += "<br> Japanese Symbol Challenge 1: ^" + format(new Decimal(Decimal.add(0.3, temp.mul(0.3))), true, 3) + "  (" + format(player.comps.array[index].multi, true) + "x)"
-            player.comps.array[index].multi = player.comps.array[index].multi.div(Decimal.pow(10, Decimal.sub(15, temp.mul(8))));
-            player.comps.array[index].multiFactors += "<br> Japanese Symbol Challenge 1: /" + format(Decimal.pow(10, Decimal.sub(15, temp.mul(8))), true) + "  (" + format(player.comps.array[index].multi, true) + "x)"
+            player.comps.array[index].multi = player.comps.array[index].multi.div(Decimal.pow(10, Decimal.sub(12, temp.mul(8))));
+            player.comps.array[index].multiFactors += "<br> Japanese Symbol Challenge 1: /" + format(Decimal.pow(10, Decimal.sub(12, temp.mul(8))), true) + "  (" + format(player.comps.array[index].multi, true) + "x)"
         }
 
         if (player.misc.inChallenge.includes("simp7")) {
@@ -170,7 +170,7 @@ let COMP_FUNCTIONS = {
         if (player.simplify.challenge.completed[4]) {
             let temp = dOne
             for (let comp = index; comp > 1; --comp) {
-                temp = temp.mul(player.comps.array[comp].multi.pow(0.1))
+                temp = temp.mul(player.comps.array[comp].multi.pow(0.033))
             }
             player.comps.array[index].multi = player.comps.array[index].multi.mul(temp);
             player.comps.array[index].multiFactors += "<br> JC1 Effect: x" + format(temp, true) + "  (" + format(player.comps.array[index].multi, true) + "x)"

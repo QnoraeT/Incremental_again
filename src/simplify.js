@@ -169,7 +169,7 @@ function simplifyXPtick(type, tickRate) {
     }
     if (player.misc.inChallenge.includes("simp3")) { temp = temp.pow(0.4); }
     if (player.misc.inChallenge.includes("simp6")) { temp = dOne; }
-    if (player.misc.inChallenge.includes("simp7")) { temp = temp.pow(0.5); }
+    if (player.misc.inChallenge.includes("simp7")) { temp = temp.root(3); }
     player.simplify[simplifyXPTypes[type]].effect = temp;
 }
 

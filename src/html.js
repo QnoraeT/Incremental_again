@@ -215,6 +215,7 @@ function setupHTMLSimplifyGeneral() {
     toHTMLvar(`simplify`);
     toHTMLvar(`simplify_tab_simplify`);
     toHTMLvar(`simplify_tab_tts`);
+    toHTMLvar(`simplify_tab_simpUpg`);
     toHTMLvar(`SER`);
     toHTMLvar(`SEUPG1`);
     toHTMLvar(`simpEnergy`);
@@ -223,6 +224,7 @@ function setupHTMLSimplifyGeneral() {
     html[`simplify_tab_tts`].setClasses({ defaultButton: true });
     html[`SER`].setClasses({ defaultButton: true, defaultSimplifyTab: true });
     html[`SEUPG1`].setClasses({ defaultButton: true, defaultSimplifyTab: true });
+    html[`simplify_tab_simpUpg`].setClasses({ defaultButton: true, defaultSimplifyTab: true });
 }
 
 function setupHTMLSimplifyXP() {
@@ -301,10 +303,10 @@ function updateCompHTML() {
     for (let comp = 1; comp <= 8; ++comp) {
         html[`gen-comp${comp}`].setDisplay(comp < player.comps.compVisible);
         let tr = calcCompxPerSecond(comp).add(player.comps.array[comp].amount).pow(player.comps.compExp).sub(player.comps.array[comp].amount.pow(player.comps.compExp));
-        const perSecondText = " (" + format(tr, false, tr < 10 ? 1 : 3) + "/s),";
+        const perSecondText = " (" + format(tr, false, tr < 10 ? 1 : 0, 3) + "/s),";
         const boughtText = " [ " + format(player.comps.array[comp].bought) + " ]    ";
         const text = tr.gt(0) ? perSecondText + boughtText : boughtText;
-        html[`gen-comp${comp}-amount`].setTxt(format(player.comps.array[comp].trueAmount, false, 3) + " " + text);
+        html[`gen-comp${comp}-amount`].setTxt(format(player.comps.array[comp].trueAmount, true, 3) + " " + text);
         html[`gen-comp${comp}-cost`].setTxt("Cost: " + format(player.comps.array[comp].cost, true, 3));
         let can = player.misc.points.gte(player.comps.array[comp].cost);
         html[`gen-comp${comp}-cost`].setClasses({ buttonRight: true, defaultButton: true, compNo: !can, compYes: can });
@@ -346,7 +348,7 @@ function updateSimpHTML() {
         case 0:
             if (player.simplify.upgrades.simplifyMainUPG < 1) { break; }
             for (let i = 0; i < 4; i++) {
-                html[`simpEXP${i + 1}`].setTxt(`You have ${format(player.simplify[simplifyXPTypes[i]].allocated, true)} SE allocated to ${format(player.simplify[simplifyXPTypes[i]].trueValue, true, 1)} ${simplifyXPTypes[i]}, ${simplifyXPDesc[i]}${format(player.simplify[simplifyXPTypes[i]].effect, true, 3)}.`);
+                html[`simpEXP${i + 1}`].setTxt(`You have ${format(player.simplify[simplifyXPTypes[i]].allocated, true, 0)} SE allocated to ${format(player.simplify[simplifyXPTypes[i]].trueValue, true, 3, 3)} ${simplifyXPTypes[i]}, ${simplifyXPDesc[i]}${format(player.simplify[simplifyXPTypes[i]].effect, true, 3)}.`);
             }
             break;
         case 1:

@@ -216,3 +216,25 @@ function altFactorial(input) {
     t += 5246819 / (75246796800 * (i ** 6))
     return Decimal.mul(r, t)
 }
+
+function inverseQuad(x, a, b, c) { // inverse of ax^2+bx+c
+    x = new Decimal(x)
+    a = new Decimal(a)
+    b = new Decimal(b)
+    c = new Decimal(c)
+    
+    return b.pow(2).add(x.mul(a).mul(4)).sub(a.mul(c).mul(4)).sqrt().sub(b).div(a.mul(2))
+}
+
+function inverseCube(x, a, b, c, d) { // inverse of ax^3+bx^2+cx+d
+    x = new Decimal(x)
+    a = new Decimal(a)
+    b = new Decimal(b)
+    c = new Decimal(c)
+    d = new Decimal(d)
+    
+    let w = a.pow(2).mul(d).mul(27).sub(x.mul(a.pow(2)).mul(27)).sub(a.mul(b).mul(c).mul(9)).add(b.pow(3).mul(2))
+    let m = a.mul(c).mul(3).sub(b.pow(2))
+    let we = w.pow(2).add(m.pow(3).mul(4)).sqrt().add(w).cbrt()
+    return m.mul(cbr2).div(a.mul(3).mul(we)).sub(b.div(a.mul(3))).sub(we.div(a.mul(cbr2).mul(3)))
+}

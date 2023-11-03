@@ -20,7 +20,7 @@ function format(number, fixed, dec = 3, expdec = 3) {
         return numberWithCommas(n.toNumber().toFixed(dec));
     } else if (n.lt(abbExp)) {
         let abb = n.log(1000).mul(1.000000001).floor()
-        return `${n.div(Decimal.pow(1000, abb)).toNumber().toFixed(dec)} ${abbSuffixes[abb]}`
+        return `${n.div(Decimal.pow(1000, abb)).toNumber().toFixed(expdec)} ${abbSuffixes[abb]}`
     } else if (n.lt("e1e6")) {
         let exp = n.log(10).mul(1.000001).floor()
         return `${n.div(Decimal.pow(10, exp)).toNumber().toFixed(expdec)}e${format(exp, fixed, 0, expdec)}`

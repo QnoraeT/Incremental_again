@@ -15,12 +15,12 @@ const simpChal = {
     simpChalDesc: {
         1: "Max All is disabled. ComP costs grow by 2^x per purchase. Multipliers are ^0.75 then /" + format(new Decimal(1000), true) + ".",
         2: "Max All is disabled. ComP's post-150 scaling now starts at 1. Multiplier per bought is lowered by 1, PP and MP's effect is ^0.5 and MP's effect is then /" + format(new Decimal(1000), true) + ".",
-        3: "Max All is disabled. ComP's costs are squared. 2nd and further ComP's costs are multiplied by " + format(new Decimal(10_000), true) + " before being squared. Gain is ^0.5, and your goal is " + format(new Decimal(1e20), true) + ".",
+        3: "Max All is disabled. ComP's costs are squared. 2nd and further ComP's costs are multiplied by " + format(new Decimal(10), true) + " before being squared. Your gain is also square-rooted.",
         4: "Max All is disabled. ComP's costs act like their bought amount is squared. This also means that post-150 scaling starts earlier, and that MC3's effect is slightly stronger. All multipliers to ComPs and all xP effects are ^0.4.",
-        5: "All ComP multipliers get severely reduced every time any ComP gets bought. This multiplier slowly goes back to /" + format(new Decimal(1e8), true) + " in 40 seconds. PP has no effect.",
+        5: "All ComP multipliers get severely reduced every time any ComP gets bought. This multiplier slowly goes back to /" + format(new Decimal(1e4), true) + " in 40 seconds. PP has no effect.",
         6: "Your base gain is effected by the same power that the ComP amount is being affected by. You must have " + format(new Decimal("1e395"), true) + " to complete this challenge.",
-        7: "All xP effects are neutralized.",
-        8: "All ComP's multipliers are affected by the ComP exponent to amount, and PP, MP, 1P, and DP's effects are ^0.5.",
+        7: `All xP effects are neutralized. Your goal is ${format(new Decimal(1e15))}.`,
+        8: "All ComP's multipliers are affected by the ComP exponent to amount, and PP, MP, 1P, and DP's effects are cube rooted. The ComP exponent has also been reduced to 0.4.",
         9: "Max All is disabled. Your ComP costs scale entirely based off your total ComPs bought. MP, 1P, and DP's effects now only boost PP, Gain is reduced, and their individual effects are set to as if you had none.",
         10: "ComP's post 150 scaling slowly gets earlier over time, and gets delayed by some amount per purchase. Your gain is ^0.5 with /" + format(new Decimal(1e150), true) + ".",
         11: "ComP's multipliers are only effective for 400ms before they quickly decay. This is reset every time you buy any ComP. All ComPs' multipliers are rooted by 2.",
@@ -54,6 +54,7 @@ const dOne = new Decimal(1);
 const dTwo = new Decimal(2);
 const dTen = new Decimal(10);
 const ln10 = dTen.ln();
+const cbr2 = new Decimal(2).cbrt();
 const simplifyChalTypes = ["🔎", "🔰", "🚛", "777"];
 const simplifyXPTypes = ["PP", "MP", "OP", "DP"];
 const simplifyXPColor = ["#FF0000", "#FFFF00", "#00FF00", "#0000FF"];
