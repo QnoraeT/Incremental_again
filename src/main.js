@@ -89,14 +89,14 @@ function getChalEffects() {
     player.simplify.challenge.SC3effect = temp;
 
     temp = dOne;
-    if (player.simplify.challenge.completed[3]) { temp = player.misc.points.max(10).log(10).log(10).pow(2); }
+    if (player.simplify.challenge.completed[3]) { temp = player.misc.points.max(10).log(10).root(2).mul(3); }
     temp = Decimal.pow(10, scale("EP", temp.add(1).log(10), false, 2.30102999, 1, 1.5, 0)[0]); // this is a double log softcap lmfao
     player.simplify.challenge.MC4effect = temp;
 
     temp = new Decimal(0.8);
-    if (player.simplify.challenge.completed[5]) { temp = temp.add(0.025); }
     if (player.misc.inChallenge.includes("simp11")) { temp = new Decimal(0.5); }
     if (player.misc.inChallenge.includes("simp7")) { temp = new Decimal(0.4); }
+    if (player.simplify.challenge.completed[5]) { temp = temp.add(0.025); }
     player.comps.compExp = temp;
 
     temp = new Decimal(150);
@@ -124,7 +124,7 @@ function getChalEffects() {
 
     temp = new Decimal(1e12);
     if (player.misc.inChallenge.includes("simp5")) { temp = new Decimal("1e395"); }
-    if (player.misc.inChallenge.includes("simp6")) { temp = new Decimal("1e15"); }
+    if (player.misc.inChallenge.includes("simp6")) { temp = new Decimal(1e15); }
     if (player.misc.inChallenge.includes("simp12")) { temp = new Decimal(1.111e111); }
     if (player.misc.inChallenge.includes("simp14")) { temp = new Decimal(1e55); }
     if (player.misc.inChallenge.includes("simp15")) { temp = new Decimal(1.797693e308); }

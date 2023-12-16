@@ -217,7 +217,15 @@ function altFactorial(input) {
     return Decimal.mul(r, t)
 }
 
-function inverseQuad(x, a, b, c) { // inverse of ax^2+bx+c
+/**
+ * 
+ * @param {Decimal} x the value before the quadratic polynomial
+ * @param {Decimal} a ax^2
+ * @param {Decimal} b + bx
+ * @param {Decimal} c + c
+ * @returns {Decimal}
+ */
+function inverseQuad(x, a, b, c) { // inverse of ax^2+bx+c, only
     x = new Decimal(x)
     a = new Decimal(a)
     b = new Decimal(b)
@@ -226,15 +234,58 @@ function inverseQuad(x, a, b, c) { // inverse of ax^2+bx+c
     return b.pow(2).add(x.mul(a).mul(4)).sub(a.mul(c).mul(4)).sqrt().sub(b).div(a.mul(2))
 }
 
-function inverseCube(x, a, b, c, d) { // inverse of ax^3+bx^2+cx+d
-    x = new Decimal(x)
-    a = new Decimal(a)
-    b = new Decimal(b)
-    c = new Decimal(c)
-    d = new Decimal(d)
-    
-    let w = a.pow(2).mul(d).mul(27).sub(x.mul(a.pow(2)).mul(27)).sub(a.mul(b).mul(c).mul(9)).add(b.pow(3).mul(2))
-    let m = a.mul(c).mul(3).sub(b.pow(2))
-    let we = w.pow(2).add(m.pow(3).mul(4)).sqrt().add(w).cbrt()
-    return m.mul(cbr2).div(a.mul(3).mul(we)).sub(b.div(a.mul(3))).sub(we.div(a.mul(cbr2).mul(3)))
+/**
+ * uses newton's method to find the inverse (the one wolfram alpha gave me behaved poorly due to floating poiint errors above 1e10+)
+ * @param {Decimal} x the value before the cubic polynomial
+ * @param {Decimal} a ax^3 
+ * @param {Decimal} b + bx^2
+ * @param {Decimal} c + cx
+ * @param {Decimal} d + d
+ * @returns {Decimal}
+ */
+function inverseCube(x, a, b, c, d, tol = 1e-10) { // inverse of ax^3+bx^2+cx+d, only for positive values!!
+    x = new Decimal(x);
+    a = new Decimal(a);
+    b = new Decimal(b);
+    c = new Decimal(c);
+    d = new Decimal(d);
+    res = x.root(3);
+    r;
+
+    for (var i = 0; i < 100; ++i) {
+        r = res.sub(res.pow(3).mul(a).add(res.pow(2).mul(b)).add(res.mul(c)).add(d).sub(x).div(res.pow(2).mul(a).mul(3).add(res.mul(b).mul(2)).add(c)));
+        if (res.sub(r).abs().lt(tol)) {
+            return r;
+        }
+        res = r;
+    }
+    console.warn(`inverseCube couldn't finish converging! (Final value: ${format(res)})`);
+    return res;
 }
+
+/**
+ * This function returns an approximation to the inverse factorial.
+ * Examples: x = 5040, will return 6.99724 (close to 7)
+ * @param {Decimal} x 
+ * @returns {Decimal}
+ */
+function inverseFact(x) {
+    x = new Decimal(x)
+    if (x.layer > 2) return x.log10()
+    if (x.layer > 1 && x.mag >= 10000) return x.log10().div(i.log10().log10())
+    return x.div(dsqr2pi).ln().div(Math.E).lambertw().add(1).exp().sub(0.5)
+}
+
+/**
+ * FORMULA IDEAS:
+ * 
+ * NORMAL:   10 ^ ((x + 1)(x ^ 2 + 2x + 6000) / 6000)
+ *   > Simplified to 10 ^ (1 + x + x ^ 2 / 2000 + x ^ 3 / 6000)
+ * INVERSE:  log10(cubeInv(x, 1 / 6000, 1 / 2000, 1, 1))
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
+

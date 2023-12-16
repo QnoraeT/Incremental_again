@@ -49,12 +49,14 @@ const simpChal = {
         16: "???",
     }
 }
-const dZero = new Decimal(0);
-const dOne = new Decimal(1);
-const dTwo = new Decimal(2);
-const dTen = new Decimal(10);
+
+const dZero = Decimal.dZero;
+const dOne = Decimal.dOne;
+const dTwo = Decimal.dTwo;
+const dTen = Decimal.dTen;
+const dsqr2pi = new Decimal(Math.sqrt(2 * Math.PI))
 const ln10 = dTen.ln();
-const cbr2 = new Decimal(2).cbrt();
+const cbr2 = new Decimal(Math.cbrt(2));
 const simplifyChalTypes = ["🔎", "🔰", "🚛", "777"];
 const simplifyXPTypes = ["PP", "MP", "OP", "DP"];
 const simplifyXPColor = ["#FF0000", "#FFFF00", "#00FF00", "#0000FF"];
