@@ -42,26 +42,29 @@ let COMP_FUNCTIONS = {
             }
         }
 
-        cost = Decimal.pow(10, new Decimal(2 * index).mul(temp.add(2)).sub(3)).div(player.simplify.challenge.MC1effect.pow(temp)).div(player.simplify.challenge.SC3effect.pow(Decimal.mul(index, temp)));
-        player.comps.array[index].costFactors += `<br> ${scalingNames[player.settings.scalingNames][k + 1]} Scaling: ${format(cost.mul(player.simplify.challenge.MC1effect.pow(temp)).mul(player.simplify.challenge.SC3effect.pow(Decimal.mul(index, temp))), true, 3)}   `
-        player.comps.array[index].costFactors += `[${(k >= Object.keys(player.scaling.ComPs).length - 1) ? "Final Stage" : "Next Stage @" + format(player.scaling.ComPs[k + 1].start, true, 3)}]`
+        cost = Decimal.pow(10, temp.add(2).mul(2 * index).sub(3));
+        
+        player.comps.array[index].costFactors += `<br> ${scalingNames[player.settings.scalingNames][k + 1]} Scaling: ${format(cost, true, 3)}   `;
+        player.comps.array[index].costFactors += `[${(k >= Object.keys(player.scaling.ComPs).length - 1) ? "Final Stage" : "Next Stage @" + format(player.scaling.ComPs[k + 1].start, true, 3)}]`;
 
         if (player.simplify.challenge.MC1effect.gt(1)) {
-            player.comps.array[index].costFactors += "<br> MC1 Completion: /" + format(player.simplify.challenge.MC1effect.pow(temp), true, 3) + "  (" + format(cost, true) + ")"
+            cost = cost.div(player.simplify.challenge.MC1effect.pow(player.comps.array[index].trueCost))
+            player.comps.array[index].costFactors += "<br> MC1 Completion: /" + format(player.simplify.challenge.MC1effect.pow(player.comps.array[index].trueCost), true, 3) + "  (" + format(cost, true) + ")";
         }
 
         if (player.simplify.challenge.SC3effect.gt(1)) {
-            player.comps.array[index].costFactors += "<br> SC3 Completion: /" + format(player.simplify.challenge.SC3effect.pow(Decimal.mul(index, temp)), true, 3) + "  (" + format(cost, true) + ")"
+            cost = cost.div(player.simplify.challenge.SC3effect.pow(Decimal.mul(index, player.comps.array[index].trueCost)));
+            player.comps.array[index].costFactors += "<br> SC3 Completion: /" + format(player.simplify.challenge.SC3effect.pow(Decimal.mul(index, player.comps.array[index].trueCost)), true, 3) + "  (" + format(cost, true) + ")";
         }
 
         if (player.simplify.challenge.completed[1]) {
             cost = cost.pow(0.95);
-            player.comps.array[index].costFactors += "<br> MC2 Completion: ^" + format(new Decimal(0.95), true, 3) + "  (" + format(cost, true) + ")"
+            player.comps.array[index].costFactors += "<br> MC2 Completion: ^" + format(new Decimal(0.95), true, 3) + "  (" + format(cost, true) + ")";
         }
 
         if (player.simplify.challenge.AC2effect.gt(1)) {
             cost = cost.div(player.simplify.challenge.AC2effect)
-            player.comps.array[index].costFactors += "<br> AC2 Completion: /" + format(player.simplify.challenge.AC2effect, true, 3) + "  (" + format(cost, true) + ")"
+            player.comps.array[index].costFactors += "<br> AC2 Completion: /" + format(player.simplify.challenge.AC2effect, true, 3) + "  (" + format(cost, true) + ")";
         }
 
         if (player.misc.inChallenge.includes("simp2") && index >= 2) {
@@ -189,12 +192,18 @@ let COMP_FUNCTIONS = {
 function maxAllComPS() {
     let buy;
     for (let comp = 8; comp >= 1; --comp) {
-        let x = player.misc.points.log(10);
-        x = x.add(player.simplify.challenge.AC2effect.log(10));
-        if (player.misc.inChallenge.includes("simp13")) { x = x.div(0.1); }
-        if (player.simplify.challenge.completed[1]) { x = x.div(0.95); }
+        let x = new Decimal(player.misc.points);
+        x = x.mul(player.simplify.challenge.AC2effect);
+        if (player.misc.inChallenge.includes("simp13")) { x = x.root(0.1); }
+        if (player.simplify.challenge.completed[1]) { x = x.root(0.95); }
+        if (player.simplify.challenge.MC1effect.gt(1)) {
+            x = x.mul(player.simplify.challenge.MC1effect.pow(player.comps.array[comp].trueCost))
+        }
+        if (player.simplify.challenge.SC3effect.gt(1)) {
+            x = x.mul(player.simplify.challenge.SC3effect.pow(Decimal.mul(comp, player.comps.array[comp].trueCost)));
+        }
         if (player.misc.points.gte(player.comps.array[comp].cost)) {
-            buy = x.add(3).mul(ln10).sub(ln10.mul(Decimal.mul(comp, 4))).div(Decimal.mul(comp, player.simplify.challenge.SC3effect.ln().negate()).add(Decimal.mul(comp * 2, ln10)).sub(player.simplify.challenge.MC1effect.ln()));
+            buy = x.log10().add(3).div(2 * comp).sub(2);
             for (let i = 0; i < Object.keys(player.scaling.ComPs).length; i++) {
                 if (buy.gte(player.scaling.ComPs[i].start)) {
                     buy = scale(["P", "E", "P"][i], buy, true, player.scaling.ComPs[i].start, player.scaling.ComPs[i].strength, 3, 0)[0];
@@ -209,6 +218,7 @@ function maxAllComPS() {
         }
     }
 }
+
 
 function buyComp(comp) {
     if (player.misc.points.gte(player.comps.array[comp].cost)) {

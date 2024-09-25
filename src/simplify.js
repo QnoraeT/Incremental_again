@@ -1,12 +1,12 @@
 let simpUpg2Function = {
     cost(x) {
         let temp = x;
-
+        temp = Decimal.pow(temp, 1.5).pow_base(1000).mul(1e33)
         return temp;
     },
     target(r) {
         let temp = r;
-
+        temp = temp.div(1e33).log(1000).root(1.5)
         return temp;
     },
     power() {
