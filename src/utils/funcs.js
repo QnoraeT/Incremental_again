@@ -200,23 +200,6 @@ function scale(type, amt, inv, start, pow, powScale, change) {
     return [temp, change]
 }
 
-function altFactorial(input) {
-    if (input.lt(2)) return Decimal.factorial(input)
-    if (input.layer >= 2) return Decimal.exp(input)
-    if (input.layer === 1) return Decimal.exp(input.mul(input.ln().sub(1)))
-    let r = input
-    let i = input.mag
-    let t = 1
-    r = Decimal.div(r, Math.E).pow(r).mul(Decimal.mul(2 * Math.PI, r).root(2))
-    t += 1 / (12 * (i))
-    t += 1 / (288 * (i ** 2))
-    t -= 139 / (51840 * (i ** 3))
-    t -= 571 / (2488320 * (i ** 4))
-    t += 163879 / (209018880 * (i ** 5))
-    t += 5246819 / (75246796800 * (i ** 6))
-    return Decimal.mul(r, t)
-}
-
 /**
  * 
  * @param {Decimal} x the value before the quadratic polynomial
@@ -263,18 +246,51 @@ function inverseCube(x, a, b, c, d, tol = 1e-10) { // inverse of ax^3+bx^2+cx+d,
     return res;
 }
 
-/**
- * This function returns an approximation to the inverse factorial.
- * Examples: x = 5040, will return 6.99724 (close to 7)
- * @param {Decimal} x 
- * @returns {Decimal}
- */
-function inverseFact(x) {
-    x = new Decimal(x)
-    if (x.layer > 2) return x.log10()
-    if (x.layer > 1 && x.mag >= 10000) return x.log10().div(i.log10().log10())
-    return x.div(dsqr2pi).ln().div(Math.E).lambertw().add(1).exp().sub(0.5)
-}
+// approximation
+function digamma(x) {
+    return Decimal.ln(x)
+        .sub(Decimal.div(0.5, x))
+        .sub(Decimal.div(1, Decimal.pow(x, 2).mul(12)))
+        .add(Decimal.div(1, Decimal.pow(x, 4).mul(120)));
+};
+
+
+function inverseFact(num) {
+    if (Decimal.gte(num, "eee18")) {
+        return Decimal.log10(num);
+    }
+    if (Decimal.gte(num, "eee4")) {
+        return Decimal.log10(num).div(Decimal.log10(num).log10());
+    }
+    // good enough approximation, also newton method bugs out for some reason at higher values
+    if (Decimal.gte(num, "ee6")) {
+        return Decimal.div(num, 2.5066282746310002).ln().div(Math.E).lambertw().add(1).exp().sub(0.5);
+    }
+
+    let f, f_prime;
+
+    let guess;
+    guess = Decimal.div(num, 2.5066282746310002).ln().div(Math.E).lambertw().add(1).exp().sub(0.5);
+
+    for (let i = 0; i < 100; i++) {
+        f = guess.factorial();
+        f_prime = guess.factorial().mul(digamma(guess.add(1)));
+
+        // tolerance is 1e-12
+        let converged = 
+            Decimal.gte(num, Number.MAX_SAFE_INTEGER)
+                ? guess.sub(f.sub(num).div(f_prime)).ln().sub(guess.ln()).abs().lt(1e-12)
+                : guess.sub(f.sub(num).div(f_prime)).sub(guess).abs().lt(1e-12);
+        if (converged) {
+            return guess;
+        }
+
+        // subtracted num because we're trying to find a root of the function that equals x, not a root of the formulae itself
+        guess = guess.sub(f.sub(num).div(f_prime));
+    }
+
+    throw new Error(`Number failed to converge. ${num}`);
+};
 
 /**
  * FORMULA IDEAS:

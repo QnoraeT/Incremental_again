@@ -1,15 +1,15 @@
 let COMP_FUNCTIONS = {
     updateCost(index) {
-        player.comps.array[index].costFactors = `<br> Cost Scaling:`;
+        player.comps.array[index].costFactors = `Cost Scaling:`;
         let temp = player.comps.array[index].bought;
         let cost
         if (player.misc.inChallenge.includes("simp14")) {
             temp = temp.mul(2);
-            player.comps.array[index].costFactors += "<br> SC3 Scaling: x" + format(dTwo, true, 3) + "  (" + format(temp, true) + " buys)"
+            player.comps.array[index].costFactors += "<br> SC3 Scaling: x" + format(dTwo, 3) + "  (" + format(temp) + " buys)"
         }
         if (player.misc.inChallenge.includes("simp3")) {
             temp = temp.pow(2);
-            player.comps.array[index].costFactors += "<br> MC4 Scaling: ^" + format(dTwo, true, 3) + "  (" + format(temp, true) + " buys)"
+            player.comps.array[index].costFactors += "<br> MC4 Scaling: ^" + format(dTwo, 3) + "  (" + format(temp) + " buys)"
         }
         if (player.misc.inChallenge.includes("simp8")) {
             let t2 = dZero
@@ -17,19 +17,19 @@ let COMP_FUNCTIONS = {
                 t2 = t2.add(player.comps.array[comp].bought)
             }
             temp = temp.add(t2);
-            player.comps.array[index].costFactors += "<br> AC1 Scaling: +" + format(t2, true, 3) + "  (" + format(temp, true) + " buys)"
+            player.comps.array[index].costFactors += "<br> AC1 Scaling: +" + format(t2, 3) + "  (" + format(temp) + " buys)"
         }
         if (player.misc.inChallenge.includes("simp11")) {
             temp = temp.add(player.simplify.main.timeInSimplify.mul(0.78));
-            player.comps.array[index].costFactors += "<br> AC4 Scaling: +" + format(player.simplify.main.timeInSimplify.mul(0.78), true, 3) + "  (" + format(temp, true) + " buys)"
+            player.comps.array[index].costFactors += "<br> AC4 Scaling: +" + format(player.simplify.main.timeInSimplify.mul(0.78), 3) + "  (" + format(temp) + " buys)"
         }
         if (player.simplify.challenge.completed[2]) {
             temp = temp.mul(0.975);
-            player.comps.array[index].costFactors += "<br> MC3 Completion: x" + format(new Decimal(0.975), true, 3) + "  (" + format(temp, true) + " buys)"
+            player.comps.array[index].costFactors += "<br> MC3 Completion: x" + format(new Decimal(0.975), 3) + "  (" + format(temp) + " buys)"
         }
         if (player.simplify.challenge.completed[3]) {
             temp = temp.sub(player.simplify.challenge.MC4effect);
-            player.comps.array[index].costFactors += "<br> MC4 Completion: -" + format(player.simplify.challenge.MC4effect, true, 3) + "  (" + format(temp, true) + " buys)"
+            player.comps.array[index].costFactors += "<br> MC4 Completion: -" + format(player.simplify.challenge.MC4effect, 3) + "  (" + format(temp) + " buys)"
         }
 
         player.comps.array[index].trueCost = temp;
@@ -44,41 +44,42 @@ let COMP_FUNCTIONS = {
 
         cost = Decimal.pow(10, temp.add(2).mul(2 * index).sub(3));
         
-        player.comps.array[index].costFactors += `<br> ${scalingNames[player.settings.scalingNames][k + 1]} Scaling: ${format(cost, true, 3)}   `;
-        player.comps.array[index].costFactors += `[${(k >= Object.keys(player.scaling.ComPs).length - 1) ? "Final Stage" : "Next Stage @" + format(player.scaling.ComPs[k + 1].start, true, 3)}]`;
+        player.comps.array[index].costFactors += `<br> ${scalingNames[player.settings.scalingNames][k + 1]} Scaling: ${format(cost, 3)}   `;
+        player.comps.array[index].costFactors += `[${(k >= Object.keys(player.scaling.ComPs).length - 1) ? "Final Stage" : "Next Stage @" + format(player.scaling.ComPs[k + 1].start, 3)}]`;
 
         if (player.simplify.challenge.MC1effect.gt(1)) {
             cost = cost.div(player.simplify.challenge.MC1effect.pow(player.comps.array[index].trueCost))
-            player.comps.array[index].costFactors += "<br> MC1 Completion: /" + format(player.simplify.challenge.MC1effect.pow(player.comps.array[index].trueCost), true, 3) + "  (" + format(cost, true) + ")";
+            player.comps.array[index].costFactors += "<br> MC1 Completion: /" + format(player.simplify.challenge.MC1effect.pow(player.comps.array[index].trueCost), 3) + "  (" + format(cost, true) + ")";
         }
 
         if (player.simplify.challenge.SC3effect.gt(1)) {
             cost = cost.div(player.simplify.challenge.SC3effect.pow(Decimal.mul(index, player.comps.array[index].trueCost)));
-            player.comps.array[index].costFactors += "<br> SC3 Completion: /" + format(player.simplify.challenge.SC3effect.pow(Decimal.mul(index, player.comps.array[index].trueCost)), true, 3) + "  (" + format(cost, true) + ")";
+            player.comps.array[index].costFactors += "<br> SC3 Completion: /" + format(player.simplify.challenge.SC3effect.pow(Decimal.mul(index, player.comps.array[index].trueCost)), 3) + "  (" + format(cost, true) + ")";
         }
 
         if (player.simplify.challenge.completed[1]) {
             cost = cost.pow(0.95);
-            player.comps.array[index].costFactors += "<br> MC2 Completion: ^" + format(new Decimal(0.95), true, 3) + "  (" + format(cost, true) + ")";
+            player.comps.array[index].costFactors += "<br> MC2 Completion: ^" + format(new Decimal(0.95), 3) + "  (" + format(cost, true) + ")";
         }
 
         if (player.simplify.challenge.AC2effect.gt(1)) {
             cost = cost.div(player.simplify.challenge.AC2effect)
-            player.comps.array[index].costFactors += "<br> AC2 Completion: /" + format(player.simplify.challenge.AC2effect, true, 3) + "  (" + format(cost, true) + ")";
+            player.comps.array[index].costFactors += "<br> AC2 Completion: /" + format(player.simplify.challenge.AC2effect, 3) + "  (" + format(cost, true) + ")";
         }
 
         if (player.misc.inChallenge.includes("simp2") && index >= 2) {
             cost = cost.mul(10);
-            player.comps.array[index].costFactors += "<br> MC3 Scaling: x" + format(new Decimal(10), true, 3) + "  (" + format(cost, true) + ")"
+            player.comps.array[index].costFactors += "<br> MC3 Scaling: x" + format(new Decimal(10), 3) + "  (" + format(cost, true) + ")"
         }
 
         if (player.misc.inChallenge.includes("simp2")) {
             cost = cost.pow(2);
-            player.comps.array[index].costFactors += "<br> MC3 Scaling: ^" + format(new Decimal(2), true, 3) + "  (" + format(cost, true) + ")"
+            player.comps.array[index].costFactors += "<br> MC3 Scaling: ^" + format(new Decimal(2), 3) + "  (" + format(cost, true) + ")"
         }
 
         if (player.misc.inChallenge.includes("simp0")) {
-            cost = cost.mul(Decimal.pow(2, temp.mul(temp.add(1)).div(2))); player.comps.array[index].costFactors += "<br> MC1 Scaling: x" + format(Decimal.pow(2, temp.mul(temp.add(1)).div(2)), true, 3) + "  (" + format(cost, true) + ")"
+            cost = cost.mul(Decimal.pow(2, temp.mul(temp.add(1)).div(2))); 
+            player.comps.array[index].costFactors += "<br> MC1 Scaling: x" + format(Decimal.pow(2, temp.mul(temp.add(1)).div(2)), 3) + "  (" + format(cost, true) + ")"
         }
 
         if (index == 1 && player.comps.array[index].bought.eq(0)) {
@@ -89,7 +90,7 @@ let COMP_FUNCTIONS = {
     },
     updateMulti(index) {
         // i plan for this to have very minimal softcaps
-        player.comps.array[index].multiFactors = "<br> Multipliers:";
+        player.comps.array[index].multiFactors = "Multipliers:";
         player.comps.array[index].multi = new Decimal(1);
         if (player.misc.inChallenge.includes("simp14")) {
             player.comps.array[index].bought = player.comps.array[index].bought.sub(player.simplify.main.timeInSimplify.mul(0.4));
@@ -106,7 +107,7 @@ let COMP_FUNCTIONS = {
             let temp = player.simplify.OP.effect
             if (player.misc.inChallenge.includes("simp12")) { temp = new Decimal(0.5); }
             player.comps.array[index].multi = player.comps.array[index].multi.pow(temp)
-            player.comps.array[index].multiFactors += "<br> ComP1 Bonus: ^" + format(temp, true, 3) + "  (" + format(player.comps.array[index].multi, true) + "x)"
+            player.comps.array[index].multiFactors += "<br> ComP1 Bonus: ^" + format(temp, 3) + "  (" + format(player.comps.array[index].multi, true) + "x)"
         }
 
         if (index == 2 || (index == 8 && player.simplify.challenge.completed[6])) {
@@ -116,7 +117,7 @@ let COMP_FUNCTIONS = {
             if (player.simplify.challenge.completed[7]) { temp = new Decimal(5 / 3); }
             if (player.misc.inChallenge.includes("simp12")) { temp = new Decimal(0.5); }
             player.comps.array[index].multi = player.comps.array[index].multi.pow(temp)
-            player.comps.array[index].multiFactors += `<br> ${(index == 8 && player.simplify.challenge.completed[6]) ? "JC3" : "ComP2"} Bonus: ^` + format(temp, true, 3) + "  (" + format(player.comps.array[index].multi, true) + "x)"
+            player.comps.array[index].multiFactors += `<br> ${(index == 8 && player.simplify.challenge.completed[6]) ? "JC3" : "ComP2"} Bonus: ^` + format(temp, 3) + "  (" + format(player.comps.array[index].multi, true) + "x)"
         }
 
         if (player.simplify.main.simplifyStat.gt(0)) {
@@ -154,20 +155,20 @@ let COMP_FUNCTIONS = {
         if (player.misc.inChallenge.includes("simp4")) {
             let temp = Decimal.clamp(player.simplify.challenge.JC1Time.div(40), 0, 1)
             player.comps.array[index].multi = player.comps.array[index].multi.pow(Decimal.add(0.3, temp.mul(0.3)));
-            player.comps.array[index].multiFactors += "<br> Japanese Symbol Challenge 1: ^" + format(new Decimal(Decimal.add(0.3, temp.mul(0.3))), true, 3) + "  (" + format(player.comps.array[index].multi, true) + "x)"
+            player.comps.array[index].multiFactors += "<br> Japanese Symbol Challenge 1: ^" + format(new Decimal(Decimal.add(0.3, temp.mul(0.3))), 3) + "  (" + format(player.comps.array[index].multi, true) + "x)"
             player.comps.array[index].multi = player.comps.array[index].multi.div(Decimal.pow(10, Decimal.sub(12, temp.mul(8))));
             player.comps.array[index].multiFactors += "<br> Japanese Symbol Challenge 1: /" + format(Decimal.pow(10, Decimal.sub(12, temp.mul(8))), true) + "  (" + format(player.comps.array[index].multi, true) + "x)"
         }
 
         if (player.misc.inChallenge.includes("simp7")) {
             player.comps.array[index].multi = player.comps.array[index].multi.pow(player.comps.compExp);
-            player.comps.array[index].multiFactors += "<br> Japanese Symbol Challenge 4: ^" + format(player.comps.compExp, true, 3) + "  (" + format(player.comps.array[index].multi, true) + "x)"
+            player.comps.array[index].multiFactors += "<br> Japanese Symbol Challenge 4: ^" + format(player.comps.compExp, 3) + "  (" + format(player.comps.array[index].multi, true) + "x)"
         }
 
         if (player.misc.inChallenge.includes("simp10")) {
             let temp = Decimal.div(0.5, player.simplify.challenge.JC1Time.max(0.4).add(0.6).pow(0.7))
             player.comps.array[index].multi = player.comps.array[index].multi.pow(temp);
-            player.comps.array[index].multiFactors += "<br> Articulated Challenge 3: ^" + format(temp, true, 3) + "  (" + format(player.comps.array[index].multi, true) + "x)"
+            player.comps.array[index].multiFactors += "<br> Articulated Challenge 3: ^" + format(temp, 3) + "  (" + format(player.comps.array[index].multi, true) + "x)"
         }
 
         if (player.simplify.challenge.completed[4]) {
@@ -176,7 +177,7 @@ let COMP_FUNCTIONS = {
                 temp = temp.mul(player.comps.array[comp].multi.pow(0.033))
             }
             player.comps.array[index].multi = player.comps.array[index].multi.mul(temp);
-            player.comps.array[index].multiFactors += "<br> JC1 Effect: x" + format(temp, true) + "  (" + format(player.comps.array[index].multi, true) + "x)"
+            player.comps.array[index].multiFactors += "<br> JC1 Effect: x" + format(temp) + "  (" + format(player.comps.array[index].multi, true) + "x)"
         }
 
         if (player.misc.inChallenge.includes("simp14")) {

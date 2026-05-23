@@ -43,6 +43,13 @@ class Element {
         new Element(id).setDisplay(bool);
     }
 
+    setFlexDisplay(bool) {
+        this.el.style.display = bool ? "flex" : "none";
+    }
+    static setFlexDisplay(id, bool) {
+        new Element(id).setFlexDisplay(bool);
+    }
+
     addClass(name) {
         this.el.classList.add(name);
     }
@@ -146,25 +153,31 @@ function setupHTMLTabs() {
     toHTMLvar(`tab_comp`);
     toHTMLvar(`tab_other`);
     toHTMLvar(`tab_simplify`);
-    html[`tab_comp`].setClasses({ defaultTab: true, defaultButton: true });
-    html[`tab_other`].setClasses({ defaultTab: true, defaultButton: true });
-    html[`tab_simplify`].setClasses({ defaultSimplifyTab: true, defaultButton: true });
+    html[`tab_comp`].setClasses({ font: true, defaultTab: true, defaultButton: true });
+    html[`tab_other`].setClasses({ font: true, defaultTab: true, defaultButton: true });
+    html[`tab_simplify`].setClasses({ font: true, defaultSimplifyTab: true, defaultButton: true });
 
 }
 
 function setupHTMLComPs() {
     let el = new Element("comp");
     let table = "";
-    table += `<button id="maxAll" onclick="maxAllComPS();" class="defaultTab defaultButton" style="display: inherit;">Max All</button>`;
+    table += `<button id="maxAll" onclick="maxAllComPS();" class="defaultTab defaultButton font">Max All</button>`;
     for (let comp = 1; comp < 9; ++comp) {
         table += `
-            <div id="gen-comp${comp}" style="display: none;">
-                <p id="gen-comp${comp}-name" class="text"> ComP${comp}: </p>
-                <p id="gen-comp${comp}-amount" class="text">0, </p>
-                <p id="gen-comp${comp}-multi" class="text">1x </p>
-                <button id="gen-comp${comp}-cost" onclick="buyComp(${comp});" class="compNo buttonRight defaultButton Scaled0">Cost: ${format(player.comps.array[comp].cost, true, 3)}</button>
-                <button id="gen-comp${comp}-breakdown" onclick="expandComPMULTI(${comp});" class="ceMul defaultButton">Show factors</button>
-                <p id="gen-comp${comp}-mbd" class="text compMultBreakdown"></p>
+            <div id="gen-comp${comp}" class="flex-horizontal" style="width: 100%">
+                <div class="flex-vertical" style="align-items: flex-start; width: 70%; margin: 0px">
+                    <div class="flex-horizontal font" style="justify-content: flex-start; margin: 0px">
+                        <p style="margin: 0px" id="gen-comp${comp}-name">ComP${comp}:&nbsp;</p>
+                        <p style="margin: 0px" id="gen-comp${comp}-amount">0, </p>&nbsp;
+                        <p style="margin: 0px" id="gen-comp${comp}-multi">1x </p>
+                    </div>
+                    <p style="margin: 0px" id="gen-comp${comp}-mbd" class="compMultBreakdown font"></p>
+                </div>
+                <div class="flex-horizontal" style="justify-content: flex-end; width: 30%; margin: 0px;">
+                    <button id="gen-comp${comp}-cost" style="margin: 2px; text-align: center; height: 24px;" onclick="buyComp(${comp});" class="compNo buttonRight defaultButton font Scaled0">Cost: null</button>
+                    <button id="gen-comp${comp}-breakdown" style="margin: 2px; text-align: center; height: 24px;" onclick="expandComPMULTI(${comp});" class="ceMul defaultButton font">Show factors</button>
+                </div>
             </div>
             `;
     }
@@ -200,9 +213,9 @@ function setupHTMLOther() {
     let changeLog = ""
 
     html[`changeLog`].setHTML(changeLog)
-    html[`tab_other_stat`].setClasses({ defaultTab: true, defaultButton: true });
-    html[`tab_other_changeLog`].setClasses({ defaultTab: true, defaultButton: true });
-    html[`tab_other_note`].setClasses({ defaultTab: true, defaultButton: true });
+    html[`tab_other_stat`].setClasses({ font: true, defaultTab: true, defaultButton: true });
+    html[`tab_other_changeLog`].setClasses({ font: true, defaultTab: true, defaultButton: true });
+    html[`tab_other_note`].setClasses({ font: true, defaultTab: true, defaultButton: true });
 }
 
 function setupHTMLSimplify() {
@@ -220,11 +233,11 @@ function setupHTMLSimplifyGeneral() {
     toHTMLvar(`SEUPG1`);
     toHTMLvar(`simpEnergy`);
     toHTMLvar(`simpTabs`);
-    html[`simplify_tab_simplify`].setClasses({ defaultButton: true });
-    html[`simplify_tab_tts`].setClasses({ defaultButton: true });
-    html[`SER`].setClasses({ defaultButton: true, defaultSimplifyTab: true });
-    html[`SEUPG1`].setClasses({ defaultButton: true, defaultSimplifyTab: true });
-    html[`simplify_tab_simpUpg`].setClasses({ defaultButton: true, defaultSimplifyTab: true });
+    html[`simplify_tab_simplify`].setClasses({ font: true, defaultButton: true });
+    html[`simplify_tab_tts`].setClasses({ font: true, defaultButton: true });
+    html[`SER`].setClasses({ font: true, defaultButton: true, defaultSimplifyTab: true });
+    html[`SEUPG1`].setClasses({ font: true, defaultButton: true, defaultSimplifyTab: true });
+    html[`simplify_tab_simpUpg`].setClasses({ font: true, defaultButton: true, defaultSimplifyTab: true });
 }
 
 function setupHTMLSimplifyXP() {
@@ -232,9 +245,9 @@ function setupHTMLSimplifyXP() {
     let table = "";
     for (let i = 0; i < 4; i++) {
         table += `
-        <span id="simpEXP${i + 1}"></span>
-        <button id="simpEXP${i + 1}b" class="simplify${i + 1}b defaultButton" onclick="simpExPAllocate(${i});" border: "2px solid ${simplifyXPColor[i]}" color: "${simplifyXPColor[i]}">Allocate all SE into ${simplifyXPTypes[i]}.</button>
-        <br>
+            <span id="simpEXP${i + 1}" class="font"></span>
+            <button id="simpEXP${i + 1}b" class="simplify${i + 1}b defaultButton font" onclick="simpExPAllocate(${i});" border: "2px solid ${simplifyXPColor[i]}" color: "${simplifyXPColor[i]}">Allocate all SE into ${simplifyXPTypes[i]}.</button>
+            <br>
         `;
     }
     el.setHTML(table);
@@ -252,10 +265,10 @@ function setupHTMLSimplifyChal() {
         table += `
         <div id="simpChal${chall}">
             <p id="simpChal${chall}-type" class="simpChText">${simplifyChalTypes[chall]} Challenges</p>
-            <button id="simpChal${(4 * chall)}-id" onclick="simpChalSelect(${(4 * chall)});" class="simpChal simpChalIncomplete defaultButton">${(4 * chall)}</button>
-            <button id="simpChal${(4 * chall) + 1}-id" onclick="simpChalSelect(${(4 * chall) + 1});" class="simpChal simpChalIncomplete defaultButton">${(4 * chall) + 1}</button>
-            <button id="simpChal${(4 * chall) + 2}-id" onclick="simpChalSelect(${(4 * chall) + 2});" class="simpChal simpChalIncomplete defaultButton">${(4 * chall) + 2}</button>
-            <button id="simpChal${(4 * chall) + 3}-id" onclick="simpChalSelect(${(4 * chall) + 3});" class="simpChal simpChalIncomplete defaultButton">${(4 * chall) + 3}</button>
+            <button id="simpChal${(4 * chall)}-id" onclick="simpChalSelect(${(4 * chall)});" class="simpChal font simpChalIncomplete defaultButton">${(4 * chall)}</button>
+            <button id="simpChal${(4 * chall) + 1}-id" onclick="simpChalSelect(${(4 * chall) + 1});" class="simpChal font simpChalIncomplete defaultButton">${(4 * chall) + 1}</button>
+            <button id="simpChal${(4 * chall) + 2}-id" onclick="simpChalSelect(${(4 * chall) + 2});" class="simpChal font simpChalIncomplete defaultButton">${(4 * chall) + 2}</button>
+            <button id="simpChal${(4 * chall) + 3}-id" onclick="simpChalSelect(${(4 * chall) + 3});" class="simpChal font simpChalIncomplete defaultButton">${(4 * chall) + 3}</button>
         </div>
         `;
     }
@@ -272,6 +285,8 @@ function setupHTMLSimplifyChal() {
     toHTMLvar("challengeStart1");
     toHTMLvar(`completeChallenge1`);
     toHTMLvar(`ttsChalArea`);
+
+    updateSimpChallengeHTML();
 }
 
 function updateHTML() {
@@ -303,13 +318,13 @@ function updateCompHTML() {
     for (let comp = 1; comp <= 8; ++comp) {
         html[`gen-comp${comp}`].setDisplay(comp < player.comps.compVisible);
         let tr = calcCompxPerSecond(comp).add(player.comps.array[comp].amount).pow(player.comps.compExp).sub(player.comps.array[comp].amount.pow(player.comps.compExp));
-        const perSecondText = " (" + format(tr, false, tr < 10 ? 1 : 0, 3) + "/s),";
+        const perSecondText = " (" + format(tr, tr.lt(10) ? 1 : 0) + "/s),";
         const boughtText = " [ " + format(player.comps.array[comp].bought) + " ]    ";
         const text = tr.gt(0) ? perSecondText + boughtText : boughtText;
-        html[`gen-comp${comp}-amount`].setTxt(format(player.comps.array[comp].trueAmount, true, 3) + " " + text);
-        html[`gen-comp${comp}-cost`].setTxt("Cost: " + format(player.comps.array[comp].cost, true, 3));
+        html[`gen-comp${comp}-amount`].setTxt(format(player.comps.array[comp].trueAmount) + " " + text);
+        html[`gen-comp${comp}-cost`].setTxt("Cost: " + format(player.comps.array[comp].cost));
         let can = player.misc.points.gte(player.comps.array[comp].cost);
-        html[`gen-comp${comp}-cost`].setClasses({ buttonRight: true, defaultButton: true, compNo: !can, compYes: can });
+        html[`gen-comp${comp}-cost`].setClasses({ font: true, defaultButton: true, compNo: !can, compYes: can });
         html[`gen-comp${comp}-cost`].addClass(`Scaled0`);
         for (let i = 0; i < Object.keys(player.scaling.ComPs).length; ++i) {
             if (player.comps.array[comp].trueCost.gte(player.scaling.ComPs[i].start)) {
@@ -317,10 +332,10 @@ function updateCompHTML() {
                 html[`gen-comp${comp}-cost`].addClass(`Scaled${i + 1}`);
             }
         }
-        html[`gen-comp${comp}-multi`].setTxt(format(player.comps.array[comp].multi, true, 3) + "x ");
+        html[`gen-comp${comp}-multi`].setTxt(format(player.comps.array[comp].multi) + "x ");
         tr = (expandMultComP == comp) ? ((expandMultComPType == 0) ? player.comps.array[comp].multiFactors : player.comps.array[comp].costFactors) : "";
-        html[`gen-comp${comp}-mbd`].setClasses({ text: true, compMultBreakdown: expandMultComPType == 0, compCostBreakdown: expandMultComPType == 1 });
-        html[`gen-comp${comp}-breakdown`].setClasses({ defaultButton: true, ceMul: expandMultComPType == 0, ceCost: expandMultComPType == 1 });
+        html[`gen-comp${comp}-mbd`].setClasses({ font: true, compMultBreakdown: expandMultComPType == 0, compCostBreakdown: expandMultComPType == 1 });
+        html[`gen-comp${comp}-breakdown`].setClasses({ font: true, defaultButton: true, ceMul: expandMultComPType == 0, ceCost: expandMultComPType == 1 });
         html[`gen-comp${comp}-mbd`].setHTML(tr);
     }
     html[`maxAll`].setDisplay(!(player.misc.inChallenge.includes("simp0") || player.misc.inChallenge.includes("simp1") || player.misc.inChallenge.includes("simp2") || player.misc.inChallenge.includes("simp3") || player.misc.inChallenge.includes("simp8") || player.misc.inChallenge.includes("simp11")));
@@ -331,24 +346,27 @@ function updateSimpHTML() {
     html['simpTabs'].setDisplay(player.simplify.upgrades.simplifyMainUPG >= 2);
     html['simpExP'].setDisplay(player.simplify.upgrades.simplifyMainUPG >= 1 && tab[0] == 2 && tab[1] == 0);
     html['ttsChal'].setDisplay(tab[0] == 2 && tab[1] == 1);
+
+    html['simplify_tab_tts'].setDisplay(player.simplify.upgrades.simplifyMainUPG >= 2);
+    html['simplify_tab_simpUpg'].setDisplay(player.simplify.upgrades.simplifyMainUPG >= 3);
     if (tab[0] !== 2) {
         return;
     }
-    html["simpEnergy"].setTxt("You have " + format(player.simplify.main.simplifyEnergy, true) + " Simplify Energy.");
-    html["SEUPG1"].setTxt(simpUpg1Desc[player.simplify.upgrades.simplifyMainUPG + 1] + " Cost: " + format(simpUPG1Cost(), false) + " Simplify Energy");
-    html["SER"].setClasses({ defaultButton: true, defaultSimplifyTab: true, inSimpChal: player.misc.inSChallenge && player.misc.points.gte(player.simplify.main.simplifyReq) });
-    let txt = `${(player.misc.points.gte(player.simplify.main.simplifyReq)) ? "You will gain " + format(getSimplifyGain().floor(), true) + " Simplify Energy. " : "Reset your current simplify run. "} `;
+    html["simpEnergy"].setTxt("You have " + format(player.simplify.main.simplifyEnergy) + " Simplify Energy.");
+    html["SEUPG1"].setTxt(simpUpg1Desc[player.simplify.upgrades.simplifyMainUPG + 1] + " Cost: " + format(simpUPG1Cost()) + " Simplify Energy");
+    html["SER"].setClasses({ font: true, defaultButton: true, defaultSimplifyTab: true, inSimpChal: player.misc.inSChallenge && player.misc.points.gte(player.simplify.main.simplifyReq) });
+    let txt = `${(player.misc.totalPointsInSimplify.gte(player.simplify.main.simplifyReq)) ? "You will gain " + format(getSimplifyGain().floor()) + " Simplify Energy. " : "Reset your current simplify run. "} `;
     if (getSimplifyGain().lte(10000)) {
-        txt += `[ Next at ${format(player.simplify.main.SEExp.sub(1).mul(getSimplifyGain().floor().add(3)).pow(player.simplify.main.simplifyReq.log(player.simplify.main.SEExp).sub(new Decimal(10).log(player.simplify.main.SEExp))).mul(10).sub(player.misc.totalPointsInSimplify), true, 3, 3)} ]`;
+        txt += `[ Next at ${format(player.simplify.main.SEExp.sub(1).mul(getSimplifyGain().floor().add(3)).pow(player.simplify.main.simplifyReq.log(player.simplify.main.SEExp).sub(new Decimal(10).log(player.simplify.main.SEExp))).mul(10).sub(player.misc.totalPointsInSimplify))} ]`;
     } else {
-        txt += `[ Next OoM at ${format(player.simplify.main.SEExp.sub(1).mul(Decimal.pow(10, getSimplifyGain().log(10).ceil()).add(2)).pow(player.simplify.main.simplifyReq.log(player.simplify.main.SEExp).sub(new Decimal(10).log(player.simplify.main.SEExp))).mul(10), true, 3, 3)} ]`;
+        txt += `[ Next OoM at ${format(player.simplify.main.SEExp.sub(1).mul(Decimal.pow(10, getSimplifyGain().log(10).ceil()).add(2)).pow(player.simplify.main.simplifyReq.log(player.simplify.main.SEExp).sub(new Decimal(10).log(player.simplify.main.SEExp))).mul(10))} ]`;
     }
     html["SER"].setTxt(txt)
     switch (tab[1]) {
         case 0:
             if (player.simplify.upgrades.simplifyMainUPG < 1) { break; }
             for (let i = 0; i < 4; i++) {
-                html[`simpEXP${i + 1}`].setTxt(`You have ${format(player.simplify[simplifyXPTypes[i]].allocated, true, 0)} SE allocated to ${format(player.simplify[simplifyXPTypes[i]].trueValue, true, 3, 3)} ${simplifyXPTypes[i]}, ${simplifyXPDesc[i]}${format(player.simplify[simplifyXPTypes[i]].effect, true, 3)}.`);
+                html[`simpEXP${i + 1}`].setTxt(`You have ${format(player.simplify[simplifyXPTypes[i]].allocated)} SE allocated to ${format(player.simplify[simplifyXPTypes[i]].trueValue, 2)} ${simplifyXPTypes[i]}, ${simplifyXPDesc[i]}${format(player.simplify[simplifyXPTypes[i]].effect, 2)}.`);
             }
             break;
         case 1:
@@ -356,4 +374,39 @@ function updateSimpHTML() {
             html[`completeChallenge1`].setDisplay(player.misc.totalPointsInSimplify.gte(player.simplify.main.simplifyReq) && player.misc.inSChallenge);
             break;
     }
+}
+
+function updateSimpChallengeHTML() {
+            html[`challengeStart1`].setClasses({ font: true, challengeStart: true, startChallenge: !player.misc.inSChallenge, exitChallenge: player.misc.inSChallenge, defaultButton: true });
+            html[`challengeStart1`].setTxt(player.misc.inSChallenge ? "Exit Challenge" : "Start Challenge");
+            html[`completeChallenge1`].setClasses({ font: true, challengeStart: true, completeChallenge: true, defaultButton: true });
+            let c = player.simplify.challenge.completed
+            for (let i = 0; i < 4; i++) {
+                html[`simpChal${i}`].setDisplay(
+                    c[4 * (i - 1)] ||
+                    c[4 * (i - 1) + 1] ||
+                    c[4 * (i - 1) + 2] ||
+                    c[4 * (i - 1) + 3] ||
+                    i == 0);
+                for (let j = 0; j < 4; j++) {
+                    html[`simpChal${4 * i + j}-id`].setDisplay(c[4 * (i - 1) + j] || i == 0)
+                    html[`simpChal${4 * i + j}-id`].setClasses({ font: true, simpChal: true, simpChalIncomplete: !c[4 * i + j], simpChalComplete: c[4 * i + j], inSimpChal: player.misc.inChallenge.includes(`simp${4 * i + j}`), defaultButton: true })
+                    if (simpChalSelected == 4 * i + j) {
+                        if (!c[4 * i + j]) {
+                            html[`simpChal${4 * i + j}-id`].removeClass("simpChalIncomplete");
+                            html[`simpChal${4 * i + j}-id`].addClass("simpChalSelected");
+                        }
+                        if (c[4 * i + j]) {
+                            html[`simpChal${4 * i + j}-id`].removeClass("simpChalComplete");
+                            html[`simpChal${4 * i + j}-id`].addClass("simpChalCompleteSelected");
+                        }
+                        if (player.misc.inChallenge.includes(`simp${4 * i + j}`)) {
+                            html[`simpChal${4 * i + j}-id`].removeClass("inSimpChal");
+                            html[`simpChal${4 * i + j}-id`].addClass("inSimpChalSelected");
+                        }
+                    }
+                }
+                html[`ttsChalArea`].setClasses({ font: true, simpChalDesc: true });
+                html[`ttsChalArea`].setHTML(`${simplifyChalTypes[Math.floor(simpChalSelected / 4)]} Challenge ${(simpChalSelected % 4) + 1}: <br> ${simpChal.simpChalDesc[simpChalSelected + 1]} <br> <br> Reward: ${simpChal.simpChalReward[simpChalSelected + 1]}`);
+            }
 }

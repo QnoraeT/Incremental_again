@@ -20,49 +20,49 @@ let simpUpg2Function = {
         switch (type) {
             case 1:
                 temp = "ComP's effective bought amount for multipliers are multiplied by x";
-                temp += format(t2, true, 3);
+                temp += format(t2, 3);
                 break;
             case 2:
                 temp = "MC1's effect is increased by +";
-                temp += format(t2, true, 3);
+                temp += format(t2, 3);
                 break;
             case 3:
                 temp = "Simplify Energy's gain exponent is increased by +";
-                temp += format(t2, true, 3);
+                temp += format(t2, 3);
                 break;
             case 4:
-                temp = "DP's root is reduced from " + format(new Decimal(7), true, 3) + " by /";
-                temp += format(t2, true, 3);
+                temp = "DP's root is reduced from " + format(new Decimal(7), 3) + " by /";
+                temp += format(t2, 3);
                 temp += `, it's effect severely weakens when the root has been weakened to ${format(new Decimal(4.9))} or lower.`;
                 break;
             case 5:
                 temp = "ComP's post-150 scaling is delayed by +";
-                temp += format(t2, true, 3);
+                temp += format(t2, 3);
                 break;
             case 6:
                 temp = "JC1's effect exponent is increased by +";
-                temp += format(t2, true, 3);
+                temp += format(t2, 3);
                 temp += ", weighted towards 8th ComP";
                 break;
             case 7:
-                temp = "OP's root is reduced from " + format(new Decimal(5.5), true, 3) + " by /";
-                temp += format(t2, true, 3);
+                temp = "OP's root is reduced from " + format(new Decimal(5.5), 3) + " by /";
+                temp += format(t2, 3);
                 temp += `, it's effect weakens when the root has been weakened to ${format(new Decimal(4.125))} or lower.`;
                 break;
             case 8:
                 temp = "MC4's effect exponent is multiplied by x";
-                temp += format(t2[0], true, 3);
+                temp += format(t2[0], 3);
                 temp += ", and it's effect divisor is decreased by /";
-                temp += format(t2[1], true, 3);
+                temp += format(t2[1], 3);
                 break;
             case 9:
                 temp = "ComP's post-150 scaling is weakened by ";
-                temp += format(t2, true, 3);
+                temp += format(t2, 3);
                 temp += "%"
                 break;
             case 10:
                 temp = "AC2's effect exponent is increased by x";
-                temp += format(t2, true, 3);
+                temp += format(t2, 3);
             default:
                 throw new Error("Type " + type + "is unknown!");
         }
@@ -189,7 +189,7 @@ function simpExPAllocate(id) {
 }
 
 function simplifyReset(...param) {
-    if (player.misc.points.gte(player.simplify.main.simplifyReq) && player.misc.inSChallenge && !param.noChalComplete) {
+    if (player.misc.totalPointsInSimplify.gte(player.simplify.main.simplifyReq) && player.misc.inSChallenge && !param.noChalComplete) {
         completeChallenge("simp");
         updateChallenge("simp");
     }
@@ -214,6 +214,6 @@ function simplifyReset(...param) {
 
 function simpUPG1Cost() {
     let ret = new Decimal(player.simplify.upgrades.simplifyMainUPG);
-    ret = Decimal.pow(10, ret.pow(2)).mul(altFactorial(ret));
+    ret = Decimal.pow(10, ret.pow(2)).mul(ret.factorial());
     return ret;
 }

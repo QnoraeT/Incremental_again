@@ -69,7 +69,7 @@ function getProgress() { // progressBar = 0-1
     if (player.misc.totalPoints.lt(1e12) && canSet) {
         progressBar = player.misc.totalPoints.div(10).max(1).log(1e11);
         m = progressBar.clamp(0, 1);
-        progressBarText = `Next layer: ${(m.toNumber() * 100).toFixed(2)}% ( ${format(player.misc.totalPoints)} / 1.000e12 )`;
+        progressBarText = `Next layer: ${(m.toNumber() * 100).toFixed(2)}% ( ${format(player.misc.totalPoints)} / 1.000 T )`;
         canSet = false
     }
     if (player.simplify.upgrades.simplifyMainUPG == 0 && canSet) {
@@ -173,45 +173,14 @@ function exitChallenge(type) {
 
 function updateChallenge(type) {
     switch (type) {
-        case "simp": case "all":
+        case "simp":
             player.misc.inSChallenge = false;
             for (let i = 0; i < 16; ++i) {
                 if (player.misc.inChallenge.includes("simp" + i)) {
                     player.misc.inSChallenge = true;
                 }
             }
-            html[`challengeStart1`].setClasses({ challengeStart: true, startChallenge: !player.misc.inSChallenge, exitChallenge: player.misc.inSChallenge, defaultButton: true });
-            html[`challengeStart1`].setTxt(player.misc.inSChallenge ? "Exit Challenge" : "Start Challenge");
-            html[`completeChallenge1`].setClasses({ challengeStart: true, completeChallenge: true, defaultButton: true });
-            let c = player.simplify.challenge.completed
-            for (let i = 0; i < 4; i++) {
-                html[`simpChal${i}`].setDisplay(
-                    c[4 * (i - 1)] ||
-                    c[4 * (i - 1) + 1] ||
-                    c[4 * (i - 1) + 2] ||
-                    c[4 * (i - 1) + 3] ||
-                    i == 0);
-                for (let j = 0; j < 4; j++) {
-                    html[`simpChal${4 * i + j}-id`].setDisplay(c[4 * (i - 1) + j] || i == 0)
-                    html[`simpChal${4 * i + j}-id`].setClasses({ simpChal: true, simpChalIncomplete: !c[4 * i + j], simpChalComplete: c[4 * i + j], inSimpChal: player.misc.inChallenge.includes(`simp${4 * i + j}`), defaultButton: true })
-                    if (simpChalSelected == 4 * i + j) {
-                        if (!c[4 * i + j]) {
-                            html[`simpChal${4 * i + j}-id`].removeClass("simpChalIncomplete");
-                            html[`simpChal${4 * i + j}-id`].addClass("simpChalSelected");
-                        }
-                        if (c[4 * i + j]) {
-                            html[`simpChal${4 * i + j}-id`].removeClass("simpChalComplete");
-                            html[`simpChal${4 * i + j}-id`].addClass("simpChalCompleteSelected");
-                        }
-                        if (player.misc.inChallenge.includes(`simp${4 * i + j}`)) {
-                            html[`simpChal${4 * i + j}-id`].removeClass("inSimpChal");
-                            html[`simpChal${4 * i + j}-id`].addClass("inSimpChalSelected");
-                        }
-                    }
-                }
-                html[`ttsChalArea`].setClasses({ simpChalDesc: true });
-                html[`ttsChalArea`].setHTML(`${simplifyChalTypes[Math.floor(simpChalSelected / 4)]} Challenge ${(simpChalSelected % 4) + 1}: <br> ${simpChal.simpChalDesc[simpChalSelected + 1]} <br> <br> Reward: ${simpChal.simpChalReward[simpChalSelected + 1]}`);
-            }
+            updateSimpChallengeHTML();
         default:
         // do
     }
@@ -317,7 +286,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
             player.misc.pps = calcPointsPerSecond();
             player.misc.points = player.misc.points.add(player.misc.pps.times(gameDelta));
-            document.getElementById("points").innerText = format(player.misc.points, true, 3) + " ( " + format(player.misc.pps, true, 3) + " / s )";
+            document.getElementById("points").innerText = format(player.misc.points) + " (" + format(player.misc.pps) + "/s)";
 
             player.misc.totalPoints = player.misc.totalPoints.add(player.misc.pps.times(gameDelta));
             player.misc.totalPointsInSimplify = player.misc.totalPointsInSimplify.add(player.misc.pps.times(gameDelta));

@@ -7,15 +7,29 @@
   z-index: -2;
 }
 
+.flex-vertical {
+    display: flex; 
+    flex-direction: column; 
+    align-items: center;
+}
+
+.flex-horizontal {
+    display: flex; 
+    flex-direction: row; 
+    justify-content: center;
+}
+
+.font {
+  font-family: "Verdana"; 
+}
+
 #fps {
   color: yellow;
-  font-family: "Verdana";
   font-size: 18px;
 }
 
 p {
   color: white;
-  font-family: "Verdana";
   font-size: 18px;
 }
 
@@ -25,9 +39,6 @@ p {
   color: white;
 }
 
-.text {
-  display: inline;
-}
 
 .defaultButton{
   background-color: black;
@@ -40,41 +51,31 @@ body {
 }
 
 #points {
-  font-family: "Verdana";
   font-size: 24px;
-  text-align: center;
   text-shadow: 2px 2px grey;
   color: white;
 } 
 
 #simpEXP1 {
-  font-family: "Verdana";
   font-size: 16px;
-  text-align: left;
   text-shadow: 1px 1px #800000;
   color: red;
 } 
 
 #simpEXP2 {
-  font-family: "Verdana";
   font-size: 16px;
-  text-align: left;
   text-shadow: 1px 1px #808000;
   color: yellow;
 } 
 
 #simpEXP3 {
-  font-family: "Verdana";
   font-size: 16px;
-  text-align: left;
   text-shadow: 1px 1px #008000;
   color: #00ff00;
 } 
 
 #simpEXP4 {
-  font-family: "Verdana";
   font-size: 16px;
-  text-align: left;
   text-shadow: 1px 1px #000080;
   color: blue;
 } 
@@ -124,9 +125,7 @@ body {
 }
 
 #simpEnergy {
-  font-family: "Verdana";
   font-size: 20px;
-  text-align: left;
   text-shadow: 1.5px 1.5px #008080;
   color: cyan;
 } 
@@ -152,7 +151,6 @@ body {
 #simplify_tab_simplify{
   border: 2px solid #0CF;
   color: #0CF;
-  display: inline;
 }
 
 #simplify_tab_simplify:hover{
@@ -162,7 +160,6 @@ body {
 #simplify_tab_tts{
   border: 2px solid #FFFFFF;
   color: white;
-  display: inline;
 }
 
 #simplify_tab_tts:hover{
@@ -208,25 +205,19 @@ body {
 }
 
 .compMultBreakdown {
-  font-family: "Verdana";
   font-size: 16px;
-  text-align: left;
   text-shadow: 1px 1px #004080;
   color: #0080FF;
 } 
 
 .compCostBreakdown {
-  font-family: "Verdana";
   font-size: 16px;
-  text-align: left;
   text-shadow: 1px 1px #806000;
   color: #FFC000;
 } 
 
 #progressBar1 {
-  font-family: "Verdana";
   font-size: 16px;
-  text-align: center;
   color: #00FF00;
   border: 2px solid #00FF00;
   background-color: black;
@@ -238,7 +229,6 @@ body {
 } 
 
 #progBarBase {
-  text-align: center;
   color: #808080;
   border: 2px solid #808080;
   background-color: black;
@@ -266,18 +256,10 @@ body {
   color: #3AFF4A;
 }
 
-.buttonRight{
-  position: absolute;
-  right: 10px;
-}
-
 .simpChal{
-  font-family: "Verdana";
   font-size: 14px;
-  text-align: center;
   width: 30px;
-  height: 30px;
-  position: relative;
+  height: 30px;;
 }
 
 .simpChal:hover{
@@ -323,19 +305,13 @@ body {
   font-size: 14px;
 }
 
-.inline {
-  display: inline;
-}
-
 .challengeStart{
-  font-family: "Verdana";
   border: 2px solid #00FF00;
   color: #0F0;
   font-size: 16px;
   width: 180px;
   height: 30px;
   cursor: pointer;
-  position: relative
 }
 
 .startChallenge{
@@ -361,20 +337,16 @@ body {
 }
 
 #changeLog{
-  font-family: "Verdana";
   color: #FFF;
   font-size: 14px;
-  display: inline;
 }
 
 .date0{
   color: #F00;
   font-size: 18px;
-  display: inline;
 }
 
 .simpChalDesc{
-  text-align: center;
   font-size: 14px;
   text-shadow: 1px 1px #0aa;
   color: cyan;
