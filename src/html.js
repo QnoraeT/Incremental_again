@@ -168,7 +168,7 @@ function setupHTMLComPs() {
             <div id="gen-comp${comp}" class="flex-horizontal" style="width: 100%">
                 <div class="flex-vertical" style="align-items: flex-start; width: 70%; margin: 0px">
                     <div class="flex-horizontal font" style="justify-content: flex-start; margin: 0px">
-                        <p style="margin: 0px" id="gen-comp${comp}-name">ComP${comp}:&nbsp;</p>
+                        <p style="margin: 0px" id="gen-comp${comp}-name">Complicator #${comp}:&nbsp;</p>
                         <p style="margin: 0px" id="gen-comp${comp}-amount">0, </p>&nbsp;
                         <p style="margin: 0px" id="gen-comp${comp}-multi">1x </p>
                     </div>
@@ -210,7 +210,7 @@ function setupHTMLOther() {
     toHTMLvar(`tab_other_changeLog`);
     toHTMLvar(`tab_other_note`);
     toHTMLvar(`changeLog`);
-    let changeLog = ""
+    let changeLog = "";
 
     html[`changeLog`].setHTML(changeLog)
     html[`tab_other_stat`].setClasses({ font: true, defaultTab: true, defaultButton: true });
@@ -262,13 +262,14 @@ function setupHTMLSimplifyChal() {
     let el = new Element("ttsChals");
     let table = "";
     for (let chall = 0; chall < 4; chall++) {
+        let type = ["M", "J", "A", "S"][chall]
         table += `
         <div id="simpChal${chall}">
-            <p id="simpChal${chall}-type" class="simpChText">${simplifyChalTypes[chall]} Challenges</p>
-            <button id="simpChal${(4 * chall)}-id" onclick="simpChalSelect(${(4 * chall)});" class="simpChal font simpChalIncomplete defaultButton">${(4 * chall)}</button>
-            <button id="simpChal${(4 * chall) + 1}-id" onclick="simpChalSelect(${(4 * chall) + 1});" class="simpChal font simpChalIncomplete defaultButton">${(4 * chall) + 1}</button>
-            <button id="simpChal${(4 * chall) + 2}-id" onclick="simpChalSelect(${(4 * chall) + 2});" class="simpChal font simpChalIncomplete defaultButton">${(4 * chall) + 2}</button>
-            <button id="simpChal${(4 * chall) + 3}-id" onclick="simpChalSelect(${(4 * chall) + 3});" class="simpChal font simpChalIncomplete defaultButton">${(4 * chall) + 3}</button>
+            <p id="simpChal${chall}-type" class="simpChText font">${simplifyChalTypes[chall]} Challenges</p>
+            <button id="simpChal${(4 * chall)}-id" onclick="simpChalSelect(${(4 * chall)});" class="simpChal font simpChalIncomplete defaultButton">${type}C1</button>
+            <button id="simpChal${(4 * chall) + 1}-id" onclick="simpChalSelect(${(4 * chall) + 1});" class="simpChal font simpChalIncomplete defaultButton">${type}C2</button>
+            <button id="simpChal${(4 * chall) + 2}-id" onclick="simpChalSelect(${(4 * chall) + 2});" class="simpChal font simpChalIncomplete defaultButton">${type}C3</button>
+            <button id="simpChal${(4 * chall) + 3}-id" onclick="simpChalSelect(${(4 * chall) + 3});" class="simpChal font simpChalIncomplete defaultButton">${type}C4</button>
         </div>
         `;
     }
@@ -366,7 +367,7 @@ function updateSimpHTML() {
         case 0:
             if (player.simplify.upgrades.simplifyMainUPG < 1) { break; }
             for (let i = 0; i < 4; i++) {
-                html[`simpEXP${i + 1}`].setTxt(`You have ${format(player.simplify[simplifyXPTypes[i]].allocated)} SE allocated to ${format(player.simplify[simplifyXPTypes[i]].trueValue, 2)} ${simplifyXPTypes[i]}, ${simplifyXPDesc[i]}${format(player.simplify[simplifyXPTypes[i]].effect, 2)}.`);
+                html[`simpEXP${i + 1}`].setTxt(`You have ${format(player.simplify[simplifyXPTypeInternal[i]].allocated)} SE allocated to ${format(player.simplify[simplifyXPTypeInternal[i]].trueValue, 2)} ${simplifyXPTypes[i]}, ${simplifyXPDesc[i]}${format(player.simplify[simplifyXPTypeInternal[i]].effect, 4)}.`);
             }
             break;
         case 1:
@@ -377,36 +378,36 @@ function updateSimpHTML() {
 }
 
 function updateSimpChallengeHTML() {
-            html[`challengeStart1`].setClasses({ font: true, challengeStart: true, startChallenge: !player.misc.inSChallenge, exitChallenge: player.misc.inSChallenge, defaultButton: true });
-            html[`challengeStart1`].setTxt(player.misc.inSChallenge ? "Exit Challenge" : "Start Challenge");
-            html[`completeChallenge1`].setClasses({ font: true, challengeStart: true, completeChallenge: true, defaultButton: true });
-            let c = player.simplify.challenge.completed
-            for (let i = 0; i < 4; i++) {
-                html[`simpChal${i}`].setDisplay(
-                    c[4 * (i - 1)] ||
-                    c[4 * (i - 1) + 1] ||
-                    c[4 * (i - 1) + 2] ||
-                    c[4 * (i - 1) + 3] ||
-                    i == 0);
-                for (let j = 0; j < 4; j++) {
-                    html[`simpChal${4 * i + j}-id`].setDisplay(c[4 * (i - 1) + j] || i == 0)
-                    html[`simpChal${4 * i + j}-id`].setClasses({ font: true, simpChal: true, simpChalIncomplete: !c[4 * i + j], simpChalComplete: c[4 * i + j], inSimpChal: player.misc.inChallenge.includes(`simp${4 * i + j}`), defaultButton: true })
-                    if (simpChalSelected == 4 * i + j) {
-                        if (!c[4 * i + j]) {
-                            html[`simpChal${4 * i + j}-id`].removeClass("simpChalIncomplete");
-                            html[`simpChal${4 * i + j}-id`].addClass("simpChalSelected");
-                        }
-                        if (c[4 * i + j]) {
-                            html[`simpChal${4 * i + j}-id`].removeClass("simpChalComplete");
-                            html[`simpChal${4 * i + j}-id`].addClass("simpChalCompleteSelected");
-                        }
-                        if (player.misc.inChallenge.includes(`simp${4 * i + j}`)) {
-                            html[`simpChal${4 * i + j}-id`].removeClass("inSimpChal");
-                            html[`simpChal${4 * i + j}-id`].addClass("inSimpChalSelected");
-                        }
-                    }
+    html[`challengeStart1`].setClasses({ font: true, challengeStart: true, startChallenge: !player.misc.inSChallenge, exitChallenge: player.misc.inSChallenge, defaultButton: true });
+    html[`challengeStart1`].setTxt(player.misc.inSChallenge ? "Exit Challenge" : "Start Challenge");
+    html[`completeChallenge1`].setClasses({ font: true, challengeStart: true, completeChallenge: true, defaultButton: true });
+    let c = player.simplify.challenge.completed
+    for (let i = 0; i < 4; i++) {
+        html[`simpChal${i}`].setDisplay(
+            c[4 * (i - 1)] ||
+            c[4 * (i - 1) + 1] ||
+            c[4 * (i - 1) + 2] ||
+            c[4 * (i - 1) + 3] ||
+            i == 0);
+        for (let j = 0; j < 4; j++) {
+            html[`simpChal${4 * i + j}-id`].setDisplay(c[4 * (i - 1) + j] || i == 0)
+            html[`simpChal${4 * i + j}-id`].setClasses({ font: true, simpChal: true, simpChalIncomplete: !c[4 * i + j], simpChalComplete: c[4 * i + j], inSimpChal: player.misc.inChallenge.includes(`simp${4 * i + j}`), defaultButton: true })
+            if (simpChalSelected == 4 * i + j) {
+                if (!c[4 * i + j]) {
+                    html[`simpChal${4 * i + j}-id`].removeClass("simpChalIncomplete");
+                    html[`simpChal${4 * i + j}-id`].addClass("simpChalSelected");
                 }
-                html[`ttsChalArea`].setClasses({ font: true, simpChalDesc: true });
-                html[`ttsChalArea`].setHTML(`${simplifyChalTypes[Math.floor(simpChalSelected / 4)]} Challenge ${(simpChalSelected % 4) + 1}: <br> ${simpChal.simpChalDesc[simpChalSelected + 1]} <br> <br> Reward: ${simpChal.simpChalReward[simpChalSelected + 1]}`);
+                if (c[4 * i + j]) {
+                    html[`simpChal${4 * i + j}-id`].removeClass("simpChalComplete");
+                    html[`simpChal${4 * i + j}-id`].addClass("simpChalCompleteSelected");
+                }
+                if (player.misc.inChallenge.includes(`simp${4 * i + j}`)) {
+                    html[`simpChal${4 * i + j}-id`].removeClass("inSimpChal");
+                    html[`simpChal${4 * i + j}-id`].addClass("inSimpChalSelected");
+                }
             }
+        }
+        html[`ttsChalArea`].setClasses({ font: true, simpChalDesc: true });
+        html[`ttsChalArea`].setHTML(`${simplifyChalTypes[Math.floor(simpChalSelected / 4)]} Challenge ${(simpChalSelected % 4) + 1}: <br> ${simpChal.simpChalDesc[simpChalSelected + 1]} <br> <br> Reward: ${simpChal.simpChalReward[simpChalSelected + 1]}`);
+    }
 }

@@ -13,39 +13,39 @@ const scalingNames = {
 }
 const simpChal = {
     simpChalDesc: {
-        1: "Max All is disabled. ComP costs grow by 2^x per purchase. Multipliers are ^0.75 then /" + format(new Decimal(1000), true) + ".",
-        2: "Max All is disabled. ComP's post-150 scaling now starts at 1. Multiplier per bought is lowered by 1, PP and MP's effect is ^0.5 and MP's effect is then /" + format(new Decimal(1000), true) + ".",
-        3: "Max All is disabled. ComP's costs are squared. 2nd and further ComP's costs are multiplied by " + format(new Decimal(10), true) + " before being squared. Your gain is also square-rooted.",
-        4: "Max All is disabled. ComP's costs act like their bought amount is squared. This also means that post-150 scaling starts earlier, and that MC3's effect is slightly stronger. All multipliers to ComPs and all xP effects are ^0.4.",
-        5: "All ComP multipliers get severely reduced every time any ComP gets bought. This multiplier slowly goes back to /" + format(new Decimal(1e4), true) + " in 40 seconds. PP has no effect.",
-        6: "Your base gain is effected by the same power that the ComP amount is being affected by. You must have " + format(new Decimal("1e395"), true) + " to complete this challenge.",
+        1: "Max All is disabled. Complicators costs grow by 2^x per purchase. Multipliers are ^0.75 then /" + format(new Decimal(1000), true) + ".",
+        2: "Max All is disabled. Complicators' post-150 scaling now starts at 1. Multiplier per bought is lowered by 1, PP and MP's effect is ^0.5 and MP's effect is then /" + format(new Decimal(1000), true) + ".",
+        3: "Max All is disabled. Complicators' costs are squared. 2nd and further Complicators' costs are multiplied by " + format(new Decimal(10), true) + " before being squared. Your gain is also square-rooted.",
+        4: "Max All is disabled. Complicators' costs act like their bought amount is squared. This also means that post-150 scaling starts earlier, and that MC3's effect is slightly stronger. All multipliers to Complicatorss and all xP effects are ^0.4.",
+        5: "All Complicators multipliers get severely reduced every time any Complicators gets bought. This multiplier slowly goes back to /" + format(new Decimal(1e4), true) + " in 40 seconds. PP has no effect.",
+        6: "Your base gain is effected by the same power that the Complicators amount is being affected by. You must have " + format(new Decimal("1e395"), true) + " to Complicatorslete this challenge.",
         7: `All xP effects are neutralized. Your goal is ${format(new Decimal(1e15))}.`,
-        8: "All ComP's multipliers are affected by the ComP exponent to amount, and PP, MP, 1P, and DP's effects are cube rooted. The ComP exponent has also been reduced to 0.4.",
-        9: "Max All is disabled. Your ComP costs scale entirely based off your total ComPs bought. MP, 1P, and DP's effects now only boost PP, Gain is reduced, and their individual effects are set to as if you had none.",
-        10: "ComP's post 150 scaling slowly gets earlier over time, and gets delayed by some amount per purchase. Your gain is ^0.5 with /" + format(new Decimal(1e150), true) + ".",
-        11: "ComP's multipliers are only effective for 400ms before they quickly decay. This is reset every time you buy any ComP. All ComPs' multipliers are rooted by 2.",
-        12: "Max All is disabled. Your ComP 'bought' goes up over time but it doesn't increase your multiplier. ComP's amount power is decreased from ^0.8 to ^0.5.",
-        13: "ComPs 1-2's power modifiers are set to 0.5, however you have an extra sub-layer in the Simplify tab to help you in this challenge. Simplify requirement is " + format(new Decimal(1.111e111), true) + ".",
-        14: "Your gain is set to ^0.05, but your ComP costs are set to ^0.1. Not only that, you have a 'relative gain' which slowly decreases with time. If it goes lower than 1, you restart the challenge.",
-        15: "ComP costs act like if you have bought double. Your 'bought' always goes down at a steady pace, but your cost never goes down. However, you will gain a sub-layer in the Simplify tab which will help you in this challenge. Simplify requirement is " + format(new Decimal(1e55), true) + ".",
-        16: "Someone else is trying to compete with your growth. Reset everything including your simplify layer, and try to get " + format(new Decimal(1.797693e308), true) + " as fast as you can. Your previous Simplify stats are saved, and they also slightly boost your ComP multipliers based on how far you got before entering this challenge.",
+        8: "All Complicators' multipliers are affected by the Complicators exponent to amount, and PP, MP, OP, and DP's effects are cube rooted. The Complicators exponent has also been reduced to 0.4.",
+        9: "Max All is disabled. Your Complicators costs scale entirely based off your total Complicatorss bought. MP, OP, and DP's effects are nullified and gain is ^0.25. However, MP, OP, and DP boost PP.",
+        10: "Complicators' post 150 scaling slowly gets earlier over time, and gets delayed by some amount per purchase. Gain is square-rooted, then /" + format(new Decimal(1e150), true) + ".",
+        11: "Complicators' multipliers are only effective for 400ms before they quickly decay. This is reset every time you buy any Complicators. All Complicators' multipliers are square-rooted.",
+        12: "Max All is disabled. Your Complicators 'bought' goes up over time but it doesn't increase your multiplier. Complicators' amount power is decreased from ^0.8 to ^0.5.",
+        13: "Complicators 1-2's power modifiers are set to ^0.5, however you have an extra sub-layer in the Simplify tab to help you in this challenge. Simplify requirement is " + format(new Decimal(1.111e111), true) + ".",
+        14: "Your gain is set to ^0.05, but your Complicators' costs are set to ^0.1. Not only that, you have a 'relative gain' which slowly decreases with time. If it goes lower than 1, you restart the challenge.",
+        15: "Complicators' costs act like if you have bought double. Your 'bought' always goes down at a steady pace, but your cost never goes down. However, you will gain a sub-layer in the Simplify tab which will help you in this challenge. Simplify requirement is " + format(new Decimal(1e55), true) + ".",
+        16: "Someone else is trying to compete with your growth. Reset everything including your simplify layer, and try to get " + format(new Decimal(1.797693e308), true) + " as fast as you can. Your previous Simplify stats are saved, and they also slightly boost your Complicators' multipliers based on how far you got before entering this challenge.",
     },
     simpChalReward: {
-        1: "ComP costs are divided by 2 per purchase.",
-        2: "ComP costs are ^0.95.",
-        3: "ComP costs now act like they're 0.975x less. This also slightly delays Post-150 scaling.",
-        4: "All ComP costs are offset based off your points. This gets softcapped after " + format(new Decimal(200), true) + ".",
-        5: "Higher order ComPs get a multiplier bonus based off of the previous ComP's multipliers.",
-        6: "The ComP exponent is slightly increased. (^0.8 -> ^0.825)",
-        7: "The 8th ComP gets a power bonus similar with the 2nd ComP.",
-        8: "2nd ComP's bonus exponent is increased. (^1.585 -> ^1.667)",
-        9: "MP, 1P, and DP increases PP's effect.",
-        10: "ComP's post-150 scaling gets delayed by 0.01 per total ComP purchase.",
-        11: "ComP costs slowly decay based off time in Simplify.",
+        1: "Complicators' costs are divided by 2 per purchase.",
+        2: "Complicators' costs are ^0.95.",
+        3: "Complicators' costs now act like they're 0.975x less. This also slightly delays Post-150 scaling.",
+        4: "All Complicators' costs are offset based off your points. This gets softcapped after " + format(new Decimal(200), true) + ".",
+        5: "Higher order Complicators' get a multiplier bonus based off of the previous Complicators' multipliers.",
+        6: "The Complicators exponent is slightly increased. (^0.8 -> ^0.825)",
+        7: "The 8th Complicator gets a power bonus similar with the 2nd Complicator.",
+        8: "2nd Complicators' bonus exponent is increased. (^1.585 -> ^1.667)",
+        9: "MP, OP, and DP increases PP's effect.",
+        10: "Complicators' post-150 scaling gets delayed by 0.01 per total Complicators purchase.",
+        11: "Complicators costs slowly decay based off time in Simplify.",
         12: "Simplify Energy's base exponent is increased by 0.025.",
         13: "You gain a modified version of the sub-layer, which doesn't reset on Simplify.",
-        14: "ComP1 produces ComP8 at a reduced rate.",
-        15: "ComP costs get reduced by 1.25^ComP# per purchase.",
+        14: "Complicator 1 produces Complicators  at a reduced rate.",
+        15: "Complicators costs get reduced by 1.25^Complicators# per purchase.",
         16: "???",
     }
 }
@@ -57,10 +57,7 @@ const dTen = Decimal.dTen;
 const dsqr2pi = new Decimal(Math.sqrt(2 * Math.PI))
 const ln10 = dTen.ln();
 const cbr2 = new Decimal(Math.cbrt(2));
-const simplifyChalTypes = ["🔎", "🔰", "🚛", "777"];
-const simplifyXPTypes = ["PP", "MP", "OP", "DP"];
-const simplifyXPColor = ["#FF0000", "#FFFF00", "#00FF00", "#0000FF"];
-const simplifyXPDesc = ["increasing overall gain by x", "increasing all multipliers by x", "improving 1st mult power to ^", "boosting multiplier per bought by x"];
+
 let tab = [0, 0, 0];
 let expandMultComP = 0;
 let expandMultComPType = 0;
@@ -92,6 +89,7 @@ function makeComp(index) {
 }
 
 let player = {};
+let tmp = {};
 let game = {};
 let currentSave = 0;
 
@@ -228,6 +226,12 @@ function resetPlayer() {
                 milestoneMisc: dZero, // custom challenges and stuff ("don't buy comp1 more than once", "reach 1e100 in 15 seconds without comp6+", etc)
             },
         },
+    }
+}
+
+function resetTmp() {
+    tmp = {
+
     }
 }
 

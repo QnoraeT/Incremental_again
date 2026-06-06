@@ -126,8 +126,8 @@ let COMP_FUNCTIONS = {
                 player.comps.array[index].multiFactors += `<br> Simplified Count ${player.simplify.upgrades.simplifyMainUPG >= 1 ? " (Outside Challenge):" : ""} x${format(player.simplify.main.simplifyStat.add(1).root(new Decimal(index)), true, 2)}  (${format(player.comps.array[index].multi, true)}x)`
             }
 
-            player.comps.array[index].multi = player.comps.array[index].multi.mul(player.simplify.main.totalSE.add(1).root(new Decimal((index) - 1 / 1.75 + 4)));
-            player.comps.array[index].multiFactors += "<br> Total Simplfied Energy: x" + format(player.simplify.main.totalSE.add(1).root(new Decimal((index) - 1 / 1.75 + 4)), true, 2) + "  (" + format(player.comps.array[index].multi, true) + "x)"
+            player.comps.array[index].multi = player.comps.array[index].multi.mul(player.simplify.main.totalSE.add(1).root(3.5 + 0.5 * index));
+            player.comps.array[index].multiFactors += "<br> Total Simplfied Energy: x" + format(player.simplify.main.totalSE.add(1).root(3.5 + 0.5 * index), true, 2) + "  (" + format(player.comps.array[index].multi, true) + "x)"
         }
 
         if (player.simplify.MP.effect.gt(1)) {
@@ -146,7 +146,7 @@ let COMP_FUNCTIONS = {
             player.comps.array[index].multi = player.comps.array[index].multi.div(1000);
             player.comps.array[index].multiFactors += "<br> Magnifying Challenge 1: /" + format(new Decimal(1000), true) + "  (" + format(player.comps.array[index].multi, true) + "x)"
         }
-
+        
         if (player.misc.inChallenge.includes("simp3")) {
             player.comps.array[index].multi = player.comps.array[index].multi.pow(0.4);
             player.comps.array[index].multiFactors += "<br> Magnifying Challenge 4: ^" + format(new Decimal(0.4), true, 2) + "  (" + format(player.comps.array[index].multi, true) + "x)"

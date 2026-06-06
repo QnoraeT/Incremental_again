@@ -79,19 +79,7 @@ function getProgress() { // progressBar = 0-1
 }
 
 function getChalEffects() {
-    let temp;
-    temp = dOne;
-    if (player.simplify.challenge.completed[0]) { temp = temp.add(1); }
-    player.simplify.challenge.MC1effect = temp;
 
-    temp = dOne;
-    if (player.simplify.challenge.completed[14]) { temp = temp.add(0.25); }
-    player.simplify.challenge.SC3effect = temp;
-
-    temp = dOne;
-    if (player.simplify.challenge.completed[3]) { temp = player.misc.points.max(10).log(10).root(2).mul(3); }
-    temp = Decimal.pow(10, scale("EP", temp.add(1).log(10), false, 2.30102999, 1, 1.5, 0)[0]); // this is a double log softcap lmfao
-    player.simplify.challenge.MC4effect = temp;
 
     temp = new Decimal(0.8);
     if (player.misc.inChallenge.includes("simp11")) { temp = new Decimal(0.5); }
@@ -113,27 +101,6 @@ function getChalEffects() {
         }
     }
     player.scaling.ComPs[0].start = temp.max(1);
-
-    temp = dOne
-    if (player.simplify.challenge.completed[10]) { temp = Decimal.pow(player.simplify.main.timeInSimplify.add(1), 32); }
-    player.simplify.challenge.AC2effect = temp;
-
-    temp = new Decimal(1.5)
-    if (player.simplify.challenge.completed[11]) { temp = temp.add(0.025); }
-    player.simplify.main.SEExp = temp;
-
-    temp = new Decimal(1e12);
-    if (player.misc.inChallenge.includes("simp5")) { temp = new Decimal("1e395"); }
-    if (player.misc.inChallenge.includes("simp6")) { temp = new Decimal(1e15); }
-    if (player.misc.inChallenge.includes("simp12")) { temp = new Decimal(1.111e111); }
-    if (player.misc.inChallenge.includes("simp14")) { temp = new Decimal(1e55); }
-    if (player.misc.inChallenge.includes("simp15")) { temp = new Decimal(1.797693e308); }
-    player.simplify.main.simplifyReq = temp;
-
-    if (player.misc.inChallenge.includes("simp13")) {
-        temp = player.misc.pps.div(Decimal.pow(1.3, player.simplify.main.timeInSimplify));
-        player.simplify.challenge.SC2RG = temp;
-    }
 }
 
 function challengeToggle(type) {
@@ -270,19 +237,21 @@ window.addEventListener('DOMContentLoaded', () => {
                 document.getElementById("fps").innerText = `FPS: ${FPS}`;
             }
             let gameDelta = Decimal.mul(delta, player.misc.timeSpeed).mul(player.misc.setTimeSpeed);
-            player.misc.gameTime = player.misc.gameTime.add(gameDelta);
-            player.simplify.main.timeInSimplify = player.simplify.main.timeInSimplify.add(gameDelta);
-            player.simplify.challenge.JC1Time = player.simplify.challenge.JC1Time.add(gameDelta);
-            player.misc.totalTime += delta;
             sessionTime += delta;
             softcaps = [];
-            player.simplify.main.totalXP = dOne;
-            for (let type = 0; type < 4; ++type) {
-                simplifyXPtick(type, gameDelta);
-                player.simplify.main.totalXP = Decimal.mul(player.simplify.main.totalXP, player.simplify[simplifyXPTypes[type]].trueValue);
-            }
-            player.simplify.main.totalXP = player.simplify.main.totalXP.pow(player.simplify.main.SAExp);
+
+            player.misc.gameTime = player.misc.gameTime.add(gameDelta);
+            player.misc.totalTime += delta;
+
+            updateSimplify_game(gameDelta)
             player.comps.compBM = player.simplify.DP.effect;
+
+            getChalEffects();
+            for (let comp = 1; comp <= 8; ++comp) {
+                COMP_FUNCTIONS.updateMulti(comp);
+                COMP_FUNCTIONS.updateCost(comp);
+                COMP_FUNCTIONS.updateAmount(comp, calcCompxPerSecond(comp).times(gameDelta));
+            }
 
             player.misc.pps = calcPointsPerSecond();
             player.misc.points = player.misc.points.add(player.misc.pps.times(gameDelta));
@@ -292,12 +261,6 @@ window.addEventListener('DOMContentLoaded', () => {
             player.misc.totalPointsInSimplify = player.misc.totalPointsInSimplify.add(player.misc.pps.times(gameDelta));
             getProgress();
             progressBar = Decimal.clamp(progressBar, 0, 1);
-            getChalEffects();
-            for (let comp = 1; comp <= 8; ++comp) {
-                COMP_FUNCTIONS.updateMulti(comp);
-                COMP_FUNCTIONS.updateCost(comp);
-                COMP_FUNCTIONS.updateAmount(comp, calcCompxPerSecond(comp).times(gameDelta));
-            }
 
             if (timeStamp > lastSave + saveTime) {
                 console.log(saveTheFrickingGame());

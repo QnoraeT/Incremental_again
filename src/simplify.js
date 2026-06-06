@@ -1,4 +1,10 @@
-let simpUpg2Function = {
+const simplifyChalTypes = ["🔎", "🔰", "🚛", "777"];
+const simplifyXPTypes = ["Point Power", "Mult Power", "One Power", "Dimension Power"];
+const simplifyXPTypeInternal = ["PP", "MP", "OP", "DP"];
+const simplifyXPColor = ["#FF0000", "#FFFF00", "#00FF00", "#0000FF"];
+const simplifyXPDesc = ["increasing 1st complicator's mult by x", "increasing all complicator multipliers by x", "improving 1st complicator's mult power to ^", "boosting multiplier per complicator bought by x"];
+
+const simpUpg2Function = {
     cost(x) {
         let temp = x;
         temp = Decimal.pow(temp, 1.5).pow_base(1000).mul(1e33)
@@ -19,7 +25,7 @@ let simpUpg2Function = {
         let t2 = (total) ? simpUpg2Function.strengthTotal(type, temp) : simpUpg2Function.strengthPer(type);
         switch (type) {
             case 1:
-                temp = "ComP's effective bought amount for multipliers are multiplied by x";
+                temp = simplifyXPTypes[3] + "'s effect is raised by ^";
                 temp += format(t2, 3);
                 break;
             case 2:
@@ -31,12 +37,11 @@ let simpUpg2Function = {
                 temp += format(t2, 3);
                 break;
             case 4:
-                temp = "DP's root is reduced from " + format(new Decimal(7), 3) + " by /";
+                temp = simplifyXPTypes[3] + "'s effect is reduced from 7.000 by /";
                 temp += format(t2, 3);
-                temp += `, it's effect severely weakens when the root has been weakened to ${format(new Decimal(4.9))} or lower.`;
                 break;
             case 5:
-                temp = "ComP's post-150 scaling is delayed by +";
+                temp = "Complicators' post-150 scaling is delayed by +";
                 temp += format(t2, 3);
                 break;
             case 6:
@@ -45,9 +50,8 @@ let simpUpg2Function = {
                 temp += ", weighted towards 8th ComP";
                 break;
             case 7:
-                temp = "OP's root is reduced from " + format(new Decimal(5.5), 3) + " by /";
+                temp = simplifyXPTypes[2] + "'s root is reduced from " + format(new Decimal(5.5), 3) + " by /";
                 temp += format(t2, 3);
-                temp += `, it's effect weakens when the root has been weakened to ${format(new Decimal(4.125))} or lower.`;
                 break;
             case 8:
                 temp = "MC4's effect exponent is multiplied by x";
@@ -56,7 +60,7 @@ let simpUpg2Function = {
                 temp += format(t2[1], 3);
                 break;
             case 9:
-                temp = "ComP's post-150 scaling is weakened by ";
+                temp = "Complicators' post-150 scaling is weakened by ";
                 temp += format(t2, 3);
                 temp += "%"
                 break;
@@ -131,23 +135,23 @@ function getSimplifyGain() {
 
 function simplifyXPtick(type, tickRate) {
     let temp;
-    temp = player.simplify[simplifyXPTypes[type]].allocated.pow(1.5);
-    player.simplify[simplifyXPTypes[type]].generated = player.simplify[simplifyXPTypes[type]].generated.add(temp.mul(tickRate));
-    player.simplify[simplifyXPTypes[type]].trueValue = player.simplify[simplifyXPTypes[type]].generated.add(1).pow(player.simplify.main.SAExp).sub(1);
-    temp = player.simplify[simplifyXPTypes[type]].trueValue;
+    temp = player.simplify[simplifyXPTypeInternal[type]].allocated.pow(1.5);
+    player.simplify[simplifyXPTypeInternal[type]].generated = player.simplify[simplifyXPTypeInternal[type]].generated.add(temp.mul(tickRate));
+    player.simplify[simplifyXPTypeInternal[type]].trueValue = player.simplify[simplifyXPTypeInternal[type]].generated.add(1).pow(player.simplify.main.SAExp).sub(1);
+    temp = player.simplify[simplifyXPTypeInternal[type]].trueValue;
     if (player.misc.inChallenge.includes("simp8") && !temp == 0) { temp = dZero; }
     switch (type) {
         case 0:
             temp = temp.div(20).add(1).pow(2.1);
             if (player.simplify.challenge.completed[8]) {
-                temp = temp.mul(player.simplify[simplifyXPTypes[1]].effect.pow(1.1))
-                    .pow(player.simplify[simplifyXPTypes[2]].effect.sub(1).max(1).root(1.7))
-                    .mul(player.simplify[simplifyXPTypes[3]].effect.pow(64));
+                temp = temp.mul(player.simplify[simplifyXPTypeInternal[1]].effect.pow(0.5))
+                    .pow(player.simplify[simplifyXPTypeInternal[2]].effect.sub(1).max(1).root(3))
+                    .mul(player.simplify[simplifyXPTypeInternal[3]].effect.pow(8));
             }
             if (player.misc.inChallenge.includes("simp8")) {
-                temp = temp.mul(player.simplify[simplifyXPTypes[1]].trueValue.div(25).add(1).pow(1.125))
-                    .pow(player.simplify[simplifyXPTypes[2]].trueValue.add(10).log(10).root(5.5))
-                    .pow(player.simplify[simplifyXPTypes[3]].trueValue.add(10).log(10).root(7).add(1).div(2));
+                temp = temp.mul(player.simplify[simplifyXPTypeInternal[1]].trueValue.div(25).add(1).pow(1.125))
+                    .pow(player.simplify[simplifyXPTypeInternal[2]].trueValue.add(10).log(10).root(5.5))
+                    .pow(player.simplify[simplifyXPTypeInternal[3]].trueValue.add(10).log(10).root(7).add(1).div(2));
             }
             if (player.misc.inChallenge.includes("simp1")) { temp = temp.root(2); }
             if (player.misc.inChallenge.includes("simp4")) { temp = dOne; }
@@ -170,7 +174,7 @@ function simplifyXPtick(type, tickRate) {
     if (player.misc.inChallenge.includes("simp3")) { temp = temp.pow(0.4); }
     if (player.misc.inChallenge.includes("simp6")) { temp = dOne; }
     if (player.misc.inChallenge.includes("simp7")) { temp = temp.root(3); }
-    player.simplify[simplifyXPTypes[type]].effect = temp;
+    player.simplify[simplifyXPTypeInternal[type]].effect = temp;
 }
 
 function simplify1Upg() {
@@ -184,7 +188,7 @@ function simplify1Upg() {
 }
 
 function simpExPAllocate(id) {
-    player.simplify[simplifyXPTypes[id]].allocated = player.simplify[simplifyXPTypes[id]].allocated.add(player.simplify.main.simplifyEnergy);
+    player.simplify[simplifyXPTypeInternal[id]].allocated = player.simplify[simplifyXPTypeInternal[id]].allocated.add(player.simplify.main.simplifyEnergy);
     player.simplify.main.simplifyEnergy = dZero;
 }
 
@@ -216,4 +220,49 @@ function simpUPG1Cost() {
     let ret = new Decimal(player.simplify.upgrades.simplifyMainUPG);
     ret = Decimal.pow(10, ret.pow(2)).mul(ret.factorial());
     return ret;
+}
+
+function updateSimplify_game(gameDelta) {
+    player.simplify.main.timeInSimplify = player.simplify.main.timeInSimplify.add(gameDelta);
+    player.simplify.challenge.JC1Time = player.simplify.challenge.JC1Time.add(gameDelta);
+    player.simplify.main.totalXP = dOne;
+    for (let type = 0; type < 4; ++type) {
+        simplifyXPtick(type, gameDelta);
+        player.simplify.main.totalXP = Decimal.mul(player.simplify.main.totalXP, player.simplify[simplifyXPTypeInternal[type]].trueValue);
+    }
+    player.simplify.main.totalXP = player.simplify.main.totalXP.pow(player.simplify.main.SAExp);
+
+    let temp;
+    temp = dOne;
+    if (player.simplify.challenge.completed[0]) { temp = temp.add(1); }
+    player.simplify.challenge.MC1effect = temp;
+
+    temp = dOne;
+    if (player.simplify.challenge.completed[14]) { temp = temp.add(0.25); }
+    player.simplify.challenge.SC3effect = temp;
+
+    temp = dOne;
+    if (player.simplify.challenge.completed[3]) { temp = player.misc.points.max(1e10).log10().log10().ln().mul(10); }
+    player.simplify.challenge.MC4effect = temp;
+
+    temp = dOne
+    if (player.simplify.challenge.completed[10]) { temp = Decimal.pow(player.simplify.main.timeInSimplify.add(1), 32); }
+    player.simplify.challenge.AC2effect = temp;
+
+    temp = new Decimal(1.5)
+    if (player.simplify.challenge.completed[11]) { temp = temp.add(0.025); }
+    player.simplify.main.SEExp = temp;
+
+    temp = new Decimal(1e12);
+    if (player.misc.inChallenge.includes("simp5")) { temp = new Decimal("1e395"); }
+    if (player.misc.inChallenge.includes("simp6")) { temp = new Decimal(1e15); }
+    if (player.misc.inChallenge.includes("simp12")) { temp = new Decimal(1.111e111); }
+    if (player.misc.inChallenge.includes("simp14")) { temp = new Decimal(1e55); }
+    if (player.misc.inChallenge.includes("simp15")) { temp = new Decimal(1.797693e308); }
+    player.simplify.main.simplifyReq = temp;
+
+    if (player.misc.inChallenge.includes("simp13")) {
+        temp = player.misc.pps.div(Decimal.pow(1.3, player.simplify.main.timeInSimplify));
+        player.simplify.challenge.SC2RG = temp;
+    }
 }
